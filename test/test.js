@@ -17,4 +17,7 @@ var test = require('./client');
 //test.test('/get_class_student');
 //test.test('/get_genearch_list');
 //test.test('/teacher_login');
-test.test('/get_children_list');
+//test.test('/get_children_list');
+//test.test('/get_child_xeight');
+//test.test('/get_daily_item');
+test.test('/get_calendar');

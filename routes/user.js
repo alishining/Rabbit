@@ -95,7 +95,34 @@ exports.add_major_account = function(req, res, next){
 			res.json(result.fail);
 		}
 	});
-}
+};
+
+exports.get_genearch_info = function(req, res, next){
+	var phone = '';
+	var values = [phone];
+	sql.query(req, res, sql_mapping, get_genearch_info, values, next, function(ret){
+		if (ret && ret[0] != undefined) {
+			result.succ.msg = ret;
+			res.json(result.succ);
+		} else {
+			res.json(result.fail);
+		}
+	})
+};
+
+exports.mod_genearch_info = function(req, res, next){
+	var name = 'shining';
+	var role = 'father';
+	var phone = '18610091662';	
+	var values = [name, role, phone];
+	sql.query(req, res, sql_mapping.mod_genearch_info, values, next, function(ret){
+		if (ret) {
+			res.json(result.succ);
+		} else {
+			res.json(result.fail);
+		}
+	});
+};
 
 exports.add_assist_account = function(req, res, next){
 	var phone = '18610091662';
@@ -149,36 +176,18 @@ exports.get_assist_account_list = function(req, res, next){
 	});
 };
 
-exports.mod_genearch_info = function(req, res, next){
-	var name = 'shining';
-	var role = 'father';
-	var phone = '18610091662';	
-	var values = [name, role, phone];
-	sql.query(req, res, sql_mapping.mod_genearch_info, values, next, function(ret){
-		if (ret) {
+exports.get_child_info = function(req, res, next){
+	var student_id = '';
+	var values = [student_id];
+	sql.query(req, res, sql_mapping.get_student_info, values, next, function(ret){
+		if (ret && ret[0] != undefined) {
+			result.succ.msg = ret;
 			res.json(result.succ);
 		} else {
 			res.json(result.fail);
 		}
-	});
+	})
 };
-
-exports.get_genearch_list = function(req, res, next){
-	var student_id = '1a3';
-	var values = ['%'+student_id+'%'];
-	sql.query(req, res, sql_mapping.get_genearch_list, values, next, function(ret){
-		if (ret) {
-			try {
-				result.succ.msg = ret;
-				res.json(result.succ);
-			} catch(err) {
-				res.json(result.fail);
-			}
-		} else {
-			res.json(result.fail);
-		}
-	});
-}
 
 exports.get_children_list = function(req, res, next){
 	var phone = '18610091662';
@@ -191,4 +200,74 @@ exports.get_children_list = function(req, res, next){
 			res.json(result.fail);
 		}
 	})
+};
+
+exports.get_child_xeight = function(req, res, next){
+	var student_id = '07411040'; 
+	var item = '身高';
+	var values = [student_id, item];
+	sql.query(req, res, sql_mapping.get_child_xeight, values, next, function(ret){
+		if (ret) {
+			result.succ.msg = ret;
+			res.json(result.succ);
+		} else {
+			res.json(result.fail);
+		}
+	});
+};
+
+exports.is_reach_standard = function(req, res, next){
+};
+
+exports.get_daily_detail = function(req, res, next){
+	var ds = '2016-01-13';
+	var student_id = '07411040';
+	var values = [ds, student_id];
+	sql.query(req, res, sql_mapping.get_daily_detail, values, next, function(ret){
+		if (ret && ret[0] != undefined) {
+			result.succ.msg = ret;
+			res.json(result.succ);
+		} else {
+			res.json(result.fail);
+		};
+	});
+};
+
+exports.get_calendar = function(req, res, next){
+	var myDate = new Date();
+	var year = myDate.getFullYear();
+	var month = myDate.getMonth()+1;
+	myDate = new Date(year+'-'+month+'-1');
+	var day = myDate.getDay();
+	res.json(day);
+};
+
+exports.get_training_rate = function(req, res, next){
+	var year = '';
+	var month = '';
+	var values = [];
+	sql.query(req, res, sql_mapping.get_training_rate, values, next, function(ret){
+		if (ret && ret[0] != undefined) {
+			result.succ.msg = ret;
+			res.json(result.succ);
+		} else {
+			res.json(result.fail);
+		}
+	});
+};
+
+exports.get_score_list = function(req, res, next){
+};
+
+exports.record_training_item = function(req, res, next){
+	var student_id = '07411040'; 
+	var item = '';
+	var ds = '';
+	var values = [student_id, item, ds];
+	sql.query(req, res, sql_mapping.record_training_item, values, next, function(ret){
+		if (ret && ret[0] != undefined)
+		res.json(result.succ);
+		else
+		res.json(result.fail);	
+	});
 }

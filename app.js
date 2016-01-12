@@ -38,19 +38,19 @@ app.post('/get_assist_account_list', user_route.get_assist_account_list);  //获
 app.post('/get_child_info', user_route.get_child_info);					   //获取孩子信息
 app.post('/get_children_list', user_route.get_children_list);			   //获取孩子列表
 
-//获取孩子历史身高
-//获取孩子历史体重
+//获取孩子历史身高或体重
+app.post('/get_child_xeight', user_route.get_child_xeight);
 //孩子身高／体重是否达标
-//记录孩子身高
-//记录孩子体重
+app.post('/is_reach_standard', user_route.is_reach_standard);
 //获取某日的训练详情
-//补录某日的训练状况
+app.post('/get_daily_detail', user_route.get_daily_detail);
 //获取某月的日历及训练进度
+app.post('/get_calendar', user_route.get_calendar);
+app.post('/get_training_rate', user_route.get_training_rate);
 //获取孩子体育成绩单
-//
+app.post('/get_score_list', user_route.get_score_list);
 //记录训练结果
-//获取孩子当日的训练项目
-//获取所有项目列表
+app.post('/record_training_item', user_route.record_training_item);
 
 
 app.use(function(req, res, next) {
