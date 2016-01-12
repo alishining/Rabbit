@@ -23,6 +23,7 @@ exports.sms = function(num, phone, result) {
 
 		});	
 		req.end('\n');
+		
 		ret.succ.msg = num;
 		result.json(ret.succ);
 	} catch (err) {

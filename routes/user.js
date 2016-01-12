@@ -5,7 +5,7 @@ var tools = require('../tools/sms');
 var result = require('../tools/result');
 
 exports.sms = function(req, res, next){
-	var phone = '18610091662';
+	var phone = req.body.phone;
 	var num = Math.floor(Math.random()*10000);
 	if (num < 10){
 		num = '000' + num;
@@ -21,7 +21,7 @@ exports.sms = function(req, res, next){
 };
 
 exports.login = function(req, res, next){
-	var values = ['18610091662']
+	var values = [req.body.phone]
 	sql.query(req, res, sql_mapping.login, values, next, function(ret){
 		try {
 			if (ret[0].children_list != '') {
