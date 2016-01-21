@@ -1,4 +1,5 @@
 var express = require('express');
+var multipart = require('connect-multiparty');
 var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
@@ -636,11 +637,11 @@ exports.record_training_item = function(req, res, next){
 	});
 };
 
-exports.upload_img = function(req, res, next){ 
-	var id	  = req.body.uid; 
-	var value = req.body.value; 
-	var type  = req.body.type;
-	if (id == undefined || value == undefined || type == undefined){ 
+exports.upload_img = function(req, res, next){
+	var id	         = req.body.uid;
+	var tmp_filename = req.files.value.path;
+	var type         = req.body.type;
+	if (id == undefined || tmp_filename == undefined || type == undefined){ 
 		result.header.code = '400'; 
 		result.header.msg  = '参数不存在';  
 		result.data        = {}; 
@@ -652,21 +653,18 @@ exports.upload_img = function(req, res, next){
 	var extra = new qiniu.io.PutExtra(); 
 	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu'); 
 	var uptoken = putPolicy.token(); 
-	qiniu.io.put(uptoken, key, value, extra, function(err, ret) { 
+	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) { 
 		if (!err) { 
-			var table_name = '';
-			var field_name = '';
+			var sql_content = '';
 			if (type == 0){
-				table_name = 'student_name';
-				field_name = 'student_id';
+				sql_content = sql_mapping.update_student_img;	
 			}
 			if (type == 1){
-				table_name = 'genearch_name'; 
-				field_name = 'phone';
+				sql_content = sql_mapping.update_genearch_img;
 			}
 			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
-			var values = [table_name, file_name, field_name, id];
-			sql.query(req, res, sql_mapping.update_img, values, next, function(err, ret){
+			var values = [file_name, id];
+			sql.query(req, res, sql_content, values, next, function(err, ret){
 				result.header.code = '200'; 
 				result.header.msg  = '成功'; 
 				result.data        = {result : '0', 
@@ -681,4 +679,4 @@ exports.upload_img = function(req, res, next){
 			res.json(result); 
 		} 
 	}); 
-} 
+};

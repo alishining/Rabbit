@@ -1,4 +1,5 @@
 var express = require('express');
+var multipart = require('connect-multiparty');
 var http = require('http');
 var path = require('path');
 var ejs = require('ejs');
@@ -38,7 +39,8 @@ app.post('/record_training_item', user_route.record_training_item);  //记录训
 app.post('/me', user_route.me);										 //我的接口
 app.post('/get_assist_list', user_route.get_assist_list);			 //辅助帐号列表
 app.post('/select_student', user_route.select_student);				 //选择默认孩子	
-app.post('/upload_img', user_route.upload_img);						 //上传头像
+var multipartMiddleware = multipart();
+app.post('/upload_img', multipartMiddleware, user_route.upload_img); //上传头像
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

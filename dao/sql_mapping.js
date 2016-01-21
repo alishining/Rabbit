@@ -23,7 +23,8 @@ var sql = {
 	update_training_item : 'update training_record set score=? where id=?',
 	search_record : 'select id from training_record where id = ?',
 	get_oneday_detail : 'select item, score from training_record where ds=? and student_id=?',
-	update_img : 'update ? set img=? where ?=?'
+	update_student_img : 'update student_info set img=? where student_id=?',
+	update_genearch_img : 'update genearch_info set img=? where phone=?'
 };
 
 module.exports = sql;
