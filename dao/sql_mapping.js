@@ -22,7 +22,8 @@ var sql = {
 	record_training_item : 'insert into training_record(id, student_id, item, score, ds) values(?,?,?,?,?)',
 	update_training_item : 'update training_record set score=? where id=?',
 	search_record : 'select id from training_record where id = ?',
-	get_oneday_detail : 'select item, score from training_record where ds=? and student_id=?'
+	get_oneday_detail : 'select item, score from training_record where ds=? and student_id=?',
+	update_img : 'update ? set img=? where ?=?'
 };
 
 module.exports = sql;
