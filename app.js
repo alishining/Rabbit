@@ -24,34 +24,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 //User routes
 app.post('/sms', user_route.sms);								//短信接口
 app.post('/login', user_route.login);							//登录接口
-
+app.post('/index', user_route.index);							//首页信息
 app.post('/bind_student', user_route.bind_student);				//绑定学生接口
 app.post('/unbind_student', user_route.unbind_student);			//解绑学生接口
-
-app.post('/add_major_account', user_route.add_major_account);	//添加家长信息（账户）
-app.post('/get_genearch_info', user_route.get_genearch_info);	//获取家长信息
 app.post('/mod_genearch_info', user_route.mod_genearch_info);	//更新家长信息
-
-app.post('/add_assist_account', user_route.add_assist_account);			   //添加辅助帐号
-app.post('/del_assist_account', user_route.del_assist_account);			   //删除辅助帐号
-app.post('/get_assist_account_list', user_route.get_assist_account_list);  //获取辅助帐号列表
-app.post('/get_child_info', user_route.get_child_info);					   //获取孩子信息
-app.post('/get_children_list', user_route.get_children_list);			   //获取孩子列表
-
-//获取孩子历史身高或体重
-app.post('/get_child_xeight', user_route.get_child_xeight);
-//孩子身高／体重是否达标
-app.post('/is_reach_standard', user_route.is_reach_standard);
-//获取某日的训练详情
-app.post('/get_daily_detail', user_route.get_daily_detail);
-//获取某月的日历及训练进度
-app.post('/get_calendar', user_route.get_calendar);
-app.post('/get_training_rate', user_route.get_training_rate);
-//获取孩子体育成绩单
-app.post('/get_score_list', user_route.get_score_list);
-//记录训练结果
-app.post('/record_training_item', user_route.record_training_item);
-
+app.post('/add_assist_account', user_route.add_assist_account);	//添加辅助帐号
+app.post('/del_assist_account', user_route.del_assist_account);	//删除辅助帐号
+app.post('/get_child_xeight', user_route.get_child_xeight);		//获取孩子历史身高或体重
+app.post('/get_oneday_detail', user_route.get_oneday_detail);	//获取某日的训练详情
+app.post('/get_calendar', user_route.get_calendar);				//获取某月的日历及训练进度
+app.post('/training', user_route.training);						//训练页面
+app.post('/record_training_item', user_route.record_training_item);  //记录训练结果
+app.post('/me', user_route.me);										 //我的接口
+app.post('/get_assist_list', user_route.get_assist_list);			 //辅助帐号列表
+app.post('/select_student', user_route.select_student);				 //选择默认孩子	
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

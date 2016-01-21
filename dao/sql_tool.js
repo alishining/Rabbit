@@ -7,9 +7,7 @@ exports.query = function(req, res, sql_query, values, next, callback) {
 		if (err)
 			next(err);
 		connection.query(sql_query, values, function(err, ret){
-			if (err)
-				next(err);
-			callback(ret);
+			callback(err, ret);
 			connection.release();
 		}); 
 	})
