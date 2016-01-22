@@ -451,13 +451,18 @@ exports.get_child_xeight = function(req, res, next){
 				if (min > ret[i].score)
 					min = Math.round(ret[i].score);
 			}
-			var delta = Math.round((max - min) / 5);
+			var delta = Math.round((max - min) / 5 * 10) / 10.0;
 			var y = [0];
 			if (delta > 0){
-				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta];
+				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta, min+5*delta, min+6*delta];
 			} else {
 				if (delta == 0)
-					y = {min};
+					y = [min];
+			}
+			var ret_length = ret.length;
+			if (ret_length < 7) {
+				for (var i=0;i<7-ret_length;i++)
+					ret.push({ds : '', score : -1});
 			}
 			result.header.code = '200';
 			result.header.msg  = '成功';
