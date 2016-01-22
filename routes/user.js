@@ -46,7 +46,7 @@ exports.login = function(req, res, next){
 			result.header.code = "200";
 			result.header.msg  = "成功";
 			if (ret[0].child != '') {
-				result.data = {result : '0', uid : phone, msg : '登录成功'};
+				result.data = {result : '0', uid : phone, student_id: ret[0].child, msg : '登录成功'};
 			} else {
 				result.data = {result : '-1', uid : phone, msg : '登录失败'};
 			}
@@ -444,17 +444,17 @@ exports.get_child_xeight = function(req, res, next){
 	var values = [student_id, item];
 	sql.query(req, res, sql_mapping.get_child_xeight, values, next, function(err, ret){
 		try {
-			var max = 0, min = 1000; 
+			var max = 0, min = 10000000; 
 			for (var i=0;i<ret.length;i++) {
 				if (max < ret[i].score)
-					max = ret[i].score;
+					max = Math.round(ret[i].score);
 				if (min > ret[i].score)
-					min = ret[i].score;
+					min = Math.round(ret[i].score);
 			}
-			var delta = (max - min) / 5.0;
+			var delta = Math.round((max - min) / 5);
 			var y = [0];
 			if (delta > 0){
-				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta, max];
+				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta];
 			} else {
 				if (delta == 0)
 					y = {min};

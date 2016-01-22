@@ -18,13 +18,14 @@ var sql = {
 	del_genearch_account : 'delete from genearch_info where phone=?',
 	get_assist_list : 'select * from assist_list where phone=?',
 	mod_genearch_info : 'update genearch_info set name=?, role=? where phone=?',
-	get_child_xeight : 'select score, ds from training_record where student_id=? and item=?',
+	get_child_xeight : 'select left(ds,7) as ds, sum(score)/count(*) as score from training_record where student_id=? and item=? and score!=\'\' GROUP BY left(ds,7)',
 	record_training_item : 'insert into training_record(id, student_id, item, score, ds) values(?,?,?,?,?)',
 	update_training_item : 'update training_record set score=? where id=?',
 	search_record : 'select id from training_record where id = ?',
 	get_oneday_detail : 'select item, score from training_record where ds=? and student_id=?',
 	update_student_img : 'update student_info set img=? where student_id=?',
 	update_genearch_img : 'update genearch_info set img=? where phone=?'
+	//------------------------------------------------------------------
 };
 
 module.exports = sql;
