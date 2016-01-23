@@ -454,7 +454,7 @@ exports.get_child_xeight = function(req, res, next){
 			var delta = Math.round((max - min) / 5 * 10) / 10.0;
 			var y = [0];
 			if (delta > 0){
-				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta, min+5*delta, min+6*delta];
+				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta, min+5*delta];
 			} else {
 				if (delta == 0)
 					y = [min];
