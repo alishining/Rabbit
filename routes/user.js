@@ -460,8 +460,8 @@ exports.get_child_xeight = function(req, res, next){
 					y = [min];
 			}
 			var ret_length = ret.length;
-			if (ret_length < 7) {
-				for (var i=0;i<7-ret_length;i++)
+			if (ret_length < 8) {
+				for (var i=0;i<8-ret_length;i++)
 					ret.push({ds : '', score : -1});
 			}
 			result.header.code = '200';
