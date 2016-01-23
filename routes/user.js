@@ -684,7 +684,8 @@ exports.upload_img = function(req, res, next){
 			result.header.code = '200'; 
 			result.header.msg  = '成功'; 
 			result.data        = {result : '-1', 
-								  msg    : '上传失败'}; 
+					      msg    : '上传失败' ,
+					      err    : err};
 			res.json(result); 
 		} 
 	}); 
