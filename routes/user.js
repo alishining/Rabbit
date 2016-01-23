@@ -643,10 +643,11 @@ exports.record_training_item = function(req, res, next){
 };
 
 exports.upload_img = function(req, res, next){
-	var id	         = req.body.uid;
-	var tmp_filename = req.files.value.path;
-	var type         = req.body.type;
-	if (id == undefined || tmp_filename == undefined || type == undefined){ 
+	var uid	            = req.body.uid;
+	var student_img_id  = req.body.student_img_id;
+	var tmp_filename	= req.files.value.path;
+	var type			= req.body.type;
+	if ((type == 0 && student_img_id == undefined) || uid == undefined || tmp_filename == undefined || type == undefined){ 
 		result.header.code = '400'; 
 		result.header.msg  = '参数不存在';  
 		result.data        = {}; 
@@ -660,11 +661,14 @@ exports.upload_img = function(req, res, next){
 	var uptoken = putPolicy.token(); 
 	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) { 
 		if (!err) { 
+			var id = '';
 			var sql_content = '';
 			if (type == 0){
+				id = student_img_id;
 				sql_content = sql_mapping.update_student_img;	
 			}
 			if (type == 1){
+				id = uid;
 				sql_content = sql_mapping.update_genearch_img;
 			}
 			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
