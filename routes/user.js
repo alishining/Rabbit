@@ -654,6 +654,16 @@ exports.upload_img = function(req, res, next){
 		res.json(result); 
 		return; 
 	} 
+	var id = '';
+	var sql_content = '';
+	if (type == 0){
+		id = student_img_id;
+		sql_content = sql_mapping.update_student_img;
+	}
+	if (type == 1){
+		id = uid;
+		sql_content = sql_mapping.update_genearch_img;
+	}
 	var date  = new Date(); 
 	var key = encrypt.md5(id+date) + '.jpg'; 
 	var extra = new qiniu.io.PutExtra(); 
@@ -661,16 +671,6 @@ exports.upload_img = function(req, res, next){
 	var uptoken = putPolicy.token(); 
 	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) { 
 		if (!err) { 
-			var id = '';
-			var sql_content = '';
-			if (type == 0){
-				id = student_img_id;
-				sql_content = sql_mapping.update_student_img;	
-			}
-			if (type == 1){
-				id = uid;
-				sql_content = sql_mapping.update_genearch_img;
-			}
 			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
 			var values = [file_name, id];
 			sql.query(req, res, sql_content, values, next, function(err, ret){
