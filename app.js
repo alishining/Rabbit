@@ -8,6 +8,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var user_route = require('./routes/user');
+var web_route = require('./routes/web');
 
 var app = express();
 
@@ -41,6 +42,32 @@ app.post('/get_assist_list', user_route.get_assist_list);			 //辅助帐号列�
 app.post('/select_student', user_route.select_student);				 //选择默认孩子	
 var multipartMiddleware = multipart();
 app.post('/upload_img', multipartMiddleware, user_route.upload_img); //上传头像
+//------------------------------------------------------------------
+app.post('/school_login', web_route.school_login);
+
+app.post('/get_province', web_route.get_province);
+app.post('/get_city', web_route.get_city);
+app.post('/get_district', web_route.get_district);
+
+app.post('/add_school', web_route.add_school);
+app.post('/del_school', web_route.del_school);
+app.post('/mod_school', web_route.mod_school);
+app.post('/get_school', web_route.get_school);
+
+//app.post('/add_grade', web_route.add_grade);
+//app.post('/del_grade', web_route.del_grade);
+//app.post('/mod_grade', web_route.mod_grade);
+//app.post('/get_grade', web_route.get_grade);
+
+//app.post('/add_class', web_route.add_class);
+//app.post('/del_class', web_route.del_class);
+//app.post('/mod_class', web_route.mod_class);
+//app.post('/get_class', web_route.get_class);
+
+//app.post('/add_health', web_route.add_health);
+//app.post('/del_health', web_route.del_health);
+//app.post('/mod_health', web_route.mod_health);
+//app.post('/get_health', web_route.get_health);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

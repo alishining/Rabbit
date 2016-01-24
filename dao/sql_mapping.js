@@ -24,8 +24,16 @@ var sql = {
 	search_record : 'select id from training_record where id = ?',
 	get_oneday_detail : 'select item, score from training_record where ds=? and student_id=?',
 	update_student_img : 'update student_info set img=? where student_id=?',
-	update_genearch_img : 'update genearch_info set img=? where phone=?'
+	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	//------------------------------------------------------------------
+	school_login : 'select password, school from school where account=?',
+	get_province : 'select distinct province from admin_code',
+	get_city : 'select distinct city from admin_code where province=?',
+	get_district : 'select adcode, district from admin_code where province=? and city=?',
+	add_school : 'insert into school(school, admin_code, province, city, district, account, password, protocol_start, protocol_end, remind_day, status, is_tryout, is_cooperate, is_delete) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+	del_school : 'update school set is_delete = 1 where id=?',
+	mod_school : 'update school set is_delete=?, school=? where id=?',
+	get_school : 'select id, school, is_cooperate, province, city, district from school where province like ? and city like ? and district like ? and school like ?'
 };
 
 module.exports = sql;
