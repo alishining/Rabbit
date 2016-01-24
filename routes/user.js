@@ -489,15 +489,22 @@ exports.get_oneday_detail = function(req, res, next){
 	}
 	var values = [ds, student_id];
 	var item_list = [];
-	sql.query(req, res, sql_mapping.get_daily_detail, values, next, function(err, ret){
-		for (var i=0;i<ret.length;i++){
-			item_list.push({item_id : ret[i].item, score : ret[i].score, level : '0'});
-		}
-		result.header.code = '200';
-		result.header.msg  = '成功';
-		result.data        = {item_list};
+	try{
+		sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
+			for (var i=0;i<ret.length;i++){
+				item_list.push({item_id : ret[i].item, score : ret[i].score, level : '0'});
+			}
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data        = {item_list};
+			res.json(result);
+		});
+	} catch(err) {
+		result.header.code = '500';
+		result.header.msg  = '获取失败';
+		result.data        = {};
 		res.json(result);
-	});
+	}
 };
 
 exports.get_calendar = function(req, res, next){
@@ -510,7 +517,7 @@ exports.get_calendar = function(req, res, next){
 	var day = myDate.getDay();
 	var calendar = [];
 	for (var i=0;i<day;i++){
-		calendar.push({day : '-1', rate_finish : 0, ret_total : 0});
+		calendar.push({day : '-1', rate_finish : 0, rate_total : 0});
 	}
 	var days = 0;
 	if (month==1 || month==3 || month==5 || month==7 || month==8 || month==10 || month==12)
@@ -525,10 +532,10 @@ exports.get_calendar = function(req, res, next){
 	}
 	for (var i=1;i<=days;i++){
 		if (i < 10) i = '0' + i;
-		calendar.push({day : year+'-'+month+'-'+i, rate_finish : 0, ret_total : 0});
+		calendar.push({day : year+'-'+month+'-'+i, rate_finish : 0, rate_total : 0});
 	}
 	for (var i=0;i<42-days-day;i++){
-		calendar.push({day : '-1', rate_finish : 0, ret_total : 0});
+		calendar.push({day : '-1', rate_finish : 0, rate_total : 0});
 	}
 	var student_id = req.body.student_id;
 	if (student_id == undefined){
@@ -545,7 +552,7 @@ exports.get_calendar = function(req, res, next){
 			for (var i=0;i<ret.length;i++){
 				for (var j=0;j<calendar.length;j++)
 					if (ret[i].ds == calendar[j].day){
-						calendar[j].ret_total = ret[i].count;
+						calendar[j].rate_total = ret[i].count;
 						break;
 					}
 			}
@@ -553,7 +560,7 @@ exports.get_calendar = function(req, res, next){
 				for (var i=0;i<ret.length;i++){
 					for (var j=0;j<calendar.length;j++)
 						if (ret[i].ds == calendar[j].day){
-							calendar[j].ret_finish = ret[i].count;
+							calendar[j].rate_finish = ret[i].count;
 							break;
 						}
 				}
@@ -581,7 +588,15 @@ exports.training = function(req, res, next){
 		return;
 	}
 	var date  = new Date(); 
-	var ds = date.toLocaleDateString();
+	var month = date.getMonth()+1;
+	var day = date.getDate();
+	if (date.getMonth()+1 < 10)
+		month = '0'+ (date.getMonth()+1);
+	if (date.getDate() < 10)
+		day = '0' + date.getDate();
+	
+	var ds = date.getFullYear() + '-' + month  + '-' + day;
+	console.log(ds);
 	var values = [ds, student_id];
 	var item_list = [];
 	sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
