@@ -54,15 +54,18 @@ app.post('/del_school', web_route.del_school);
 app.post('/mod_school', web_route.mod_school);
 app.post('/get_school', web_route.get_school);
 
-//app.post('/add_grade', web_route.add_grade);
-//app.post('/del_grade', web_route.del_grade);
-//app.post('/mod_grade', web_route.mod_grade);
-//app.post('/get_grade', web_route.get_grade);
+app.post('/add_grade', web_route.add_grade);
+app.post('/del_grade', web_route.del_grade);
+app.post('/get_grade', web_route.get_grade);
 
-//app.post('/add_class', web_route.add_class);
-//app.post('/del_class', web_route.del_class);
-//app.post('/mod_class', web_route.mod_class);
-//app.post('/get_class', web_route.get_class);
+app.post('/add_class', web_route.add_class);
+app.post('/del_class', web_route.del_class);
+app.post('/get_class', web_route.get_class);
+
+app.post('/add_contract', web_route.add_contract);
+app.post('/del_contract', web_route.del_contract);
+app.post('/mod_contract', web_route.mod_contract);
+app.post('/get_contract', web_route.get_contract);
 
 //app.post('/add_health', web_route.add_health);
 //app.post('/del_health', web_route.del_health);
