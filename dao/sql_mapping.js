@@ -26,7 +26,7 @@ var sql = {
 	update_student_img : 'update student_info set img=? where student_id=?',
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	//------------------------------------------------------------------
-	school_login : 'select password, school from school where account=?',
+	school_login : 'select id, password, school from school where account=?',
 	get_province : 'select distinct province from admin_code',
 	get_city : 'select distinct city from admin_code where province=?',
 	get_district : 'select adcode, district from admin_code where province=? and city=?',
@@ -47,7 +47,10 @@ var sql = {
 	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1 and is_delete=0',
 	add_health_item : 'insert into health_item(health_item) values(?)',
 	del_health_item : 'delete from health_item where id=?',
-	get_health_item : 'select * from health_item'
+	get_health_item : 'select * from health_item',
+	//-------------------------------------------------------------------
+	get_school_grade : 'select grade from student_info where school_id=? GROUP BY grade',
+	get_school_class : 'select class from student_info where school_id=? GROUP BY class'
 };
 
 module.exports = sql;

@@ -33,6 +33,7 @@ exports.school_login = function(req, res, next){
 				result.data = {result : '0',			
 							   uid : user_name, 
 							   school : ret[0].school,	
+							   school_id : ret[0].id,
 							   msg : '登录成功'};
 			} else {
 				result.data = {result : '-1', uid : user_name, msg : '登录失败'};
@@ -129,7 +130,7 @@ exports.add_school = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [school,'',province,city,district,'','','','','','','',is_cooperate,'0'];
+	var values = [school,'',province,city,district,school,'','','','','','',is_cooperate,'0'];
 	sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -287,7 +288,8 @@ exports.get_grade = function(req, res, next){
 };
 
 exports.add_class = function(req, res, next){
-	var class_id = req.body.grade_id;
+	console.log(req.body);
+	var class_id = req.body.class_id;
 	var grade    = req.body.grade;
 	var cls      = req.body.cls;
 	if (class_id == undefined || grade == undefined || cls == undefined){
@@ -297,7 +299,7 @@ exports.add_class = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [class_id, grade, cls];
+	var values = [class_id, cls, grade];
 	sql.query(req, res, sql_mapping.add_class, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -355,37 +357,30 @@ exports.get_class = function(req, res, next){
 	})
 };
 
-exports.add_contract = function(req, res, next){
-	var id				= req.body.id;
-	var account			= req.body.account;
-	var password		= req.body.password;
-	var protocol_start	= req.body.protocol_start;
-	var protocol_end	= req.body.protocol_end;
-	var remind_day		= req.body.remind_day;
-	var is_tryout		= req.body.is_tryout;
-	var is_cooperate	= req.body.is_cooperate;
-	if (id == undefined || account == undefined || password == undefined || protocol_start == undefined || protocol_end == undefined || remind_day == undefined || is_tryout == undefined || is_cooperate == undefined){
+exports.reset_password = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
-		result.data		   = {};
+		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [account, password, protocol_start, protocol_end, remind_day, is_tryout, is_cooperate, id];
-	sql.query(req, res, sql_mapping.add_contract, values, next, function(err, ret){
-		try {
-			result.header.code = "200";
-			result.header.msg  = "成功"; 
-			result.data = {result : '0',  msg : '添加成功'};
-			res.json(result);
-		} catch(err) {
+	var values = [id];
+	sql.query(req, res, sql_mapping.reset_password, values, next, function(err, ret){
+		if (err){
 			result.header.code = "500";
-			result.header.msg  = "添加失败";
+			result.header.msg  = "修改失败";
 			result.data        = {};
 			res.json(result);
+			return;
 		}
-	})
-};
+		result.header.code = "200";
+		result.header.msg  = "成功"; 
+		result.data = {result : '0',  msg : '修改成功'};
+		res.json(result);
+	});
+}
 
 exports.del_contract = function(req, res, next){
 	var id = req.body.id;
@@ -414,21 +409,19 @@ exports.del_contract = function(req, res, next){
 
 exports.mod_contract = function(req, res, next){
 	var id              = req.body.id;
-	var account         = req.body.account;
-	var password        = req.body.password;
 	var status			= req.body.status;
 	var protocol_start  = req.body.protocol_start;
 	var protocol_end    = req.body.protocol_end;
 	var remind_day      = req.body.remind_day;
 	var is_tryout       = req.body.is_tryout;
-	if (id == undefined || account == undefined || password == undefined || status == undefined || protocol_start == undefined || protocol_end == undefined || remind_day == undefined || is_tryout == undefined){
+	if (id == undefined || status == undefined || protocol_start == undefined || protocol_end == undefined || remind_day == undefined || is_tryout == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data		   = {};
 		res.json(result);
 		return;
 	}
-	var values = [account, password, status, is_tryout, protocol_start, protocol_end, remind_day, id];
+	var values = [status, is_tryout, protocol_start, protocol_end, remind_day, id];
 	sql.query(req, res, sql_mapping.mod_contract, values, next, function(err, ret){
 		try {
 			result.header.code = "200";

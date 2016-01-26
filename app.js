@@ -9,6 +9,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var user_route = require('./routes/user');
 var web_route = require('./routes/web');
+var school_web_route = require('./routes/school_web');
 
 var app = express();
 
@@ -62,7 +63,7 @@ app.post('/add_class', web_route.add_class);
 app.post('/del_class', web_route.del_class);
 app.post('/get_class', web_route.get_class);
 
-app.post('/add_contract', web_route.add_contract);
+app.post('/reset_password', web_route.reset_password);
 app.post('/del_contract', web_route.del_contract);
 app.post('/mod_contract', web_route.mod_contract);
 app.post('/get_contract', web_route.get_contract);
@@ -70,6 +71,9 @@ app.post('/get_contract', web_route.get_contract);
 app.post('/add_health_item', web_route.add_health_item);
 app.post('/del_health_item', web_route.del_health_item);
 app.post('/get_health_item', web_route.get_health_item);
+//------------------------------------------------------------------
+app.post('/get_school_grade', school_web_route.get_school_grade);
+app.post('/get_school_class', school_web_route.get_school_class);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
