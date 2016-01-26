@@ -1,6 +1,6 @@
 
 var sql = {
-	bind_student : 'insert into children_list(phone, student_id, name, img) values(?,?,?,?)',
+	bind_student : 'insert into children_list(phone, student_id, name, img) values(?,?)',
 	unbind_student : 'delete from children_list where phone=? and student_id=?',
 	bind_assist   : 'insert into assist_list(phone, assist_phone, role, img) values(?,?,?,?)',
 	unbind_assist : 'delete from assist_list where assist_phone=?',
