@@ -45,16 +45,12 @@ exports.login = function(req, res, next){
 		try {
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			if (ret[0].child != '') {
-				result.data = {result : '0', uid : phone, student_id: ret[0].child, msg : '登录成功'};
-			} else {
-				result.data = {result : '-1', uid : phone, msg : '登录失败'};
-			}
+			result.data = {result : '0', uid : phone, student_id: ret[0].child, msg : '登录成功'};
 			res.json(result);
 		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "获取默认孩子失败";
-			result.data        = {};
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {result : '0', uid : phone, student_id: ret[0].child, msg : '登录成功'};
 			res.json(result);
 		}
 	})
@@ -451,10 +447,10 @@ exports.get_child_xeight = function(req, res, next){
 				if (min > ret[i].score)
 					min = Math.round(ret[i].score);
 			}
-			var delta = Math.round((max - min) / 5 * 10) / 10.0;
+			var delta = Math.round((max - min) / 4 * 10) / 10.0;
 			var y = [0];
 			if (delta > 0){
-				y = [min, min+delta, min+2*delta, min+3*delta, min+4*delta, min+5*delta];
+				y = [min-delta, min, min+delta, min+2*delta, min+3*delta, min+4*delta];
 			} else {
 				if (delta == 0)
 					y = [min];
@@ -492,7 +488,11 @@ exports.get_oneday_detail = function(req, res, next){
 	try{
 		sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
 			for (var i=0;i<ret.length;i++){
-				item_list.push({item_id : ret[i].item, score : ret[i].score, level : '0'});
+				item_list.push({item_id : ret[i].item, 
+						score : ret[i].score, 
+						level : '0',
+						item_name : '身高',
+						item_img  : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg'});
 			}
 			result.header.code = '200';
 			result.header.msg  = '成功';
@@ -604,9 +604,15 @@ exports.training = function(req, res, next){
 		for (var i=0;i<ret.length;i++){
 			if (ret[i].score == ''){
 				finish = finish - 1;
-				item_list.push({item_id : ret[i].item, sign : '-1'});	
+				item_list.push({item_id : ret[i].item, 
+						sign : '-1', 
+						item_img : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg',
+						item_name : '身高'});	
 			} else {
-				item_list.push({item_id : ret[i].item, sign : '0'});
+				item_list.push({item_id : ret[i].item, 
+						sign : '0', 
+						item_img : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg',
+						item_name : '体重'});
 			}
 		}
 		result.header.code = "200";
