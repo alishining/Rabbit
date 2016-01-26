@@ -254,7 +254,7 @@ exports.me = function(req, res, next){
 				}
 				result.header.code = '200';
 				result.header.msg  = '成功';
-				result.data = {img, name, role, phone, clist};
+				result.data = {img, name, role, phone, major, clist};
 				res.json(result);
 			})
 		} else {
