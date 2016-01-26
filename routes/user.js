@@ -50,7 +50,7 @@ exports.login = function(req, res, next){
 		} catch(err) {
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {result : '0', uid : phone, student_id: ret[0].child, msg : '登录成功'};
+			result.data = {result : '0', uid : phone, student_id: '', msg : '登录成功'};
 			res.json(result);
 		}
 	})
