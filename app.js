@@ -67,8 +67,9 @@ app.post('/del_contract', web_route.del_contract);
 app.post('/mod_contract', web_route.mod_contract);
 app.post('/get_contract', web_route.get_contract);
 
-app.post('/add_health', web_route.add_health);
-app.post('/del_health', web_route.del_health);
+app.post('/add_health_item', web_route.add_health_item);
+app.post('/del_health_item', web_route.del_health_item);
+app.post('/get_health_item', web_route.get_health_item);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
