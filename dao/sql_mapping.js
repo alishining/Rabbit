@@ -9,7 +9,7 @@ var sql = {
 	rate_total : 'select ds,count(*) as count from training_record WHERE student_id=? and ds like ? group by ds ORDER BY ds ASC',
 	rate_finish : 'select ds,count(*) as count from training_record WHERE student_id=? and score!=\'\' and ds like ? group by ds ORDER BY ds ASC',
 	get_student_info : 'select student_id, img, student_name, height, weight, bmi, bmi_type, score from student_info where student_id=?',
-	get_children_list : 'select a.student_id, b.img, b.student_name, b.sex, b.school from children_list a left outer join student_info b on a.student_id=b.student_id WHERE b.student_id is not null group by student_id',
+	get_children_list : 'select a.student_id, b.img, b.student_name, b.sex, b.school from children_list a left outer join student_info b on a.student_id=b.student_id WHERE a.phone=? and b.student_id is not null group by student_id',
 	get_genearch_info : 'select * from genearch_info where phone=?',
 	check_student : 'select student_name, check_code, bind_status, img from student_info where student_id=?',
 	update_student_status : 'update student_info set bind_status = ? where student_id=?',
@@ -41,10 +41,10 @@ var sql = {
 	del_class : 'delete from class where class_id=?',
 	get_class : 'select * from class',
 	
-	add_contract : 'update school set account=?, password=?, protocol_start=?, protocol_end=?, remind_day=?, is_tryout=?, is_cooperate=1, status=0 where id=?',
+	reset_password : 'update school set password=123456 where id=?',
 	del_contract : 'update school set is_cooperate=0 where id=?',
-	mod_contract : 'update school set account=?, password=?, status=?, is_tryout=?, protocol_start=?, protocol_end=?, remind_day=? where id=?',
-	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1',
+	mod_contract : 'update school set status=?, is_tryout=?, protocol_start=?, protocol_end=?, remind_day=? where id=?',
+	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1 and is_delete=0',
 	add_health_item : 'insert into health_item(health_item) values(?)',
 	del_health_item : 'delete from health_item where id=?',
 	get_health_item : 'select * from health_item'
