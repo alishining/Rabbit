@@ -114,13 +114,13 @@ exports.bind_student = function(req, res, next){
 			if (ret[0].bind_status == 0 && ret[0].check_code == check_code && student_name == ret[0].student_name) {
 				values = [phone, student_id, student_name, ret[0].img];
 				sql.query(req, res, sql_mapping.bind_student, values, next, function(err, ret){
-					values = [student_id, phone];
-					sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
-						values = [-1, student_id];
-						sql.query(req, res, sql_mapping.update_student_status,values,next, function(err, ret){
-							if (type == -1){
-								values = [phone, student_name+'的家长', '家长', student_id, '0', ''];
-								sql.query(req,res,sql_mapping.add_genearch_account,values,next, function(err, ret){
+					values = [-1, student_id];
+					sql.query(req, res, sql_mapping.update_student_status,values,next, function(err, ret){
+						if (type == -1){
+							values = [phone, student_name+'的家长', '家长', student_id, '0', ''];
+							sql.query(req,res,sql_mapping.add_genearch_account,values,next, function(err, ret){
+								values = [student_id, phone];
+								sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
 									if (err){
 										result.header.code = "200";
 										result.header.msg  = "成功"; 
@@ -135,14 +135,14 @@ exports.bind_student = function(req, res, next){
 														  msg    : '绑定成功'};
 									res.json(result);
 								})
-							} else {
-								result.header.code = "200";
-								result.header.msg  = "成功";
-								result.data		   = {result : '0',
-													  msg    : '绑定成功'};	
-								res.json(result);
-							}
-						})
+							})
+						} else {
+							result.header.code = "200";
+							result.header.msg  = "成功";
+							result.data		   = {result : '0',
+												  msg    : '绑定成功'};	
+							res.json(result);
+						}
 					})	
 				})
 			} else {
