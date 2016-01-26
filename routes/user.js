@@ -81,15 +81,15 @@ exports.index = function(req, res, next){
 					}
 				})
 			} else {
-				result.header.code = "500";
-				result.header.msg  = "无法获得孩子ID";
-				result.data        = {};
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {student_info : {student_id : ''}};
 				res.json(result);
 			}
 		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "获取孩子信息失败";
-			result.data        = {};
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {student_info : {student_id : ''}};
 			res.json(result);
 		}
 	})
