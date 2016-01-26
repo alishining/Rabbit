@@ -32,8 +32,8 @@ var sql = {
 	get_district : 'select adcode, district from admin_code where province=? and city=?',
 	add_school : 'insert into school(school, admin_code, province, city, district, account, password, protocol_start, protocol_end, remind_day, status, is_tryout, is_cooperate, is_delete) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
 	del_school : 'update school set is_delete = 1 where id=?',
-	mod_school : 'update school set is_delete=?, school=? where id=?',
-	get_school : 'select id, school, is_cooperate, province, city, district from school where province like ? and city like ? and district like ? and school like ?',
+	mod_school : 'update school set is_cooperate=?, school=? where id=?',
+	get_school : 'select id, school, is_cooperate, province, city, district from school where province like ? and city like ? and district like ? and school like ? and is_delete=0',
 	add_grade : 'insert into grade values(?,?)',
 	del_grade : 'delete from grade where grade_id=?',
 	get_grade : 'select * from grade',
@@ -44,7 +44,10 @@ var sql = {
 	add_contract : 'update school set account=?, password=?, protocol_start=?, protocol_end=?, remind_day=?, is_tryout=?, is_cooperate=1, status=0 where id=?',
 	del_contract : 'update school set is_cooperate=0 where id=?',
 	mod_contract : 'update school set account=?, password=?, status=?, is_tryout=?, protocol_start=?, protocol_end=?, remind_day=? where id=?',
-	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1'
+	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1',
+	add_health_item : 'insert into health_item(health_item) values(?)',
+	del_health_item : 'delete from health_item where id=?',
+	get_health_item : 'select * from health_item'
 };
 
 module.exports = sql;

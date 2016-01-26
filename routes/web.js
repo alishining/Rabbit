@@ -203,7 +203,6 @@ exports.get_school = function(req, res, next){
 	var city	  =  '%' + req.body.city + '%';
 	var district  =  '%' + req.body.district + '%';
 	var values = [province, city, district, school];
-	console.log(values);
 	sql.query(req, res, sql_mapping.get_school, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -456,6 +455,73 @@ exports.get_contract = function(req, res, next){
 			result.header.code = "200";
 			result.header.msg  = "成功"; 
 			result.data = {cooperate_school : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	})
+};
+
+exports.add_health_item = function(req, res, next){
+	var health_item = req.body.health_item;
+	if (health_item == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	var values = [health_item];
+	sql.query(req, res, sql_mapping.add_health_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '添加成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "添加失败";
+			result.data        = {};
+			res.json(result);
+		}
+	})
+};
+
+exports.del_health_item = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.del_health_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '删除成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+		}
+	})
+};
+
+exports.get_health_item = function(req, res, next){
+	var values = [];
+	sql.query(req, res, sql_mapping.get_health_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {health_item : ret};
 			res.json(result);
 		} catch(err) {
 			result.header.code = "500";
