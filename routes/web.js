@@ -99,7 +99,6 @@ exports.add_school = function(req, res, next){
 	var values = [school,'',province,city,district,school,'','','','','',is_cooperate,'0'];
 	try {
 		sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
-			console.log(ret);
 			values = [school, '123456', '', '', ret.insertId, school, '', '1', '0'];
 			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
 				try {
@@ -265,7 +264,6 @@ exports.get_grade = function(req, res, next){
 };
 
 exports.add_class = function(req, res, next){
-	console.log(req.body);
 	var class_id = req.body.class_id;
 	var grade    = req.body.grade;
 	var cls      = req.body.cls;
@@ -547,14 +545,15 @@ exports.mod_sport_item = function(req, res, next){
 	var training_direction = req.body.training_direction;
 	var training_guide = req.body.training_guide;
 	var is_dev = req.body.is_dev;
-	if (item_id == undefined || name == undefined || icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined){
+	var id = req.body.id;
+	if (item_id == undefined || name == undefined || icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined || id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev];
+	var values = [item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev, id];
 	sql.query(req, res, sql_mapping.mod_sport_item, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -593,4 +592,107 @@ exports.get_sport_item = function(req, res, next){
 			res.json(result);
 		}
 	});
-}
+};
+
+exports.add_score_level = function(req, res, next){
+	var item_id = req.body.item_id;
+	var grade   = req.body.grade;
+	var sex     = req.body.sex;
+	var record  = req.body.record;
+	var score   = req.body.score;
+	var level   = req.body.level;
+	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_id, grade, sex, record, score, level];
+	sql.query(req, res, sql_mapping.add_score_level, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {result : '0',  msg : '添加成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "添加失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.del_score_level = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.del_score_level, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '删除成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.mod_score_level = function(req, res, next){
+	var item_id = req.body.item_id;
+	var grade   = req.body.grade;
+	var sex     = req.body.sex;
+	var record  = req.body.record;
+	var score   = req.body.score;
+	var level   = req.body.level;
+	var id		= req.body.id; 
+	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined || id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_id, grade, sex, record, score, level, id];
+	sql.query(req, res, sql_mapping.mod_score_level, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {result : '0',  msg : '修改成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "修改失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.get_score_level = function(req, res, next){
+	var values = [];
+	sql.query(req, res, sql_mapping.get_score_level, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {score_level : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};

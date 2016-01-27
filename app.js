@@ -74,6 +74,11 @@ app.post('/del_sport_item', web_route.del_sport_item);
 app.post('/mod_sport_item', web_route.mod_sport_item);
 app.post('/get_sport_item', web_route.get_sport_item);
 
+app.post('/add_score_level', web_route.add_score_level);
+app.post('/del_score_level', web_route.del_score_level);
+app.post('/mod_score_level', web_route.mod_score_level);
+app.post('/get_score_level', web_route.get_score_level);
+
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/reset_default_password', school_web_route.reset_default_password);

@@ -47,8 +47,12 @@ var sql = {
 	get_health_item : 'select * from health_item',
 	add_sport_item : 'insert into training(item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev) values(?,?,?,?,?,?,?,?,?,?)',
 	del_sport_item : 'delete from training where id=?',
-	mod_sport_item : 'update training set item_id=?, name=?, icon=?, unit=?, suitable_grade=?, type=? health_item=?, training_direction=?, training_guide=?, is_dev=?',
+	mod_sport_item : 'update training set item_id=?, name=?, icon=?, unit=?, suitable_grade=?, type=?, health_item=?, training_direction=?, training_guide=?, is_dev=? where id=?',
 	get_sport_item : 'select * from training where name like ?',
+	add_score_level : 'insert into score_level(item_id, grade, sex, record, score, level) values(?,?,?,?,?,?)',
+	del_score_level : 'delete from score_level where id=?',
+	mod_score_level : 'update score_level set item_id=?, grade=?, sex=?, record=?,score=?, level=? where id=?',
+	get_score_level : 'select * from score_level',
 	//-------------------------------------------------------------------
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
 	add_school_user  : 'insert into school_user values(?,?,?,?,?,?,?,?,?)',

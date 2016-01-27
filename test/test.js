@@ -27,4 +27,12 @@ var test = require('./client');
 //test.test('/get_calendar');
 //test.test('/record_training_item');
 //test.test('/me');
-test.test('/upload_img');
+//test.test('/upload_img');
+//test.test('/get_province');
+//test.test('/get_city');
+//test.test('/get_district');
+//test.test('/add_school');
+//test.test('/del_school');
+//test.test('/mod_school');
+test.test('/get_school');
+
