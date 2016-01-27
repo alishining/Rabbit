@@ -57,7 +57,8 @@ var sql = {
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
 	add_school_user  : 'insert into school_user values(?,?,?,?,?,?,?,?,?)',
 	reset_default_password   : 'update school_user set password=123456 where school_id=?',
-	get_user_class : 'select class_list from school_user where account=?'
+	get_user_class : 'select class_list from school_user where account=?',
+	student_sport_report : 'select a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.year=? and b.term=? and b.student_id is not null'
 };
 
 module.exports = sql;

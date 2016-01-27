@@ -44,6 +44,7 @@ app.post('/select_student', user_route.select_student);				 //选择默认孩子
 var multipartMiddleware = multipart();
 app.post('/upload_img', multipartMiddleware, user_route.upload_img); //上传头像
 //------------------------------------------------------------------
+app.post('/reset_default_password', web_route.reset_default_password);
 app.post('/get_province', web_route.get_province);
 app.post('/get_city', web_route.get_city);
 app.post('/get_district', web_route.get_district);
@@ -81,8 +82,8 @@ app.post('/get_score_level', web_route.get_score_level);
 
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
-app.post('/reset_default_password', school_web_route.reset_default_password);
 app.post('/get_user_class', school_web_route.get_user_class);
+app.post('/student_sport_report', school_web_route.student_sport_report);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

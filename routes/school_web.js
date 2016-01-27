@@ -76,28 +76,56 @@ exports.get_user_class = function(req, res, next){
 	})
 };
 
-exports.reset_default_password = function(req, res, next){
-	var id = req.body.id;
-	if (id == undefined){
+exports.student_sport_report = function(req, res, next){
+	var sex		 = '%' + req.body.sex + '%';
+	var class_id = req.body.class_id;
+	var year	 = req.body.year;
+	var term	 = req.body.term;
+	console.log(req.body);
+	if (sex == undefined || class_id == undefined || year == undefined || term == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
-		result.data        = {};
+		result.data		   = {};
 		res.json(result);
 		return;
 	}
-	var values = [id];
-	sql.query(req, res, sql_mapping.reset_default_password, values, next, function(err, ret){
-		if (err){
+	var values = [sex, class_id, year,term];
+	sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
+		try {
+			var report_list = [];
+			var id_set = new Set();
+			for (var i=0;i<ret.length;i++){
+				if (!id_set.has(ret[i].student_id)){
+					id_set.add(ret[i].student_id);
+					report_list.push({student_id   : ret[i].student_id,
+									  student_name : ret[i].student_name,
+									  sex          : ret[i].sex,
+									  item_list    : [{item   : ret[i].item, 
+												   	   record : ret[i].record, 
+													   score  : ret[i].score, 
+													   level  : ret[i].level}]});
+				} else {
+					for (var j=0;j<report_list.length;j++){
+						if (report_list[j].student_id == ret[i].student_id){
+							report_list[j].item_list.push({ item   : ret[i].item,
+															record : ret[i].record,
+															score  : ret[i].score,
+															level  : ret[i].level});
+							break;
+						}
+					}	
+				}
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {report_list : report_list};
+			res.json(result);
+		} catch(err) {
 			result.header.code = "500";
-			result.header.msg  = "修改失败";
+			result.header.msg  = "获取失败";
 			result.data        = {};
 			res.json(result);
-			return;
 		}
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {result : '0',  msg : '修改成功'};
-		res.json(result);
-	});
+	})
 };
 

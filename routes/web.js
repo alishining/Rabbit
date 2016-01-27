@@ -14,6 +14,31 @@ var result = {
 	}
 }   
 
+exports.reset_default_password = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.reset_default_password, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "修改失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {result : '0',  msg : '修改成功'};
+		res.json(result);
+	});
+};
+
 exports.get_province = function(req, res, next){
 	var values = [];
 	sql.query(req, res, sql_mapping.get_province, values, next, function(err, ret){
