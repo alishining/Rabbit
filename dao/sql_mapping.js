@@ -26,11 +26,10 @@ var sql = {
 	update_student_img : 'update student_info set img=? where student_id=?',
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	//------------------------------------------------------------------
-	school_login : 'select id, password, school from school where account=?',
 	get_province : 'select distinct province from admin_code',
 	get_city : 'select distinct city from admin_code where province=?',
 	get_district : 'select adcode, district from admin_code where province=? and city=?',
-	add_school : 'insert into school(school, admin_code, province, city, district, account, password, protocol_start, protocol_end, remind_day, status, is_tryout, is_cooperate, is_delete) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+	add_school : 'insert into school(school, admin_code, province, city, district, account, protocol_start, protocol_end, remind_day, status, is_tryout, is_cooperate, is_delete) values(?,?,?,?,?,?,?,?,?,?,?,?,?)',
 	del_school : 'update school set is_delete = 1 where id=?',
 	mod_school : 'update school set is_cooperate=?, school=? where id=?',
 	get_school : 'select id, school, is_cooperate, province, city, district from school where province like ? and city like ? and district like ? and school like ? and is_delete=0',
@@ -41,16 +40,21 @@ var sql = {
 	del_class : 'delete from class where class_id=?',
 	get_class : 'select * from class',
 	
-	reset_password : 'update school set password=123456 where id=?',
 	del_contract : 'update school set is_cooperate=0 where id=?',
 	mod_contract : 'update school set status=?, is_tryout=?, protocol_start=?, protocol_end=?, remind_day=? where id=?',
 	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1 and is_delete=0',
 	add_health_item : 'insert into health_item(health_item) values(?)',
 	del_health_item : 'delete from health_item where id=?',
 	get_health_item : 'select * from health_item',
+	add_sport_item : 'insert into training(item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev) values(?,?,?,?,?,?,?,?,?,?)',
+	del_sport_item : 'delete from training where id=?',
+	mod_sport_item : 'update training set item_id=?, name=?, icon=?, unit=?, suitable_grade=?, type=? health_item=?, training_direction=?, training_guide=?, is_dev=?',
+	get_sport_item : 'select * from training where name like ?',
 	//-------------------------------------------------------------------
-	get_school_grade : 'select grade from student_info where school_id=? GROUP BY grade',
-	get_school_class : 'select class from student_info where school_id=? GROUP BY class'
+	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
+	add_school_user  : 'insert into school_user values(?,?,?,?,?,?,?,?,?)',
+	reset_default_password   : 'update school_user set password=123456 where school_id=?',
+	get_user_class : 'select class_list from school_user where account=?'
 };
 
 module.exports = sql;

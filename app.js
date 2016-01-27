@@ -44,8 +44,6 @@ app.post('/select_student', user_route.select_student);				 //选择默认孩子
 var multipartMiddleware = multipart();
 app.post('/upload_img', multipartMiddleware, user_route.upload_img); //上传头像
 //------------------------------------------------------------------
-app.post('/school_login', web_route.school_login);
-
 app.post('/get_province', web_route.get_province);
 app.post('/get_city', web_route.get_city);
 app.post('/get_district', web_route.get_district);
@@ -63,7 +61,6 @@ app.post('/add_class', web_route.add_class);
 app.post('/del_class', web_route.del_class);
 app.post('/get_class', web_route.get_class);
 
-app.post('/reset_password', web_route.reset_password);
 app.post('/del_contract', web_route.del_contract);
 app.post('/mod_contract', web_route.mod_contract);
 app.post('/get_contract', web_route.get_contract);
@@ -71,9 +68,16 @@ app.post('/get_contract', web_route.get_contract);
 app.post('/add_health_item', web_route.add_health_item);
 app.post('/del_health_item', web_route.del_health_item);
 app.post('/get_health_item', web_route.get_health_item);
+
+app.post('/add_sport_item', web_route.add_sport_item);
+app.post('/del_sport_item', web_route.del_sport_item);
+app.post('/mod_sport_item', web_route.mod_sport_item);
+app.post('/get_sport_item', web_route.get_sport_item);
+
 //------------------------------------------------------------------
-app.post('/get_school_grade', school_web_route.get_school_grade);
-app.post('/get_school_class', school_web_route.get_school_class);
+app.post('/school_login', school_web_route.school_login);
+app.post('/reset_default_password', school_web_route.reset_default_password);
+app.post('/get_user_class', school_web_route.get_user_class);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

@@ -14,40 +14,6 @@ var result = {
 	}
 }   
 
-exports.school_login = function(req, res, next){
-	var user_name = req.body.user_name;
-	var password  = req.body.password;
-	if (user_name == undefined || password == undefined){
-		result.header.code = "400";
-		result.header.msg  = "参数不存在";
-		result.data		   = {};
-		res.json(result);
-		return;
-	}
-	var values = [user_name];
-	sql.query(req, res, sql_mapping.school_login, values, next, function(err, ret){
-		try {
-			result.header.code = "200";
-			result.header.msg  = "成功"; 
-			if (ret[0].password == password){
-				result.data = {result : '0',			
-							   uid : user_name, 
-							   school : ret[0].school,	
-							   school_id : ret[0].id,
-							   msg : '登录成功'};
-			} else {
-				result.data = {result : '-1', uid : user_name, msg : '登录失败'};
-			}
-			res.json(result);
-		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "登录失败";
-			result.data        = {};
-			res.json(result);
-		}
-	})
-};
-
 exports.get_province = function(req, res, next){
 	var values = [];
 	sql.query(req, res, sql_mapping.get_province, values, next, function(err, ret){
@@ -130,20 +96,31 @@ exports.add_school = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [school,'',province,city,district,school,'','','','','','',is_cooperate,'0'];
-	sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
-		try {
-			result.header.code = "200";
-			result.header.msg  = "成功"; 
-			result.data = {result : '0',  msg : '添加成功'};
-			res.json(result);
-		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "添加失败";
-			result.data        = {};
-			res.json(result);
-		}
-	})
+	var values = [school,'',province,city,district,school,'','','','','',is_cooperate,'0'];
+	try {
+		sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
+			console.log(ret);
+			values = [school, '123456', '', '', ret.insertId, school, '', '1', '0'];
+			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
+				try {
+					result.header.code = "200";
+					result.header.msg  = "成功"; 
+					result.data = {result : '0',  msg : '添加成功'};
+					res.json(result);
+				} catch(err) {
+					result.header.code = "500";
+					result.header.msg  = "添加失败";
+					result.data        = {};
+					res.json(result);
+				}
+			})
+		})
+	} catch(err) {
+		result.header.code = "500";
+		result.header.msg  = "添加失败";
+		result.data        = {};
+		res.json(result);
+	}
 };
 
 exports.del_school = function(req, res, next){
@@ -357,31 +334,6 @@ exports.get_class = function(req, res, next){
 	})
 };
 
-exports.reset_password = function(req, res, next){
-	var id = req.body.id;
-	if (id == undefined){
-		result.header.code = "400";
-		result.header.msg  = "参数不存在";
-		result.data        = {};
-		res.json(result);
-		return;
-	}
-	var values = [id];
-	sql.query(req, res, sql_mapping.reset_password, values, next, function(err, ret){
-		if (err){
-			result.header.code = "500";
-			result.header.msg  = "修改失败";
-			result.data        = {};
-			res.json(result);
-			return;
-		}
-		result.header.code = "200";
-		result.header.msg  = "成功"; 
-		result.data = {result : '0',  msg : '修改成功'};
-		res.json(result);
-	});
-}
-
 exports.del_contract = function(req, res, next){
 	var id = req.body.id;
 	if (id == undefined){
@@ -525,4 +477,120 @@ exports.get_health_item = function(req, res, next){
 	})
 };
 
+exports.add_sport_item = function(req, res, next){
+	var item_id = req.body.item_id;
+	var name = req.body.name;
+	var icon = req.body.icon;
+	var unit = req.body.unit;
+	var suitable_grade = req.body.suitable_grade;
+	var type = req.body.type;
+	var health_item = req.body.health_item;
+	var training_direction = req.body.training_direction;
+	var training_guide = req.body.training_guide;
+	var is_dev = req.body.is_dev;
+	if (item_id == undefined || name == undefined || icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev];
+	sql.query(req, res, sql_mapping.add_sport_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {result : '0',  msg : '添加成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "添加失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
 
+exports.del_sport_item = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.del_sport_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '删除成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.mod_sport_item = function(req, res, next){
+	var item_id = req.body.item_id;
+	var name = req.body.name;
+	var icon = req.body.icon;
+	var unit = req.body.unit;
+	var suitable_grade = req.body.suitable_grade;
+	var type = req.body.type;
+	var health_item = req.body.health_item;
+	var training_direction = req.body.training_direction;
+	var training_guide = req.body.training_guide;
+	var is_dev = req.body.is_dev;
+	if (item_id == undefined || name == undefined || icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_id,name,icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev];
+	sql.query(req, res, sql_mapping.mod_sport_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {result : '0',  msg : '修改成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "修改失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.get_sport_item = function(req, res, next){
+	var item_name = '%' + req.body.item_name + '%';
+	if (item_name == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_name];
+	sql.query(req, res, sql_mapping.get_sport_item, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {sport_item : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+}
