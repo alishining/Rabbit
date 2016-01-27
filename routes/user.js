@@ -111,39 +111,43 @@ exports.bind_student = function(req, res, next){
 	var values = [student_id];
 	sql.query(req, res, sql_mapping.check_student, values, next, function(err, ret){
 		try {
-			if (ret[0].bind_status == 0 && ret[0].check_code == check_code && student_name == ret[0].student_name) {
+			if (ret[0].check_code == check_code && student_name == ret[0].student_name) {
 				values = [phone, student_id];
 				sql.query(req, res, sql_mapping.bind_student, values, next, function(err, ret){
-					values = [-1, student_id];
-					sql.query(req, res, sql_mapping.update_student_status,values,next, function(err, ret){
-						if (type == -1){
-							values = [phone, student_name+'的家长', '家长', student_id, '0', ''];
-							sql.query(req,res,sql_mapping.add_genearch_account,values,next, function(err, ret){
-								values = [student_id, phone];
-								sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
-									if (err){
-										result.header.code = "200";
-										result.header.msg  = "成功"; 
-										result.data		   = {result : '-1',
-															  msg	 : '帐号重复添加'};
-										res.json(result);
-										return;
-									}
+					if (err){
+						result.header.code = "200";
+						result.header.msg  = "成功"; 
+						result.data        = {result : '-1', msg    : '帐号重复添加'};
+						res.json(result);
+						return;
+					}
+					if (type == -1){
+						values = [phone, student_name+'的家长', '家长', student_id, '0', ''];
+						sql.query(req,res,sql_mapping.add_genearch_account,values,next, function(err, ret){
+							values = [student_id, phone];
+							sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
+								if (err){
 									result.header.code = "200";
-									result.header.msg  = "成功";
-									result.data        = {result : '0',
-														  msg    : '绑定成功'};
+									result.header.msg  = "成功"; 
+									result.data		   = {result : '-1',
+														  msg	 : '帐号重复添加'};
 									res.json(result);
-								})
+									return;
+								}
+								result.header.code = "200";
+								result.header.msg  = "成功";
+								result.data        = {result : '0',
+													  msg    : '绑定成功'};
+								res.json(result);
 							})
-						} else {
-							result.header.code = "200";
-							result.header.msg  = "成功";
-							result.data		   = {result : '0',
-												  msg    : '绑定成功'};	
-							res.json(result);
-						}
-					})	
+						})
+					} else {
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data		   = {result : '0',
+											  msg    : '绑定成功'};	
+						res.json(result);
+					}
 				})
 			} else {
 				result.header.code = "200";
@@ -178,14 +182,10 @@ exports.unbind_student = function(req, res, next){
 				values = [phone, student_id];
 				sql.query(req, res, sql_mapping.unbind_student, values, next, function(err, ret){
 					try {
-						values = [0, student_id];
-						sql.query(req, res, sql_mapping.update_student_status, values, next, function(err,ret){
-							result.header.code = "200";
-							result.header.msg  = "成功"; 
-							result.data        = {result : '0',
-												  msg    : '解绑成功'};
-							res.json(result);
-						});
+						result.header.code = "200";
+						result.header.msg  = "成功"; 
+						result.data        = {result : '0', msg    : '解绑成功'};
+						res.json(result);
 					} catch(err) {
 						result.header.code = "500";
 						result.header.msg  = "解绑失败";

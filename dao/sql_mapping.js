@@ -1,6 +1,6 @@
 
 var sql = {
-	bind_student : 'insert into children_list(phone, student_id) values(?,?)',
+	bind_student : 'insert into children_list(student_id, phone) values(?,?)',
 	unbind_student : 'delete from children_list where phone=? and student_id=?',
 	bind_assist   : 'insert into assist_list(phone, assist_phone, role, img) values(?,?,?,?)',
 	unbind_assist : 'delete from assist_list where assist_phone=?',
@@ -11,8 +11,7 @@ var sql = {
 	get_student_info : 'select student_id, img, student_name, height, weight, bmi, bmi_type, score from student_info where student_id=?',
 	get_children_list : 'select a.student_id, b.img, b.student_name, b.sex, b.school from children_list a left outer join student_info b on a.student_id=b.student_id WHERE a.phone=? and b.student_id is not null group by student_id',
 	get_genearch_info : 'select * from genearch_info where phone=?',
-	check_student : 'select student_name, check_code, bind_status, img from student_info where student_id=?',
-	update_student_status : 'update student_info set bind_status = ? where student_id=?',
+	check_student : 'select student_name, check_code, img from student_info where student_id=?',
 	update_child : 'update genearch_info set child=? where phone=?',
 	add_genearch_account : 'insert into genearch_info values(?,?,?,?,?,?)',
 	del_genearch_account : 'delete from genearch_info where phone=?',
