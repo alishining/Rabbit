@@ -112,7 +112,7 @@ exports.bind_student = function(req, res, next){
 	sql.query(req, res, sql_mapping.check_student, values, next, function(err, ret){
 		try {
 			if (ret[0].check_code == check_code && student_name == ret[0].student_name) {
-				values = [phone, student_id];
+				values = [student_id, phone];
 				sql.query(req, res, sql_mapping.bind_student, values, next, function(err, ret){
 					if (err){
 						result.header.code = "200";
