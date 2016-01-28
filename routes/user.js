@@ -489,10 +489,8 @@ exports.get_oneday_detail = function(req, res, next){
 		sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
 			for (var i=0;i<ret.length;i++){
 				item_list.push({item_id : ret[i].item, 
-						score : ret[i].score, 
-						level : '0',
-						item_name : '身高',
-						item_img  : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg'});
+								score   : ret[i].score, 
+								level   : '0'});
 			}
 			result.header.code = '200';
 			result.header.msg  = '成功';
@@ -566,7 +564,7 @@ exports.get_calendar = function(req, res, next){
 				}
 				result.header.code = '200';
 				result.header.msg  = '成功';
-				result.data = {calendar};
+				result.data = {date : year+'年'+month+'月', calendar :calendar};
 				res.json(result);
 			});
 		});
@@ -596,7 +594,6 @@ exports.training = function(req, res, next){
 		day = '0' + date.getDate();
 	
 	var ds = date.getFullYear() + '-' + month  + '-' + day;
-	console.log(ds);
 	var values = [ds, student_id];
 	var item_list = [];
 	sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
@@ -604,15 +601,9 @@ exports.training = function(req, res, next){
 		for (var i=0;i<ret.length;i++){
 			if (ret[i].score == ''){
 				finish = finish - 1;
-				item_list.push({item_id : ret[i].item, 
-						sign : '-1', 
-						item_img : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg',
-						item_name : '身高'});	
+				item_list.push({item_id : ret[i].item, sign : '-1'});	
 			} else {
-				item_list.push({item_id : ret[i].item, 
-						sign : '0', 
-						item_img : 'http://7xq9cu.com1.z0.glb.clouddn.com/1ad47a02d4ad698c14b4458029274401.jpg',
-						item_name : '体重'});
+				item_list.push({item_id : ret[i].item, sign : '0'});
 			}
 		}
 		result.header.code = "200";
@@ -710,4 +701,126 @@ exports.upload_img = function(req, res, next){
 			res.json(result); 
 		} 
 	}); 
+};
+
+exports.get_sport_item_resource = function(req, res, next){
+	var values = [];
+	sql.query(req, res, sql_mapping.get_sport_item_resource, values, next, function(err, ret){	
+		if (err){
+			result.hearder.code = '500';
+			result.hearder.msg  = '获取失败';
+			result.data			= {};
+			res.json(result);
+			return;
+		} 
+		result.hearder.code = '200';
+		result.hearder.msg  = '成功';
+		result.data         = {result : '0',
+							   msg	  : '获取成功'};
+		res.json(result);
+	});
+};
+
+exports.get_oil_table = function(req, res, next){
+	var item_id = req.body.item_id;
+	var sex = req.body.sex;
+	var grade = req.body.grade;
+	if (item_id == undefined || sex == undefined || grade == undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data         = {};
+		res.json(result);
+		return;
+	}
+	var values = [item_id, sex, grade];
+	var oil_list = [];
+	var scale = [];
+	if (item_id == '2' || item_id == '7'){
+		if (item_id == '2')
+			scale = [60,90,120,140,170,200,230];
+		else
+			scale = [0,10,20,30,40,50,60];
+		result.header.code = '200';
+		result.header.msg  = '成功';
+		result.data         = {scale : scale, color:'#74cdbf'};
+		res.json(result);
+	} else {
+		if (item_id == '0'){
+			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
+				if (err || ret.length < 5) {
+					oil_list.push({level:'',     record:0, color:'', angle:'0'});
+					oil_list.push({level:'优秀', record:0, color:'#57b8f4', angle:'20'});
+					oil_list.push({level:'良好', record:0, color:'#9dc615', angle:'30'});
+					oil_list.push({level:'及格', record:0, color:'#c67a15', angle:'40'});
+					oil_list.push({level:'不及格', record:0, color:'#c63015', angle:'10'});
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data         = {oil_list : oil_list};
+					res.json(result);
+					return;
+				}
+				for(var i=0;i<ret.length;i++){
+					switch(ret[i].level){
+						case '0' : 
+							oil_list.push({level:'', record:ret[i].record, color:'', angle:'0'});
+							break;
+						case '1' :
+							oil_list.push({level:'优秀', record:ret[i].record, color:'#57b8f4', angle:'20'});
+							break;
+						case '2' :
+							oil_list.push({level:'良好', record:ret[i].record, color:'#9dc615', angle:'30'});
+							break;
+						case '3' :
+							oil_list.push({level:'及格', record:ret[i].record, color:'#c67a15', angle:'40'});
+							break;
+						case '4' :
+							oil_list.push({level:'不及格', record:ret[i].record, color:'#c63015', angle:'10'});
+							break;
+					}
+				}
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data         = {oil_list : oil_list};
+				res.json(result);
+			});
+		} else {
+			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
+				if (err || ret.length < 5) {
+					oil_list.push({level:'',     record:0, color:'', angle:'0'});
+					oil_list.push({level:'不及格', record:0, color:'#c63015', angle:'10'});
+					oil_list.push({level:'及格', record:0, color:'#c67a15', angle:'40'});
+					oil_list.push({level:'良好', record:0, color:'#9dc615', angle:'30'});
+					oil_list.push({level:'优秀', record:0, color:'#57b8f4', angle:'20'});
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data         = {oil_list : oil_list};
+					res.json(result);
+					return;
+				}
+				for(var i=0;i<ret.length;i++){
+					switch(ret[i].level){
+						case '0' : 
+							oil_list.push({level:'', record:ret[i].record, color:'', angle:'0'});
+							break;
+						case '1' :
+							oil_list.push({level:'不及格', record:ret[i].record, color:'#c63015', angle:'10'});
+							break;
+						case '2' :
+							oil_list.push({level:'及格', record:ret[i].record, color:'#c67a15', angle:'40'});
+							break;
+						case '3' :
+							oil_list.push({level:'良好', record:ret[i].record, color:'#9dc615', angle:'30'});
+							break;
+						case '4' :
+							oil_list.push({level:'优秀', record:ret[i].record, color:'#57b8f4', angle:'20'});
+							break;
+					}
+				}
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data         = {oil_list : oil_list};
+				res.json(result);
+			});
+		}
+	}
 };

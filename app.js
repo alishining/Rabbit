@@ -43,6 +43,8 @@ app.post('/get_assist_list', user_route.get_assist_list);			 //辅助帐号列�
 app.post('/select_student', user_route.select_student);				 //选择默认孩子	
 var multipartMiddleware = multipart();
 app.post('/upload_img', multipartMiddleware, user_route.upload_img); //上传头像
+app.post('/get_sport_item_resource', user_route.get_sport_item_resource);  //获取运动项目资源
+app.post('/get_oil_table', user_route.get_oil_table);					   //返回油表数据
 //------------------------------------------------------------------
 app.post('/reset_default_password', web_route.reset_default_password);
 app.post('/get_province', web_route.get_province);
