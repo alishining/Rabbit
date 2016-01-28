@@ -81,11 +81,13 @@ app.post('/add_score_level', web_route.add_score_level);
 app.post('/del_score_level', web_route.del_score_level);
 app.post('/mod_score_level', web_route.mod_score_level);
 app.post('/get_score_level', web_route.get_score_level);
-
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);
 app.post('/student_sport_report', school_web_route.student_sport_report);
+app.post('/sport_item_report_rate', school_web_route.sport_item_report_rate);
+app.post('/grade_sport_item_rank', school_web_route.grade_sport_item_rank);
+app.post('/class_level_chart', school_web_route.class_level_chart);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

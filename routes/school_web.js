@@ -129,3 +129,105 @@ exports.student_sport_report = function(req, res, next){
 	})
 };
 
+exports.sport_item_report_rate = function(req, res, next){
+	var year =  req.body.year;
+	var class_id = req.body.class_id;
+	if (year == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [year, class_id];
+	sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {sport_item_rate : ret};
+		res.json(result);
+	});
+};
+
+exports.grade_sport_item_rank = function(req, res, next){
+	var year =  req.body.year;
+	var item_id =  req.body.item_id;
+	var grade = req.body.grade + '%';
+	if (year == undefined || item_id == undefined || grade == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result); 
+		return;
+	}
+	var values = [year, item_id, grade];
+	sql.query(req, res, sql_mapping.grade_sport_item_rank, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {grade_sport_item_rank : ret};
+		res.json(result);
+	});
+};
+
+exports.class_level_chart = function(req, res, next){
+	var year = req.body.year;
+	var class_id = req.body.class_id;
+	var item_id = req.body.item_id;
+	var values = [year, class_id, item_id];
+	sql.query(req, res, sql_mapping.class_level_chart, values, next, function(err, ret){
+		var boy_great = [];
+		var girl_great = [];
+		var boy_good = [];
+		var girl_good = [];
+		var boy_normal = [];
+		var girl_normal = [];
+		var boy_failed = [];
+		var girl_failed = [];
+		for (var i=0;i<ret.length;i++){
+			switch(ret[i].level){
+				case '0' :
+					if (ret[i].sex == 1){
+						boy_failed.push(ret[i].student_name);
+					} else {
+						if (ret[i].sex == 2){
+							girl_failed.push(ret[i].student_name);
+						}
+					};
+					break;
+				case '1' :
+					if (ret[i].sex == 1){
+						boy_normal.push(ret[i].student_name);
+					} else {
+						if (ret[i].sex == 2){
+							girl_normal.push(ret[i].student_name);
+						}
+					};
+					break;
+				case '2' :
+					if (ret[i].sex == 1){
+						boy_good.push(ret[i].student_name);
+					} else {
+						if (ret[i].sex == 2){
+							girl_good.push(ret[i].student_name);
+						}
+					};
+					break;
+				case '3' :
+					if (ret[i].sex == 1){
+						boy_great.push(ret[i].student_name);
+					} else {
+						if (ret[i].sex == 2){
+							girl_great.push(ret[i].student_name);
+						}
+					};
+					break;
+			}	
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {class_level_chart : {boy_great : boy_great, girl_great : girl_great,
+												   boy_good : boy_good, girl_good : girl_good,
+												   boy_normal : boy_normal, girl_normal : girl_normal,
+												   boy_failed : boy_failed, girl_failed : girl_failed}};
+		res.json(result);	
+	});
+}
