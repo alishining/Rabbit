@@ -88,6 +88,7 @@ app.post('/student_sport_report', school_web_route.student_sport_report);
 app.post('/sport_item_report_rate', school_web_route.sport_item_report_rate);
 app.post('/grade_sport_item_rank', school_web_route.grade_sport_item_rank);
 app.post('/class_level_chart', school_web_route.class_level_chart);
+app.post('/health_record', school_web_route.health_record);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

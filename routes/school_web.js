@@ -224,10 +224,72 @@ exports.class_level_chart = function(req, res, next){
 		}
 		result.header.code = "200";
 		result.header.msg  = "成功";
-		result.data        = {class_level_chart : {boy_great : boy_great, girl_great : girl_great,
-												   boy_good : boy_good, girl_good : girl_good,
+		result.data        = {class_level_chart : {boy_great  : boy_great, girl_great : girl_great,
+												   boy_good   : boy_good, girl_good : girl_good,
 												   boy_normal : boy_normal, girl_normal : girl_normal,
 												   boy_failed : boy_failed, girl_failed : girl_failed}};
 		res.json(result);	
+	});
+};
+
+exports.health_record = function(req, res, next){
+	var year = req.body.year;
+	var term = req.body.term;
+	var sex  = '%' + req.body.sex + '%';
+	var class_id = req.body.class_id;
+	if (year == undefined || term == undefined || sex == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [sex, class_id, term, year];
+	sql.query(req, res, sql_mapping.health_record, values, next, function(err, ret){
+		try {
+			var health_record_list = [];
+			var id_set = new Set();
+			for (var i=0;i<ret.length;i++){
+				if (!id_set.has(ret[i].student_id)){
+					id_set.add(ret[i].student_id);
+					health_record_list.push({student_id   : ret[i].student_id,
+						   				     student_name : ret[i].student_name,
+											 class_id	  : ret[i].class_id,
+											 birth		  : ret[i].birth,
+											 sex          : ret[i].sex,
+											 nationality  : ret[i].nationality,
+											 year		  : ret[i].year,
+											 term		  : ret[i].term,
+											 item_list    : [{item			: ret[i].item, 
+															  health_item	: ret[i].health_item, 
+															  record		: ret[i].record,
+															  unit			: ret[i].unit,
+															  score			: ret[i].score, 
+															  level			: ret[i].level}]});
+				} else {
+					for (var j=0;j<health_record_list.length;j++){
+						if (health_record_list[j].student_id == ret[i].student_id){
+							health_record_list[j].item_list.push({ item			 : ret[i].item,
+																   health_item   : ret[i].health_item,
+																   record		 : ret[i].record,
+																   unit			 : ret[i].unit,
+																   score		 : ret[i].score,
+																   level		 : ret[i].level});
+							break;
+						}
+					}	
+				}
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {health_record_list : health_record_list};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "获取失败";
+			result.data        = {};
+			res.json(result);
+		}
+
 	});
 }
