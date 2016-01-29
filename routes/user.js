@@ -639,14 +639,14 @@ exports.record_training_item = function(req, res, next){
 		}
 		sql.query(req, res, sql_content, values, next, function(err, ret){
 			if (err){
-				result.hearder.code = '500';
-				result.hearder.msg  = '记录失败';
+				result.header.code = '500';
+				result.header.msg  = '记录失败';
 				result.data			= {};
 				res.json(result);
 				return;
 			} 
-			result.hearder.code = '200';
-			result.hearder.msg  = '成功';
+			result.header.code = '200';
+			result.header.msg  = '成功';
 			result.data         = {result : '0',
 								   msg	  : '记录成功'};
 			res.json(result);
@@ -707,14 +707,14 @@ exports.get_sport_item_resource = function(req, res, next){
 	var values = [];
 	sql.query(req, res, sql_mapping.get_sport_item_resource, values, next, function(err, ret){	
 		if (err){
-			result.hearder.code = '500';
-			result.hearder.msg  = '获取失败';
+			result.header.code = '500';
+			result.header.msg  = '获取失败';
 			result.data			= {};
 			res.json(result);
 			return;
 		} 
-		result.hearder.code = '200';
-		result.hearder.msg  = '成功';
+		result.header.code = '200';
+		result.header.msg  = '成功';
 		result.data         = {result : '0',
 							   msg	  : '获取成功'};
 		res.json(result);
