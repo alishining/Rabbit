@@ -715,8 +715,7 @@ exports.get_sport_item_resource = function(req, res, next){
 		} 
 		result.header.code = '200';
 		result.header.msg  = '成功';
-		result.data         = {result : '0',
-							   msg	  : '获取成功'};
+		result.data         = {resource : ret};
 		res.json(result);
 	});
 };
