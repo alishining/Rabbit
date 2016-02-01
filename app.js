@@ -90,6 +90,16 @@ app.post('/grade_sport_item_rank', school_web_route.grade_sport_item_rank);
 app.post('/class_level_chart', school_web_route.class_level_chart);
 app.post('/health_record', school_web_route.health_record);
 
+app.post('/add_teacher', school_web_route.add_teacher);
+app.post('/del_teacher', school_web_route.del_teacher);
+app.post('/mod_teacher', school_web_route.mod_teacher);
+app.post('/get_teacher', school_web_route.get_teacher);
+app.post('/score_input', school_web_route.score_input);
+app.post('/add_student', school_web_route.add_student);
+app.post('/del_student', school_web_route.del_student);
+app.post('/mod_student', school_web_route.mod_student);
+app.post('/get_student', school_web_route.get_student);
+
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
 	err.status = 404;

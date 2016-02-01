@@ -3,6 +3,7 @@ var multipart = require('connect-multiparty');
 var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
+var tools = require('../tools/sms');
 var sql_mapping = require('../dao/sql_mapping');
 
 var result = {
@@ -81,7 +82,6 @@ exports.student_sport_report = function(req, res, next){
 	var class_id = req.body.class_id;
 	var year	 = req.body.year;
 	var term	 = req.body.term;
-	console.log(req.body);
 	if (sex == undefined || class_id == undefined || year == undefined || term == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -291,5 +291,249 @@ exports.health_record = function(req, res, next){
 			res.json(result);
 		}
 
+	});
+};
+
+exports.add_teacher = function(req, res, next){
+	var teacher_name = req.body.teacher_name;
+	var teacher_phone = req.body.teacher_phone;
+	var class_list = req.body.class_list;
+	var school_id = req.body.school_id;
+	var school = req.body.school;
+	if (teacher_name == undefined || teacher_phone == undefined || class_list == undefined || school_id == undefined || school == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var num = Math.floor(Math.random()*10000);
+	if (num < 10){
+		num = '000' + num;
+	} else {
+		if (num < 100){
+			num = '00' + num;
+		} else {
+			if (num < 1000){
+				num = '0' + num;
+			}
+		}
+	}
+	var values = [teacher_phone];
+	sql.query(req, res, sql_mapping.check_school_user, values, next, function(err, ret){
+		if (ret && ret[0] == undefined){
+			if (!tools.sms(num, teacher_phone)){
+				result.header.code = "500";
+				result.header.msg  = "短信发送失败";
+				result.data        = {};
+				res.json(result);
+				return;
+			}
+			values = [teacher_phone,num, teacher_name, teacher_phone, school_id, school, class_list, '0', '0'];
+			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
+				if (err){
+					result.header.code = "500";
+					result.header.msg  = "添加失败";
+					result.data        = {};
+					res.json(result);
+					return;
+				}
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data = {result : '0', msg : '添加成功', class_list : class_list, account : teacher_phone, id : ret.insertId, teacher_name : teacher_name};
+				res.json(result);
+			});
+		} else {
+			result.header.code = "500";
+			result.header.msg  = "帐号重复添加";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.del_teacher = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.del_school_user, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {result : '0', msg : '删除成功'};
+		res.json(result);
+	});
+};
+
+exports.mod_teacher = function(req, res, next){
+	var teacher_name = req.body.teacher_name;
+	var teacher_phone = req.body.teacher_phone;
+	var class_list = req.body.class_list;
+	if (teacher_name == undefined || teacher_phone == undefined || class_list == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [teacher_phone,teacher_phone,teacher_name,class_list,teacher_phone];
+	sql.query(req, res, sql_mapping.mod_school_user, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {result : '0', msg : '修改成功'};
+		res.json(result);
+	});
+};
+
+exports.get_teacher = function(req, res, next){
+	var school_id = req.body.school_id;
+	if (school_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id];
+	sql.query(req, res, sql_mapping.get_school_user, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {teacher_list : ret};
+		res.json(result);
+	});
+};
+
+exports.score_input = function(req, res, next){
+	var year = req.body.year;
+	var term = req.body.term;
+	var tmp_filename = req.files.value.path;
+	if (year == undefined || term == undefined || tmp_filename == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	console.log(req.body);	
+};
+
+exports.add_student = function(req, res, next){
+	var student_name = req.body.student_name;
+	var sex = req.body.sex;
+	var nationality = req.body.nationality;
+	var grade = req.body.grade;
+	var cls = req.body.cls;
+	var student_id = req.body.student_id;
+	var birth = req.body.birth;
+	var address = req.body.address;
+	var school = req.body.school;
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	if (student_name == undefined || sex == undefined || nationality == undefined || grade == undefined || cls == undefined || student_id == undefined || birth == undefined || address == undefined || school == undefined || school_id == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, '', '', '', '', 0, '', student_id, '0'];
+	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "添加失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {result : '0', msg : '添加成功'};
+		res.json(result);
+	});
+};
+
+exports.del_student = function(req, res, next){
+	var student_id = req.body.student_id;
+	if (student_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id];
+	sql.query(req, res, sql_mapping.del_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {result : '0', msg : '删除成功'};
+		res.json(result);
+	});
+};
+
+exports.mod_student = function(req, res, next){
+	var student_name = req.body.student_name;
+	var sex = req.body.sex;
+	var nationality = req.body.nationality;
+	var student_id = req.body.student_id;
+	var birth = req.body.birth;
+	var address = req.body.address;
+	if (student_name == undefined || sex == undefined || nationality == undefined || student_id == undefined || birth == undefined || address == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id, student_name, sex, nationality, birth, address, student_id];
+	sql.query(req, res, sql_mapping.mod_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "修改失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {result : '0', msg : '修改成功'};
+		res.json(result);
+	});
+};
+
+exports.get_student = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	if (class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, class_id];
+	sql.query(req, res, sql_mapping.get_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};   
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {student_list : ret};
+		res.json(result);
 	});
 }

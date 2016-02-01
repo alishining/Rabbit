@@ -57,7 +57,7 @@ var sql = {
 	get_score_level : 'select * from score_level where item_id=? and grade=?',
 	//-------------------------------------------------------------------
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
-	add_school_user  : 'insert into school_user values(?,?,?,?,?,?,?,?,?)',
+	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete) values(?,?,?,?,?,?,?,?,?)',
 	reset_default_password   : 'update school_user set password=123456 where school_id=?',
 	get_user_class : 'select class_list from school_user where account=?',
 	student_sport_report : 'select a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.year=? and b.term=? and b.student_id is not null',
@@ -65,10 +65,14 @@ var sql = {
 	grade_sport_item_rank : 'select class_id,sum(score)/count(*) as avg,max(cast(score as DECIMAL)) as max from report where year=?  and item_id=? and class_id like ? group by class_id order by sum(score)/count(*) desc',
 	class_level_chart : 'select a.level, b.sex, b.student_name from report a left outer join student_info b on a.student_id = b.student_id where a.year=? and a.class_id=? and a.item_id=? and b.student_id is not null',
 	health_record : 'select a.student_name, a.class_id, a.sex, a.birth, a.student_id, a.nationality, b.year, b.term, b.health_item, b.item, b.record, b.unit, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.term=? and b.year=? and b.student_id is not null',
-	add_teacher : '',
-	del_teacher : '',
-	mod_teacher : '',
-	get_teacher : ''
+	check_school_user : 'select account from school_user where account=?',
+	del_school_user : 'update school_user set is_delete=\'1\' where id=?',
+	mod_school_user : 'update school_user set account=?, teacher_phone=?, teacher_name=?,class_list=? where account=?',
+	get_school_user : 'select * from school_user where is_delete=\'0\' and is_root=\'0\' and school_id=?',
+	add_student : 'insert into student_info values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+	del_student : 'update student_info set is_delete=\'1\' where student_id = ?',
+	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
+	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\''
 };
 
 module.exports = sql;
