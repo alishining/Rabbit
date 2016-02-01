@@ -8,7 +8,7 @@ var sql = {
 	get_default_child : 'select child from genearch_info where phone=?',
 	rate_total : 'select ds,count(*) as count from training_record WHERE student_id=? and ds like ? group by ds ORDER BY ds ASC',
 	rate_finish : 'select ds,count(*) as count from training_record WHERE student_id=? and score!=\'\' and ds like ? group by ds ORDER BY ds ASC',
-	get_student_info : 'select student_id, img, student_name, height, weight, bmi, bmi_type, score from student_info where student_id=?',
+	get_student_info : 'select student_id, sex, grade, img, student_name, height, weight, bmi, bmi_type, score from student_info where student_id=?',
 	get_children_list : 'select a.student_id, b.img, b.student_name, b.sex, b.school from children_list a left outer join student_info b on a.student_id=b.student_id WHERE a.phone=? and b.student_id is not null group by student_id',
 	get_genearch_info : 'select * from genearch_info where phone=?',
 	check_student : 'select student_name, check_code, img from student_info where student_id=?',
@@ -64,7 +64,11 @@ var sql = {
 	sport_item_report_rate : 'select  item_id, item, sum(level=\'3\') as three, sum(level=\'3\')/count(*)*100 as three_rate,  sum(level=\'2\') as two, sum(level=\'2\')/count(*)*100 as two_rate,  sum(level=\'1\') as one, sum(level=\'1\')/count(*)*100 as one_rate, sum(level=\'0\') as zero,sum(level=\'0\')/count(*)*100 as zero_rate, count(*) as total from report where year=? and class_id=? group by item',
 	grade_sport_item_rank : 'select class_id,sum(score)/count(*) as avg,max(cast(score as DECIMAL)) as max from report where year=?  and item_id=? and class_id like ? group by class_id order by sum(score)/count(*) desc',
 	class_level_chart : 'select a.level, b.sex, b.student_name from report a left outer join student_info b on a.student_id = b.student_id where a.year=? and a.class_id=? and a.item_id=? and b.student_id is not null',
-	health_record : 'select a.student_name, a.class_id, a.sex, a.birth, a.student_id, a.nationality, b.year, b.term, b.health_item, b.item, b.record, b.unit, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.term=? and b.year=? and b.student_id is not null'
+	health_record : 'select a.student_name, a.class_id, a.sex, a.birth, a.student_id, a.nationality, b.year, b.term, b.health_item, b.item, b.record, b.unit, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.term=? and b.year=? and b.student_id is not null',
+	add_teacher : '',
+	del_teacher : '',
+	mod_teacher : '',
+	get_teacher : ''
 };
 
 module.exports = sql;
