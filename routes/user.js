@@ -638,13 +638,13 @@ exports.record_training_item = function(req, res, next){
 		return;
 	}
 	var id = encrypt.md5(student_id + item + ds);
-	var values = [id];
+	var values = [item, ds, student_id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
 		if (ret[0] == undefined && (item == '2' || item == '7')) {
 			values      = [id, student_id, item, score, ds];
 			sql_content = sql_mapping.record_training_item;
 		} else {
-			values      = [score, id];
+			values      = [score, item, student_id, ds];
 			sql_content = sql_mapping.update_training_item;
 		}
 		sql.query(req, res, sql_content, values, next, function(err, ret){
@@ -772,35 +772,35 @@ exports.get_oil_table = function(req, res, next){
 					switch(ret[i].level){
 						case '0' : 
 							oil_list.push({level  : '', 
-										   record : ret[i].record, 
+										   record : ret[4-i].record, 
 										   color  : '', 
 										   angle  : '0',
 										   delta  : 0});
 							break;
 						case '1' :
 							oil_list.push({level  : '优秀', 
-										   record : ret[i].record, 
+										   record : ret[4-i].record, 
 										   color  : '#55b7f6', 
 										   angle  : '20',
 										   delta  : (ret[3].record - ret[4].record) / 10.0});
 							break;
 						case '2' :
 							oil_list.push({level  : '良好',	
-										   record : ret[i].record, 
+										   record : ret[4-i].record, 
 										   color  : '#6de58e', 
 										   angle  : '30',
 										   delta  : (ret[2].record - ret[3].record) / 10.0});
 							break;
 						case '3' :
 							oil_list.push({level  : '及格', 
-										   record : ret[i].record, 
+										   record : ret[4-i].record, 
 										   color  : '#fccc5e',
 										   angle  : '40',
 										   delta  : (ret[1].record - ret[2].record) / 10.0});
 							break;
 						case '4' :
 							oil_list.push({level  : '不及格', 
-										   record : ret[i].record, 
+										   record : ret[4-i].record, 
 										   color  : '#ff7e78', 
 										   angle  : '10',
 										   delta  : (ret[0].record - ret[1].record) / 10.0});
