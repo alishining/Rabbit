@@ -640,12 +640,12 @@ exports.record_training_item = function(req, res, next){
 	var id = encrypt.md5(student_id + item + ds);
 	var values = [id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
-		if (ret && ret[0] != undefined) {
-			values      = [score, id];
-			sql_content = sql_mapping.update_training_item;
-		} else {
+		if (ret[0] == undefined && (item == '2' || item == '7')) {
 			values      = [id, student_id, item, score, ds];
 			sql_content = sql_mapping.record_training_item;
+		} else {
+			values      = [score, id];
+			sql_content = sql_mapping.update_training_item;
 		}
 		sql.query(req, res, sql_content, values, next, function(err, ret){
 			if (err){
