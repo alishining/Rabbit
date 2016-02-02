@@ -442,6 +442,7 @@ exports.add_student = function(req, res, next){
 		res.json(result);
 		return;
 	}
+	console.log(req.body);
 	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', student_id, '0'];
 	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 		if (err){
@@ -490,6 +491,7 @@ exports.mod_student = function(req, res, next){
 	var student_id = req.body.student_id;
 	var birth = req.body.birth;
 	var address = req.body.address;
+	console.log(req.body);
 	if (student_name == undefined || sex == undefined || nationality == undefined || student_id == undefined || birth == undefined || address == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -508,7 +510,8 @@ exports.mod_student = function(req, res, next){
 		}
 		result.header.code = "200";
 		result.header.msg  = "成功";
-		result.data = {result : '0', msg : '修改成功'};
+		result.data = {result : '0', msg : '修改成功', student_id : student_id, student_name : student_name,
+					   sex : sex, nationality : nationality, birth : birth, address : address};
 		res.json(result);
 	});
 };
@@ -536,5 +539,19 @@ exports.get_student = function(req, res, next){
 		result.header.msg  = "成功";
 		result.data = {student_list : ret};
 		res.json(result);
+	});
+};
+
+exports.get_daily_training_rate = function(req, res, next){
+	var class_id = req.body.class_id;
+	if (class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [];
+	sql.query(req, res, sql_mapping.get_daily_training_rate, values, next, function(err, ret){
 	});
 }

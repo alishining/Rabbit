@@ -74,7 +74,8 @@ var sql = {
 	add_student : 'insert into student_info values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
 	del_student : 'update student_info set is_delete=\'1\' where student_id = ?',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
-	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\''
+	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\'',
+	get_daily_training_rate : ''
 };
 
 module.exports = sql;
