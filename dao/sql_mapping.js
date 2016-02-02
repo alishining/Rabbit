@@ -71,7 +71,7 @@ var sql = {
 	del_school_user : 'update school_user set is_delete=\'1\' where id=?',
 	mod_school_user : 'update school_user set account=?, teacher_phone=?, teacher_name=?,class_list=? where account=?',
 	get_school_user : 'select * from school_user where is_delete=\'0\' and is_root=\'0\' and school_id=?',
-	add_stud$ent : 'insert into student_info values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+	add_student : 'insert into student_info values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
 	del_student : 'update student_info set is_delete=\'1\' where student_id = ?',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
 	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\''
