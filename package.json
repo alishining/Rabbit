@@ -17,6 +17,7 @@
     "moment": "^2.11.0",
     "morgan": "~1.6.1",
     "mysql": "^2.10.0",
+    "node-xlsx": "^0.6.0",
     "qiniu": "^6.1.9",
     "serve-favicon": "~2.3.0"
   }

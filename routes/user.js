@@ -75,20 +75,69 @@ exports.index = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [phone];
+	var values	 = [phone];
+	var bmi		 = '0';
+	var bmi_type = '';
 	sql.query(req, res, sql_mapping.login, values, next, function(err, ret){
 		try {
 			if (ret[0].child != '') {
 				var student_id = ret[0].child;
 				values = [student_id];
-				sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
-					if (ret) {
-						var student_info = ret[0];
-						result.header.code = "200";
-						result.header.msg  = "成功";
-						result.data = {student_info};
-						res.json(result);
+				sql.query(req, res, sql_mapping.get_student_height, values, next, function(err, ret){
+					var height = '';
+					try{
+						height = ret[0].score;
+					} catch(err){
+						height = '';
 					}
+					sql.query(req, res, sql_mapping.get_student_weight, values, next, function(err, ret){
+						var weight = '';
+						try{
+							weight = ret[0].score;
+						} catch(err){
+							weight = '';
+						}
+						sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
+							if (ret) {
+								var student_info = ret[0];
+								result.header.code = "200";
+								result.header.msg  = "成功";
+								try{
+									if (weight != '' && height!=''){
+										bmi = Math.round(weight/((height/100)*(height/100)));
+										if (bmi > 19){
+											bmi_type = '偏胖';
+										} else {
+											if (bmi < 16){
+												bmi_type = '偏瘦';
+											} else {
+												bmi_type = '健康';
+											}
+										}
+									}
+								} catch(err){
+									console.log(err);
+								}
+								result.data = {student_info :
+											   {student_id	: student_info.student_id,
+											   sex			: student_info.sex,
+											   grade		: student_info.grade,
+											   img			: student_info.img,
+											   student_name : student_info.student_name,
+											   height		: height, 
+											   weight		: weight, 
+											   score		: student_info.score,
+											   bmi			: bmi,
+											   bmi_type		: bmi_type}};
+								res.json(result);
+							} else {
+								result.header.code = "500";
+								result.header.msg  = "请求失败";
+								result.data        = {};
+								res.json(result);
+							}
+						})
+					})
 				})
 			} else {
 				result.header.code = "200";
