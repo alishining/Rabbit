@@ -551,7 +551,7 @@ exports.get_daily_training_rate = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [class_id, days];
+	var values = [class_id, Number(days)];
 	sql.query(req, res, sql_mapping.get_daily_training_rate, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
