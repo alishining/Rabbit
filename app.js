@@ -94,7 +94,7 @@ app.post('/add_teacher', school_web_route.add_teacher);
 app.post('/del_teacher', school_web_route.del_teacher);
 app.post('/mod_teacher', school_web_route.mod_teacher);
 app.post('/get_teacher', school_web_route.get_teacher);
-app.post('/score_input', school_web_route.score_input);
+app.post('/score_input', multipartMiddleware, school_web_route.score_input);
 app.post('/add_student', school_web_route.add_student);
 app.post('/del_student', school_web_route.del_student);
 app.post('/mod_student', school_web_route.mod_student);

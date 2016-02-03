@@ -409,8 +409,8 @@ exports.get_teacher = function(req, res, next){
 };
 
 exports.score_input = function(req, res, next){
-	var year = req.body.year;
-	var term = req.body.term;
+	//var year = req.body.year;
+	//var term = req.body.term;
 	//var tmp_filename = req.files.value.path;
 	console.log(req);
 	if (year == undefined || term == undefined || tmp_filename == undefined){
@@ -420,7 +420,6 @@ exports.score_input = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	console.log(req.body);	
 };
 
 exports.add_student = function(req, res, next){
@@ -543,15 +542,27 @@ exports.get_student = function(req, res, next){
 };
 
 exports.get_daily_training_rate = function(req, res, next){
+	var days	 = req.body.days;
 	var class_id = req.body.class_id;
-	if (class_id == undefined){
+	if (class_id == undefined || days == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [];
+	var values = [class_id, days];
 	sql.query(req, res, sql_mapping.get_daily_training_rate, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "获取失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {training_rate : ret};
+		res.json(result);
 	});
 }

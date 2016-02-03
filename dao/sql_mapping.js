@@ -75,7 +75,7 @@ var sql = {
 	del_student : 'update student_info set is_delete=\'1\' where student_id = ?',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
 	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\'',
-	get_daily_training_rate : ''
+	get_daily_training_rate : 'select a.ds, sum(a.sign=\'ok\')/count(*) as rate from (select ds, student_id, case when sum(score=\'\')=0 then \'ok\' else \'no\' end as sign from training_record WHERE student_id in (select student_id from student_info where class_id=?) group by ds, student_id) a group by a.ds order by ds desc limit ?'
 };
 
 module.exports = sql;
