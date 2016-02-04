@@ -356,6 +356,7 @@ exports.mod_genearch_info = function(req, res, next){
 exports.select_student = function(req, res, next){
 	var phone = req.body.uid;
 	var select_student_id = req.body.select_student_id;
+	var name = req.body.name;
 	if (phone == undefined || select_student_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -365,18 +366,21 @@ exports.select_student = function(req, res, next){
 	}
 	var values = [select_student_id, phone];
 	sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
-		try{
-			result.header.code = "200";
-			result.header.msg  = "成功";
-			result.data        = {result : '0',
-								  msg    : '切换成功'};
-			res.json(result);	
-		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "选中失败";
-			result.data        = {};
-			res.json(result);
-		}
+		values = [name+'的家长', select_student_id];
+		sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
+			try{
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {result : '0',
+									  msg    : '切换成功'};
+				res.json(result);	
+			} catch(err) {
+				result.header.code = "500";
+				result.header.msg  = "选中失败";
+				result.data        = {};
+				res.json(result);
+			}
+		});
 	});
 }
 
