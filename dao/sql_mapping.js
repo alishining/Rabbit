@@ -72,9 +72,9 @@ var sql = {
 	del_school_user : 'update school_user set is_delete=\'1\' where id=?',
 	mod_school_user : 'update school_user set account=?, teacher_phone=?, teacher_name=?,class_list=? where account=?',
 	get_school_user : 'select * from school_user where is_delete=\'0\' and is_root=\'0\' and school_id=?',
-	add_student : 'insert into student_info values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+	add_student : 'insert into student_info values ?',
 	del_student : 'update student_info set is_delete=\'1\' where student_id = ?',
-	mov_student : 'delete from student_info where student_id = ?',
+	mov_student : 'delete from student_info where student_id in (?)',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
 	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\'',
 	get_daily_training_rate : 'select a.ds, sum(a.sign=\'ok\')/count(*) as rate from (select ds, student_id, case when sum(score=\'\')=0 then \'ok\' else \'no\' end as sign from training_record WHERE student_id in (select student_id from student_info where class_id=?) group by ds, student_id) a group by a.ds order by ds desc limit ?'

@@ -1,4 +1,5 @@
 var express = require('express');
+var xlsx = require("node-xlsx");
 var multipart = require('connect-multiparty');
 var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
@@ -408,20 +409,6 @@ exports.get_teacher = function(req, res, next){
 	});
 };
 
-exports.score_input = function(req, res, next){
-	//var year = req.body.year;
-	//var term = req.body.term;
-	//var tmp_filename = req.files.value.path;
-	console.log(req);
-	if (year == undefined || term == undefined || tmp_filename == undefined){
-		result.header.code = "400";
-		result.header.msg  = "参数不存在";
-		result.data        = {};
-		res.json(result);
-		return;
-	}
-};
-
 exports.add_student = function(req, res, next){
 	var student_name = req.body.student_name;
 	var sex = req.body.sex;
@@ -565,4 +552,84 @@ exports.get_daily_training_rate = function(req, res, next){
 		result.data = {training_rate : ret};
 		res.json(result);
 	});
-}
+};
+
+exports.score_input = function(req, res, next){
+	var year = req.body.year;
+	var term = req.body.term;
+	var school = req.body.school;
+	var school_id = req.body.school_id;
+	var tmp_filename = req.files.file_upload.path;
+	if (year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var list = xlsx.parse(tmp_filename);
+	var del_values = [];
+	var add_str = [];
+	for (var i=0;i<list.length;i++){
+		var student_list = list[i].data;
+		for (var j=1;j<student_list.length;j++){
+			var record_list = student_list[j];
+			if (record_list.length != 0){
+				console.log(record_list);
+				var add_values = [];
+				grade = record_list[0];
+				class_id = record_list[1];
+				cls = record_list[2];
+				student_id = record_list[3];
+				nationality = record_list[4];
+				name = record_list[5];
+				sex = record_list[6];
+				birth = record_list[7];
+				address = record_list[8];
+				height = record_list[9];
+				weight = record_list[10];
+				lung = record_list[11];
+				run50 = record_list[12];
+				sit_reach = record_list[13];
+				jump = record_list[14];
+				situp = record_list[15];
+				del_values.push(student_id);
+				add_values.push(student_id);
+				add_values.push(0);	
+				add_values.push(name); 
+				add_values.push(sex); 
+				add_values.push(nationality);
+				add_values.push(birth);
+				add_values.push(address);
+				add_values.push(school_id);
+				add_values.push(school);
+				add_values.push(class_id);
+				add_values.push(grade%10);
+				add_values.push(cls);
+				add_values.push(0);
+				add_values.push('no_pic');
+				add_values.push(student_id);
+				add_values.push('0');
+				add_str.push((add_values));
+			}
+		}
+	}
+	var values = [del_values];
+	sql.query(req, res, sql_mapping.mov_student, values, next, function(err, ret){
+		if (err){
+			console.log(err);
+		}
+		values = [add_str];
+		sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+			if(err){
+				console.log(err);
+			}
+		});
+	});
+	result.header.code = "200";
+	result.header.msg  = "成功";
+	result.data = {result : '0', msg : '上传完毕'};
+	res.json(result);
+};
+
+
