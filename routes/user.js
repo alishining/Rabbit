@@ -357,7 +357,7 @@ exports.select_student = function(req, res, next){
 	var phone = req.body.uid;
 	var select_student_id = req.body.select_student_id;
 	var name = req.body.name;
-	if (phone == undefined || select_student_id == undefined){
+	if (phone == undefined || select_student_id == undefined || name == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -369,7 +369,7 @@ exports.select_student = function(req, res, next){
 		values = [phone];
 		sql.query(req, res, sql_mapping.get_genearch_role, values, next, function(err, ret){
 			var role = ret[0].role;	
-			values = [name+'的'+role, select_student_id];
+			values = [name+'的'+role, phone];
 			sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
 				try{
 					result.header.code = "200";
