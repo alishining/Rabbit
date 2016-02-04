@@ -336,7 +336,7 @@ exports.mod_genearch_info = function(req, res, next){
 		res.json(result);
 		return;
 	} 
-	var values = [name, role, phone];
+	var values = [role, phone];
 	sql.query(req, res, sql_mapping.mod_genearch_info, values, next, function(err, ret){
 		try {	
 			result.header.code = "200";
@@ -366,20 +366,24 @@ exports.select_student = function(req, res, next){
 	}
 	var values = [select_student_id, phone];
 	sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
-		values = [name+'的家长', select_student_id];
-		sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
-			try{
-				result.header.code = "200";
-				result.header.msg  = "成功";
-				result.data        = {result : '0',
-									  msg    : '切换成功'};
-				res.json(result);	
-			} catch(err) {
-				result.header.code = "500";
-				result.header.msg  = "选中失败";
-				result.data        = {};
-				res.json(result);
-			}
+		values = [phone];
+		sql.query(req, res, sql_mapping.get_genearch_role, values, next, function(err, ret){
+			var role = ret[0].role;	
+			values = [name+'的'+role, select_student_id];
+			sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
+				try{
+					result.header.code = "200";
+					result.header.msg  = "成功";
+					result.data        = {result : '0',
+										  msg    : '切换成功'};
+					res.json(result);	
+				} catch(err) {
+					result.header.code = "500";
+					result.header.msg  = "选中失败";
+					result.data        = {};
+					res.json(result);
+				}
+			});
 		});
 	});
 }
@@ -425,24 +429,29 @@ exports.add_assist_account = function(req, res, next){
 	var values = [phone];
 	sql.query(req, res, sql_mapping.get_default_child, values, next, function(err, ret){
 		try {
-			values = [assist_phone, role, role, ret[0].child, phone, ''];
-			sql.query(req, res, sql_mapping.add_genearch_account, values, next, function(err, ret){
-				if (err) {
-					result.header.code = "200";
-					result.header.msg  = "成功";
-					result.data        = {result : '-1',
-										  msg    : '帐号重复添加'};
-					res.json(result);
-					return;
-				}
-				values = [phone, assist_phone, role, ''];
-				sql.query(req, res, sql_mapping.bind_assist, values, next, function(err, ret){
-					result.header.code = "200";
-					result.header.msg  = "成功"; 
-					result.data        = {result : '0',
-										  msg    : '添加辅助帐号成功'};
-					res.json(result);
-				})
+			var student_id = ret[0].child;
+			values = [student_id];
+			sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
+				var studnet_name = ret[0].studnet_name; 
+				values = [assist_phone, student_name + '的' +role, role, student_id, phone, ''];
+				sql.query(req, res, sql_mapping.add_genearch_account, values, next, function(err, ret){
+					if (err) {
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data        = {result : '-1',
+											  msg    : '帐号重复添加'};
+						res.json(result);
+						return;
+					}
+					values = [phone, assist_phone, role, ''];
+					sql.query(req, res, sql_mapping.bind_assist, values, next, function(err, ret){
+						result.header.code = "200";
+						result.header.msg  = "成功"; 
+						result.data        = {result : '0',
+											  msg    : '添加辅助帐号成功'};
+						res.json(result);
+					})
+				});
 			});
 		} catch(err) {
 			result.header.code = "500";
