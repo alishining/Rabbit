@@ -19,6 +19,7 @@ var sql = {
 	del_genearch_account : 'delete from genearch_info where phone=?',
 	get_assist_list : 'select * from assist_list where phone=?',
 	mod_genearch_info : 'update genearch_info set name=?, role=? where phone=?',
+	mod_genearch_name : 'update genearch_info set name=? where phone=?',
 	get_child_xeight : 'select left(ds,7) as ds, sum(score)/count(*) as score from training_record where student_id=? and item=? and score!=\'\' GROUP BY left(ds,7)',
 	record_training_item : 'insert into training_record(id, student_id, item, score, ds) values(?,?,?,?,?)',
 	update_training_item : 'update training_record set score=? where item=? and student_id=? and ds=?',
