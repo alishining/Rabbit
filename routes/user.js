@@ -432,8 +432,13 @@ exports.add_assist_account = function(req, res, next){
 			var student_id = ret[0].child;
 			values = [student_id];
 			sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
-				var studnet_name = ret[0].studnet_name; 
-				values = [assist_phone, student_name + '的' +role, role, student_id, phone, ''];
+				var title = role;
+				try{
+					title = ret[0].studnet_name + '的' +role; 
+				} catch(err){
+					//
+				}
+				values = [assist_phone, title, role, student_id, phone, ''];
 				sql.query(req, res, sql_mapping.add_genearch_account, values, next, function(err, ret){
 					if (err) {
 						result.header.code = "200";

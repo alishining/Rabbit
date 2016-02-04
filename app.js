@@ -24,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 //User routes
 app.post('/sms', user_route.sms);								//短信接口
 app.post('/login', user_route.login);							//登录接口
