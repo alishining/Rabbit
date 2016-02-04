@@ -34,5 +34,4 @@ var test = require('./client');
 //test.test('/add_school');
 //test.test('/del_school');
 //test.test('/mod_school');
-test.test('/get_school');
-
+test.test('/unbind_student');

@@ -30,6 +30,8 @@ var sql = {
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	get_sport_item_resource : 'select item_id,icon,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record from score_level where item_id=? and sex=? and grade=? order by level',
+	get_default_child_father : 'select phone from genearch_info where child=?',
+	update_default_child : 'update genearch_info set child=? where phone in (?)',
 	//------------------------------------------------------------------
 	get_province : 'select distinct province from admin_code',
 	get_city : 'select distinct city from admin_code where province=?',

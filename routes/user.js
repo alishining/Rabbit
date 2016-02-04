@@ -227,7 +227,7 @@ exports.bind_student = function(req, res, next){
 exports.unbind_student = function(req, res, next){
 	var student_id = req.body.unbind_student_id;
 	var phone = req.body.uid;
-	if (student_id == undefined || phone ==undefined){
+	if (student_id == undefined || phone == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -237,20 +237,31 @@ exports.unbind_student = function(req, res, next){
 	var values = [phone];
 	sql.query(req, res, sql_mapping.get_default_child, values, next, function(err, ret){
 		try {
-			if (ret[0].child != student_id) {
+			var major_default_child = ret[0].child;
+			if (major_default_child != student_id) {
 				values = [phone, student_id];
 				sql.query(req, res, sql_mapping.unbind_student, values, next, function(err, ret){
-					try {
-						result.header.code = "200";
-						result.header.msg  = "成功"; 
-						result.data        = {result : '0', msg    : '解绑成功'};
-						res.json(result);
-					} catch(err) {
-						result.header.code = "500";
-						result.header.msg  = "解绑失败";
-						result.data        = {};
-						res.json(result); 
-					}
+					values = [student_id];
+					sql.query(req, res, sql_mapping.get_default_child_father, values, next, function(err, ret){
+						var child_list = [];
+						for (var i=0;i<ret.length;i++){
+							child_list.push(ret[i].phone);
+						}
+						values = [major_default_child, child_list];
+						sql.query(req, res, sql_mapping.update_default_child, values, next, function(err, ret){
+							try {
+								result.header.code = "200";
+								result.header.msg  = "成功"; 
+								result.data        = {result : '0', msg    : '解绑成功'};
+								res.json(result);
+							} catch(err) {
+								result.header.code = "500";
+								result.header.msg  = "解绑失败";
+								result.data        = {};
+								res.json(result); 
+							}
+						});
+					});
 				})
 			} else {
 				result.header.code = "200";
