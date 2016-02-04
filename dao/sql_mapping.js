@@ -30,8 +30,6 @@ var sql = {
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	get_sport_item_resource : 'select item_id,icon,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record from score_level where item_id=? and sex=? and grade=? order by level',
-	get_default_child_father : 'select phone from genearch_info where child=?',
-	update_default_child : 'update genearch_info set child=? where phone in (?)',
 	//------------------------------------------------------------------
 	get_province : 'select distinct province from admin_code',
 	get_city : 'select distinct city from admin_code where province=?',
@@ -80,7 +78,9 @@ var sql = {
 	mov_student : 'delete from student_info where student_id in (?)',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
 	get_student : 'select * from student_info where school_id=? and class_id=? and is_delete=\'0\'',
-	get_daily_training_rate : 'select a.ds, sum(a.sign=\'ok\')/count(*) as rate from (select ds, student_id, case when sum(score=\'\')=0 then \'ok\' else \'no\' end as sign from training_record WHERE student_id in (select student_id from student_info where class_id=?) group by ds, student_id) a group by a.ds order by ds desc limit ?'
+	get_daily_training_rate : 'select a.ds, sum(a.sign=\'ok\')/count(*) as rate from (select ds, student_id, case when sum(score=\'\')=0 then \'ok\' else \'no\' end as sign from training_record WHERE student_id in (select student_id from student_info where class_id=?) group by ds, student_id) a group by a.ds order by ds desc limit ?',
+	add_report : 'insert into report(student_id,class_id,item_id,item,health_item,record,unit,score,level,year,term) values ?',
+	del_report : 'delete from report where student_id in (?) and year=? and term=?'
 };
 
 module.exports = sql;

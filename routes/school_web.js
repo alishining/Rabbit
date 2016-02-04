@@ -570,6 +570,8 @@ exports.score_input = function(req, res, next){
 	var list = xlsx.parse(tmp_filename);
 	var del_values = [];
 	var add_str = [];
+	var score_list = [];
+	var item_list = [];
 	for (var i=0;i<list.length;i++){
 		var student_list = list[i].data;
 		for (var j=1;j<student_list.length;j++){
@@ -611,6 +613,99 @@ exports.score_input = function(req, res, next){
 				add_values.push(student_id);
 				add_values.push('0');
 				add_str.push((add_values));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('2');
+				item_list.push('身高');
+				item_list.push('');
+				item_list.push(height);
+				item_list.push('cm');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('7');
+				item_list.push('体重');
+				item_list.push('');
+				item_list.push(weight);
+				item_list.push('kg');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('6');
+				item_list.push('肺活量');
+				item_list.push('');
+				item_list.push(lung);
+				item_list.push('ml');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('0');
+				item_list.push('50米往返跑');
+				item_list.push('');
+				item_list.push(run50);
+				item_list.push('s');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('4');
+				item_list.push('坐位体前驱');
+				item_list.push('');
+				item_list.push(sit_reach);
+				item_list.push('个');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('8');
+				item_list.push('跳绳');
+				item_list.push('');
+				item_list.push(jump);
+				item_list.push('个');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id);
+				item_list.push(class_id);
+				item_list.push('5');
+				item_list.push('仰卧起坐');
+				item_list.push('');
+				item_list.push(situp);
+				item_list.push('个');
+				item_list.push('');
+				item_list.push('');
+				item_list.push(year);
+				item_list.push(term);
+				score_list.push((item_list));
+
+
 			}
 		}
 	}
@@ -621,6 +716,18 @@ exports.score_input = function(req, res, next){
 		}
 		values = [add_str];
 		sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+			if(err){
+				console.log(err);
+			}
+		});
+	});
+	values = [del_values, year,term];
+	sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
+		if (err){
+			console.log(err);
+		}
+		values = [score_list];
+		sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
 			if(err){
 				console.log(err);
 			}
