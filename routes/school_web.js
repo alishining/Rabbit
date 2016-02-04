@@ -577,7 +577,6 @@ exports.score_input = function(req, res, next){
 		for (var j=1;j<student_list.length;j++){
 			var record_list = student_list[j];
 			if (record_list.length != 0){
-				console.log(record_list);
 				var add_values = [];
 				grade = record_list[0];
 				class_id = record_list[1];
