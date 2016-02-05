@@ -349,18 +349,42 @@ exports.mod_genearch_info = function(req, res, next){
 	} 
 	var values = [role, phone];
 	sql.query(req, res, sql_mapping.mod_genearch_info, values, next, function(err, ret){
-		try {	
-			result.header.code = "200";
-			result.header.msg  = "成功";
-			result.data        = {result : '0',
-								  msg    : '修改成功'};
-			res.json(result);
-		} catch(err){
-			result.header.code = "500";
-			result.header.msg  = "修改失败";
-			result.data        = {};
-			res.json(result);
-		}
+		values = [phone];
+		sql.query(req, res, sql_mapping.get_default_child, values, next, function(err, ret){
+			var child = '';
+			try{
+				child = ret[0].child;
+			} catch(err){
+				result.header.code = "500";
+				result.header.msg  = "家长称谓修改失败";
+				result.data        = {};
+				res.json(result);
+				return;
+			}
+			values = [child];
+			sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
+				try{
+					values = [ret[0].student_name + '的' + role,phone];
+				} catch(err){
+					console.log(err);
+					values = ['Null', phone];
+				}
+				sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
+					try {	
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data        = {result : '0',
+											  msg    : '修改成功'};
+						res.json(result);
+					} catch(err){
+						result.header.code = "500";
+						result.header.msg  = "修改失败";
+						result.data        = {};
+						res.json(result);
+					}
+				});
+			});
+		});
 	});
 };
 
