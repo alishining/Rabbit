@@ -115,20 +115,24 @@ exports.index = function(req, res, next){
 											}
 										}
 									}
+									result.data = {student_info :
+												   {student_id	: student_info.student_id,
+												   sex			: student_info.sex,
+												   grade		: student_info.grade,
+												   img			: student_info.img,
+												   student_name : student_info.student_name,
+												   height		: height, 
+												   weight		: weight, 
+												   score		: student_info.score,
+												   bmi			: bmi,
+												   bmi_type		: bmi_type}};
 								} catch(err){
 									console.log(err);
+									result.header.code = "500";
+									result.header.msg  = "获取失败";
+									result.data        = {};
+									res.json(result);
 								}
-								result.data = {student_info :
-											   {student_id	: student_info.student_id,
-											   sex			: student_info.sex,
-											   grade		: student_info.grade,
-											   img			: student_info.img,
-											   student_name : student_info.student_name,
-											   height		: height, 
-											   weight		: weight, 
-											   score		: student_info.score,
-											   bmi			: bmi,
-											   bmi_type		: bmi_type}};
 								res.json(result);
 							} else {
 								result.header.code = "500";
