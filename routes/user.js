@@ -622,9 +622,28 @@ exports.get_oneday_detail = function(req, res, next){
 };
 
 exports.get_calendar = function(req, res, next){
-	var date  = new Date(); 
-	var year  = date.getFullYear();
-	var month = date.getMonth()+1;
+	var student_id = req.body.student_id;
+	var year = req.body.year;
+	var month = req.body.month;
+	if (student_id == undefined || year == undefined || month == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var date  = new Date(); 	
+	var nYear = date.getFullYear();
+	var nMonth = date.getMonth()+1;
+	if (year == '' || month == ''){
+		year  = nYear;
+		month = nMonth;
+	}
+	var next = 1;
+	var last = 1;
+	if (year == nYear && month == nMonth){
+		next = 0;
+	}
 	if (month < 10)
 		month = '0' + month;
 	myDate = new Date(year+'-'+month+'-1');
@@ -680,7 +699,7 @@ exports.get_calendar = function(req, res, next){
 				}
 				result.header.code = '200';
 				result.header.msg  = '成功';
-				result.data = {date : year+'年'+month+'月', calendar :calendar};
+				result.data = {date : year+'年'+month+'月', calendar:calendar, next:next, last:last};
 				res.json(result);
 			});
 		});
@@ -744,13 +763,14 @@ exports.record_training_item = function(req, res, next){
 		return;
 	}
 	var id = encrypt.md5(student_id + item + ds);
+	var date  = new Date();
 	var values = [item, ds, student_id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
-		if (ret[0] == undefined && (item == '2' || item == '7')) {
-			values      = [id, student_id, item, score, ds];
+		if (ret[0] == undefined) {
+			values      = [id, student_id, item, score, date.getTime() + ':' + score ,ds];
 			sql_content = sql_mapping.record_training_item;
 		} else {
-			values      = [score, item, student_id, ds];
+			values      = [score, ',' + date.getTime() + ':' + score, item, student_id, ds];
 			sql_content = sql_mapping.update_training_item;
 		}
 		sql.query(req, res, sql_content, values, next, function(err, ret){
@@ -769,6 +789,118 @@ exports.record_training_item = function(req, res, next){
 		});
 	});
 };
+
+exports.get_history_record = function(req, res, next){
+	var student_id = req.body.student_id;
+	var item = req.body.item;
+	var page = req.body.page;
+	if (student_id == undefined || item == undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var start = page * 20 - 20;
+	var end = start + 20; 
+	var values = [student_id, item];
+	var records = [];
+	var history_list = [];
+	var ds = '';
+	sql.query(req, res, sql_mapping.get_history_record, values, next, function(err, ret){
+		for (var i=0;i<ret.length;i++){
+			try{
+				records = ret[i].score_list.split(',');
+				ds = ret[i].ds;
+			} catch(err) {
+				continue;
+			}
+			for (var j=records.length-1;j>=0;j--){
+				try {
+					var time = records[j].split(':')[0];
+					var score = records[j].split(':')[1];
+					history_list.push({time : ds, id : time, score : score, level : '1'});
+				} catch(err) {
+					//
+				}
+			}
+		}
+		var result_list = [];
+		for (var i=start;i<end;i++){
+			if (history_list[i] != undefined)
+				result_list.push(history_list[i]);
+		}
+		var next = 1;
+		if (result_list.length != 20)
+			next = 0;
+		result.header.code = '200';
+		result.header.msg  = '成功';
+		result.data        = {history_list : result_list, next : next},
+		res.json(result);
+	})
+};
+
+exports.del_history_record = function(req, res, next){
+	var id = req.body.id;
+	var score = req.body.score;
+	var student_id = req.body.student_id;
+	var item = req.body.item;
+	var ds = req.body.ds;
+	if (id == undefined || score == undefined || student_id==undefined || item==undefined || ds==undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [item, ds, student_id];
+	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){
+		try{
+			if (ret[0] != undefined){
+				var score_list = ret[0].score_list.split(',');
+				if (score_list.length == 1){
+					values = [student_id, item, ds];
+					sql_content = sql_mapping.del_record;
+				} else {
+					var del_record = id + ':' + score;
+					var new_score_list = '';
+					var new_score = '';
+					for (var i=0;i<score_list.length;i++){
+						if (del_record != score_list[i]){
+							new_score_list = new_score_list + score_list[i] + ',';
+							new_score = score_list[i].split(':')[1];
+						}
+					}
+					new_score_list = new_score_list.substr(0, new_score_list.length-1);
+					values = [new_score, new_score_list, item, student_id, ds];
+					sql_content = sql_mapping.del_history_record;
+				}
+				sql.query(req, res, sql_content, values, next, function(err, ret){
+					if (err){
+						result.header.code = '500';
+						result.header.msg  = '删除失败';
+						result.data         = {};
+						res.json(result);
+						return;
+					}
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data         = {result : '0',
+										   msg    : '删除成功'};
+					res.json(result);
+				});
+			} else {
+				result.header.code = '500';
+				result.header.msg  = '删除失败';
+				result.data         = {};
+				res.json(result);
+				return;
+			}
+		} catch(err){
+			console.log(err);
+		}
+	});
+}
 
 exports.upload_img = function(req, res, next){
 	var uid	            = req.body.uid;
