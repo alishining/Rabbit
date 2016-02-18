@@ -621,7 +621,7 @@ exports.get_oneday_detail = function(req, res, next){
 	}
 };
 
-exports.get_calendar = function(req, res, next){
+exports.get_calendar = function(req, res, _next){
 	var student_id = req.body.student_id;
 	var year = req.body.year;
 	var month = req.body.month;
@@ -681,7 +681,7 @@ exports.get_calendar = function(req, res, next){
 	var date_month = '%'+ year + '-' + month + '%';
 	var values = [student_id, date_month];
 	try {
-		sql.query(req, res, sql_mapping.rate_total, values, next, function(err, ret){
+		sql.query(req, res, sql_mapping.rate_total, values, _next, function(err, ret){
 			for (var i=0;i<ret.length;i++){
 				for (var j=0;j<calendar.length;j++)
 					if (ret[i].ds == calendar[j].day){
@@ -689,7 +689,7 @@ exports.get_calendar = function(req, res, next){
 						break;
 					}
 			}
-			sql.query(req, res, sql_mapping.rate_finish, values, next, function(err, ret){
+			sql.query(req, res, sql_mapping.rate_finish, values, _next, function(err, ret){
 				for (var i=0;i<ret.length;i++){
 					for (var j=0;j<calendar.length;j++)
 						if (ret[i].ds == calendar[j].day){
@@ -730,21 +730,25 @@ exports.training = function(req, res, next){
 	
 	var ds = date.getFullYear() + '-' + month  + '-' + day;
 	var values = [ds, student_id];
-	var item_list = [];
+	var used_list = [];
+	var unused_list = [];
+	var sign = 0;
 	sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
-		var finish = ret.length;
-		for (var i=0;i<ret.length;i++){
-			if (ret[i].score == ''){
-				finish = finish - 1;
-				item_list.push({item_id : ret[i].item, sign : '-1'});	
-			} else {
-				item_list.push({item_id : ret[i].item, sign : '0'});
+		for (var i=0;i<9;i++){
+			sign = 0;	
+			for (var j=0;j<ret.length;j++){
+				if (parseInt(ret[j].item) == i){
+					var count = ret[j].score_list.split(',').length;
+					used_list.push({item_id : i, hint : ret[j].hint, count : count});	
+					sign = 1;
+				}
 			}
+			if (sign == 0)
+				unused_list.push({item_id : i, hint : '', count : 0});
 		}
 		result.header.code = "200";
 		result.header.msg  = "成功";
-		result.data        = {rate : finish+'/'+ret.length,
-							  item_list : item_list};
+		result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
 		res.json(result);
 	});
 };
@@ -767,7 +771,7 @@ exports.record_training_item = function(req, res, next){
 	var values = [item, ds, student_id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
 		if (ret[0] == undefined) {
-			values      = [id, student_id, item, score, date.getTime() + ':' + score ,ds];
+			values      = [id, student_id, item, score, date.getTime() + ':' + score, '', ds];
 			sql_content = sql_mapping.record_training_item;
 		} else {
 			values      = [score, ',' + date.getTime() + ':' + score, item, student_id, ds];
@@ -1107,3 +1111,62 @@ exports.get_oil_table = function(req, res, next){
 		}
 	}
 };
+
+exports.get_report = function(req, res, _next){
+	var student_id = req.body.student_id;
+	var page = req.body.page;
+	if (student_id == undefined || page == undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data         = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id];
+	var report_list = [];
+	var report = [];
+	var year = '';
+	var term = '';
+	var next = 1;
+	sql.query(req, res, sql_mapping.get_report, values, _next, function(err, ret){
+		try{
+			for (var i=0;i<ret.length;i++){
+				if (ret[i].year != year || ret[i].term != term){
+					if (report.length!=0){
+						report_list.push({title : year+'年第'+term+'学期', report : report});
+					}
+					report = [];	
+					year = ret[i].year;
+					term = ret[i].term;
+					report.push({item_id : ret[i].item_id, record : ret[i].record, level : ret[i].level});
+				} else {
+					report.push({item_id : ret[i].item_id, record : ret[i].record, level : ret[i].level});
+				}
+			}
+			if (report.length!=0){
+				report_list.push({title : year+'年第'+term+'学期', report : report});
+			}
+			if (page <= report_list.length){	
+				if (parseInt(page) == report_list.length)
+					next = 0;
+				else
+					next = 1;
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data         = {report : report_list[page - 1], next : next};
+				res.json(result);
+			} else {
+				result.header.code = '500';
+				result.header.msg  = '页数越界';
+				result.data         = {};
+				res.json(result);
+			}
+		} catch(err){
+			result.header.code = '500';
+			result.header.msg  = '获取失败';
+			result.data         = {};
+			res.json(result);
+			console.log(err);
+		}
+	});
+}

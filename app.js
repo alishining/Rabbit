@@ -58,6 +58,7 @@ app.post('/get_sport_item_resource', user_route.get_sport_item_resource);  //获
 app.post('/get_oil_table', user_route.get_oil_table);					   //返回油表数据
 app.post('/get_history_record', user_route.get_history_record);
 app.post('/del_history_record', user_route.del_history_record);
+app.post('/get_report', user_route.get_report);
 //------------------------------------------------------------------
 app.post('/reset_default_password', web_route.reset_default_password);
 app.post('/get_province', web_route.get_province);
