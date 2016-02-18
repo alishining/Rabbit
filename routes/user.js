@@ -99,10 +99,10 @@ exports.index = function(req, res, next){
 						}
 						sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
 							if (ret) {
-								var student_info = ret[0];
-								result.header.code = "200";
-								result.header.msg  = "成功";
 								try{
+									var student_info = ret[0];
+									result.header.code = "200";
+									result.header.msg  = "成功";
 									if (weight != '' && height!=''){
 										bmi = Math.round(weight/((height/100)*(height/100)));
 										if (bmi > 19){
@@ -126,14 +126,14 @@ exports.index = function(req, res, next){
 												   score		: student_info.score,
 												   bmi			: bmi,
 												   bmi_type		: bmi_type}};
+									res.json(result);
 								} catch(err){
 									console.log(err);
 									result.header.code = "500";
-									result.header.msg  = "获取失败";
+									result.header.msg  = "默认孩子不存在";
 									result.data        = {};
 									res.json(result);
 								}
-								res.json(result);
 							} else {
 								result.header.code = "500";
 								result.header.msg  = "请求失败";
