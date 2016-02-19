@@ -571,15 +571,27 @@ exports.get_child_xeight = function(req, res, next){
 				if (delta == 0)
 					y = [min];
 			}
-			var ret_length = ret.length;
-			if (ret_length < 9) {
-				for (var i=0;i<9-ret_length;i++)
-					ret.push({ds : '', score : -1});
-			}
-			result.header.code = '200';
-			result.header.msg  = '成功';
-			result.data = {x : ret, y : y};
-			res.json(result);
+			values = [item];
+			var x = [];
+			sql.query(req, res, sql_mapping.get_avg_xeight, values, next, function(err, ret_avg){
+				for (var i=0;i<ret_avg.length;i++){
+					for (var j=0;j<ret.length;j++){
+						if (ret_avg[i].ds == ret[j].ds){
+							x.push({ds : ret[j].ds, avg : ret_avg[i].score, score : ret[j].score});
+						}
+					}
+				}
+				var x_length = x.length;
+				if (x_length < 9){
+					for (var i=0;i<9-x_length;i++){
+						x.push({ds : '', avg : -1, score : -1});
+					}
+				}
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data = {x : x, y : y};
+				res.json(result);
+			});
 		} catch(err) {
 			result.header.code = '500';
 			result.header.msg  = '获取孩子身高/体重失败';
@@ -1065,8 +1077,6 @@ exports.get_oil_table = function(req, res, next){
 					return;
 				}
 				var total = ret[4].record - ret[0].record;
-				console.log(total);
-				console.log(ret);
 				for(var i=0;i<ret.length;i++){
 					switch(ret[i].level){
 						case '0' : 

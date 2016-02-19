@@ -22,6 +22,7 @@ var sql = {
 	mod_genearch_info : 'update genearch_info set role=? where phone=?',
 	mod_genearch_name : 'update genearch_info set name=? where phone=?',
 	get_child_xeight : 'select left(ds,7) as ds, sum(score)/count(*) as score from training_record where student_id=? and item=? and score!=\'\' GROUP BY left(ds,7)',
+	get_avg_xeight : 'select left(ds,7) as ds, sum(score)/count(*) as score from training_record where item=? and score!=\'\' GROUP BY left(ds,7)',
 	record_training_item : 'insert into training_record(id, student_id, item, score, score_list, hint, ds) values(?,?,?,?,?,?,?)',
 	update_training_item : 'update training_record set score=?, score_list=concat(score_list, ?) where item=? and student_id=? and ds=?',
 	get_history_record : 'select ds, score_list from training_record where student_id=? and item=? order by ds desc',
