@@ -506,14 +506,12 @@ exports.add_sport_item = function(req, res, next){
 	var icon = req.body.icon;
 	var nb_icon = req.body.nb_icon;
 	var unit = req.body.unit;
-	var suitable_grade = req.body.suitable_grade;
 	var type = req.body.type;
 	var health_item = req.body.health_item;
 	var training_direction = req.body.training_direction;
 	var training_guide = req.body.training_guide;
-	var is_dev = req.body.is_dev;
 	console.log(req.body);
-	if (item_id == undefined || name == undefined || icon == undefined || nb_icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined){
+	if (item_id == undefined || name == undefined || icon == undefined || nb_icon == undefined || unit == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -521,7 +519,7 @@ exports.add_sport_item = function(req, res, next){
 		return;
 	}
 	console.log(values);
-	var values = [item_id,name,icon,nb_icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev];
+	var values = [item_id,name,icon,nb_icon,unit,type,health_item,training_direction,training_guide];
 	sql.query(req, res, sql_mapping.add_sport_item, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -568,21 +566,19 @@ exports.mod_sport_item = function(req, res, next){
 	var icon = req.body.icon;
 	var nb_icon = req.body.nb_icon;
 	var unit = req.body.unit;
-	var suitable_grade = req.body.suitable_grade;
 	var type = req.body.type;
 	var health_item = req.body.health_item;
 	var training_direction = req.body.training_direction;
 	var training_guide = req.body.training_guide;
-	var is_dev = req.body.is_dev;
 	var id = req.body.id;
-	if (item_id == undefined || name == undefined || icon == undefined || nb_icon == undefined || unit == undefined || suitable_grade == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || is_dev == undefined || id == undefined){
+	if (item_id == undefined || name == undefined || icon == undefined || nb_icon == undefined || unit == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined || id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [item_id,name,icon,nb_icon,unit,suitable_grade,type,health_item,training_direction,training_guide,is_dev, id];
+	var values = [item_id,name,icon,nb_icon,unit,type,health_item,training_direction,training_guide, id];
 	sql.query(req, res, sql_mapping.mod_sport_item, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -630,14 +626,15 @@ exports.add_score_level = function(req, res, next){
 	var record  = req.body.record;
 	var score   = req.body.score;
 	var level   = req.body.level;
-	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined){
+	var is_dev  = req.body.is_dev;
+	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined || is_dev == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [item_id, grade, sex, record, score, level];
+	var values = [item_id, grade, sex, record, score, level, is_dev];
 	sql.query(req, res, sql_mapping.add_score_level, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -685,15 +682,16 @@ exports.mod_score_level = function(req, res, next){
 	var record  = req.body.record;
 	var score   = req.body.score;
 	var level   = req.body.level;
+	var is_dev  = req.body.is_dev;
 	var id		= req.body.id; 
-	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined || id == undefined){
+	if (item_id == undefined || grade == undefined || sex == undefined || record == undefined || score == undefined || level == undefined || id == undefined || is_dev == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [item_id, grade, sex, record, score, level, id];
+	var values = [item_id, grade, sex, record, score, level, is_dev, id];
 	sql.query(req, res, sql_mapping.mod_score_level, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -711,15 +709,14 @@ exports.mod_score_level = function(req, res, next){
 
 exports.get_score_level = function(req, res, next){
 	var item_id = req.body.item_id;
-	var grade = req.body.grade;
-	if (item_id == undefined || grade == undefined){
+	if (item_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [item_id, grade];
+	var values = [item_id];
 	sql.query(req, res, sql_mapping.get_score_level, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
