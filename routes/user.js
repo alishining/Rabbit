@@ -577,7 +577,12 @@ exports.get_child_xeight = function(req, res, next){
 				for (var i=0;i<ret_avg.length;i++){
 					for (var j=0;j<ret.length;j++){
 						if (ret_avg[i].ds == ret[j].ds){
-							x.push({ds : ret[j].ds, avg : Math.round(ret_avg[i].score), score : ret[j].score});
+							var avg = Math.round(ret_avg[i].score);
+							if (avg < min)
+								avg = min;	
+							if (avg > max)
+								avg = max;
+							x.push({ds : ret[j].ds, avg : avg, score : ret[j].score});
 						}
 					}
 				}
