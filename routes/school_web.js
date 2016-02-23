@@ -428,7 +428,6 @@ exports.add_student = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	console.log(req.body);
 	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', student_id, '0'];
 	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 		if (err){
@@ -477,7 +476,6 @@ exports.mod_student = function(req, res, next){
 	var student_id = req.body.student_id;
 	var birth = req.body.birth;
 	var address = req.body.address;
-	console.log(req.body);
 	if (student_name == undefined || sex == undefined || nationality == undefined || student_id == undefined || birth == undefined || address == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -527,6 +525,31 @@ exports.get_student = function(req, res, next){
 		res.json(result);
 	});
 };
+
+exports.search_student = function(req, res, next){
+	var input = '%' + req.body.input + '%';
+	if (input == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [input, input];
+	sql.query(req, res, sql_mapping.search_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {student_list : ret};
+		res.json(result);
+	});
+}
 
 exports.get_daily_training_rate = function(req, res, next){
 	var days	 = req.body.days;
@@ -585,7 +608,7 @@ exports.score_input = function(req, res, next){
 				nationality = record_list[4];
 				name = record_list[5];
 				sex = record_list[6];
-				birth = record_list[7];
+				birth = new Date(1000*(parseInt(record_list[7])*86400 - 2209161600)).toLocaleDateString();
 				address = record_list[8];
 				height = record_list[9];
 				weight = record_list[10];
@@ -703,8 +726,6 @@ exports.score_input = function(req, res, next){
 				item_list.push(year);
 				item_list.push(term);
 				score_list.push((item_list));
-
-
 			}
 		}
 	}
@@ -738,4 +759,84 @@ exports.score_input = function(req, res, next){
 	res.json(result);
 };
 
-
+exports.score_output = function(req, res, next){
+	var school_id = req.body.school_id;
+	var year = req.body.year;
+	var term = req.body.term;
+	var class_id = req.body.class_id;
+	if (year == undefined || term == undefined || class_id == undefined || school_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var student_id ='';
+	var report_list = [];
+	var student_info = [];
+	student_info.push('年级编号');
+	student_info.push('班级编号');
+	student_info.push('班级名称');
+	student_info.push('学籍号');
+	student_info.push('民族代码');
+	student_info.push('姓名');
+	student_info.push('性别');
+	student_info.push('出生日期');
+	student_info.push('家庭住址');
+	var values = [school_id, class_id, year, term];
+	sql.query(req, res, sql_mapping.score_output, values, next, function(err, ret){
+		var sign = ret[0].student_id;
+		for (var i=0;i<ret.length;i++){
+			if (sign != ret[i].student_id)
+				break;
+			switch(ret[i].item_id){
+				case '0' :	student_info.push('50米往返跑');
+							break;
+				case '1' :	student_info.push('平衡');
+							break;
+				case '2' :	student_info.push('身高');
+							break;
+				case '3' :	student_info.push('俯卧撑');
+							break;
+				case '4' :	student_info.push('坐位体前屈');
+							break;
+				case '5' :	student_info.push('1分钟仰卧起坐');
+							break;
+				case '6' :	student_info.push('肺活量');
+							break;
+				case '7' :	student_info.push('体重');
+							break;
+				case '8' :	student_info.push('1分钟跳绳');
+							break;
+			}
+		}
+		report_list.push(student_info);
+		student_info = [];
+		for (var i=0;i<ret.length;i++){
+			if (ret[i].student_id != student_id){
+				student_id = ret[i].student_id;
+				if (student_info.length !=0)
+					report_list.push(student_info);
+				student_info = [];
+				student_info.push(ret[i].grade);
+				student_info.push(ret[i].class_id);
+				student_info.push(ret[i].class);
+				student_info.push(ret[i].student_id);
+				student_info.push(ret[i].nationality);
+				student_info.push(ret[i].student_name);
+				student_info.push(ret[i].sex);
+				student_info.push(ret[i].birth);
+				student_info.push(ret[i].address);
+				student_info.push(ret[i].record);
+			} else {
+				student_info.push(ret[i].record);
+			}		
+		}		
+		if (student_info.length !=0)
+			report_list.push(student_info);
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {report_list : report_list};
+		res.json(result);
+	});
+}
