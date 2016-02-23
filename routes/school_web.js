@@ -785,58 +785,65 @@ exports.score_output = function(req, res, next){
 	student_info.push('家庭住址');
 	var values = [school_id, class_id, year, term];
 	sql.query(req, res, sql_mapping.score_output, values, next, function(err, ret){
-		var sign = ret[0].student_id;
-		for (var i=0;i<ret.length;i++){
-			if (sign != ret[i].student_id)
-				break;
-			switch(ret[i].item_id){
-				case '0' :	student_info.push('50米往返跑');
-							break;
-				case '1' :	student_info.push('平衡');
-							break;
-				case '2' :	student_info.push('身高');
-							break;
-				case '3' :	student_info.push('俯卧撑');
-							break;
-				case '4' :	student_info.push('坐位体前屈');
-							break;
-				case '5' :	student_info.push('1分钟仰卧起坐');
-							break;
-				case '6' :	student_info.push('肺活量');
-							break;
-				case '7' :	student_info.push('体重');
-							break;
-				case '8' :	student_info.push('1分钟跳绳');
-							break;
+		try{
+			var sign = ret[0].student_id;
+			for (var i=0;i<ret.length;i++){
+				if (sign != ret[i].student_id)
+					break;
+				switch(ret[i].item_id){
+					case '0' :	student_info.push('50米往返跑');
+								break;
+					case '1' :	student_info.push('平衡');
+								break;
+					case '2' :	student_info.push('身高');
+								break;
+					case '3' :	student_info.push('俯卧撑');
+								break;
+					case '4' :	student_info.push('坐位体前屈');
+								break;
+					case '5' :	student_info.push('1分钟仰卧起坐');
+								break;
+					case '6' :	student_info.push('肺活量');
+								break;
+					case '7' :	student_info.push('体重');
+								break;
+					case '8' :	student_info.push('1分钟跳绳');
+								break;
+				}
 			}
-		}
-		report_list.push(student_info);
-		student_info = [];
-		for (var i=0;i<ret.length;i++){
-			if (ret[i].student_id != student_id){
-				student_id = ret[i].student_id;
-				if (student_info.length !=0)
-					report_list.push(student_info);
-				student_info = [];
-				student_info.push(ret[i].grade);
-				student_info.push(ret[i].class_id);
-				student_info.push(ret[i].class);
-				student_info.push(ret[i].student_id);
-				student_info.push(ret[i].nationality);
-				student_info.push(ret[i].student_name);
-				student_info.push(ret[i].sex);
-				student_info.push(ret[i].birth);
-				student_info.push(ret[i].address);
-				student_info.push(ret[i].record);
-			} else {
-				student_info.push(ret[i].record);
-			}		
-		}		
-		if (student_info.length !=0)
 			report_list.push(student_info);
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {report_list : report_list};
-		res.json(result);
+			student_info = [];
+			for (var i=0;i<ret.length;i++){
+				if (ret[i].student_id != student_id){
+					student_id = ret[i].student_id;
+					if (student_info.length !=0)
+						report_list.push(student_info);
+					student_info = [];
+					student_info.push(ret[i].grade);
+					student_info.push(ret[i].class_id);
+					student_info.push(ret[i].class);
+					student_info.push(ret[i].student_id);
+					student_info.push(ret[i].nationality);
+					student_info.push(ret[i].student_name);
+					student_info.push(ret[i].sex);
+					student_info.push(ret[i].birth);
+					student_info.push(ret[i].address);
+					student_info.push(ret[i].record);
+				} else {
+					student_info.push(ret[i].record);
+				}		
+			}		
+			if (student_info.length !=0)
+				report_list.push(student_info);
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {report_list : report_list};
+			res.json(result);
+		} catch(err){
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {report_list : report_list};
+			res.json(result);
+		}
 	});
 }
