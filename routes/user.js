@@ -313,8 +313,8 @@ exports.me = function(req, res, next){
 							student_id		:	ret[i].student_id, 
 							student_img		:   ret[i].img,
 							student_name	:	ret[i].student_name,
+							student_num     :   ret[i].student_number,
 							student_school	:	ret[i].school,
-							student_num		:	ret[i].number,
 							student_sex		:	ret[i].sex,
 							student_select  :   '1'});
 					} else {
@@ -322,7 +322,7 @@ exports.me = function(req, res, next){
 						    student_id		:	ret[i].student_id, 
 							student_img		:	ret[i].img,
 							student_name	:	ret[i].student_name,
-							student_num     :   ret[i].number,
+							student_num     :   ret[i].student_number,
 							student_school  :	ret[i].school,
 							student_sex		:	ret[i].sex,
 							student_select	:   '0'});
