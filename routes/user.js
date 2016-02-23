@@ -314,6 +314,7 @@ exports.me = function(req, res, next){
 							student_img		:   ret[i].img,
 							student_name	:	ret[i].student_name,
 							student_school	:	ret[i].school,
+							student_num		:	ret[i].number,
 							student_sex		:	ret[i].sex,
 							student_select  :   '1'});
 					} else {
@@ -321,6 +322,7 @@ exports.me = function(req, res, next){
 						    student_id		:	ret[i].student_id, 
 							student_img		:	ret[i].img,
 							student_name	:	ret[i].student_name,
+							student_num     :   ret[i].number,
 							student_school  :	ret[i].school,
 							student_sex		:	ret[i].sex,
 							student_select	:   '0'});
@@ -338,6 +340,33 @@ exports.me = function(req, res, next){
 			res.json(result);
 		}
 	})
+};
+
+exports.mod_student_number = function(req, res, next){
+	var student_id = req.body.student_id;
+	var student_number = req.body.student_number;
+	if (student_id == undefined || student_number == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_number, student_id];
+	sql.query(req, res, sql_mapping.mod_student_number, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "修改失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {msg : '修改成功', result : '0'};
+		res.json(result);
+		return;
+	});
 };
 
 exports.mod_genearch_info = function(req, res, next){
