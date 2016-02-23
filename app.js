@@ -59,6 +59,7 @@ app.post('/get_oil_table', user_route.get_oil_table);					   //返回油表数�
 app.post('/get_history_record', user_route.get_history_record);
 app.post('/del_history_record', user_route.del_history_record);
 app.post('/get_report', user_route.get_report);
+app.post('/mod_student_number', user_route.mod_student_number);
 //------------------------------------------------------------------
 app.post('/reset_default_password', web_route.reset_default_password);
 app.post('/get_province', web_route.get_province);
