@@ -343,7 +343,7 @@ exports.me = function(req, res, next){
 };
 
 exports.mod_student_number = function(req, res, next){
-	var student_id = req.body.student_id;
+	var student_id = req.body.change_student_id;
 	var student_number = req.body.student_number;
 	if (student_id == undefined || student_number == undefined){
 		result.header.code = "400";
