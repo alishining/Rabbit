@@ -590,7 +590,7 @@ exports.get_child_xeight = function(req, res, next){
 				if (max < ret[i].score)
 					max = Math.round(ret[i].score);
 				if (min > ret[i].score)
-					min = Math.round(ret[i].score);
+					min = Math.floor(ret[i].score);
 			}
 			var delta = Math.round((max - min) / 4 * 10) / 10.0;
 			var y = [0];
