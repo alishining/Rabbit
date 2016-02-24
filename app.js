@@ -117,6 +117,7 @@ app.post('/get_student', school_web_route.get_student);
 app.post('/search_student', school_web_route.search_student);
 app.post('/get_daily_training_rate', school_web_route.get_daily_training_rate);
 app.post('/score_output', school_web_route.score_output);
+app.post('/mod_password', school_web_route.mod_password);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

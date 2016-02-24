@@ -69,6 +69,7 @@ var sql = {
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
 	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete) values(?,?,?,?,?,?,?,?,?)',
 	reset_default_password   : 'update school_user set password=123456 where school_id=?',
+	mod_password : 'update school_user set password=? where account=?',
 	get_user_class : 'select class_list from school_user where account=?',
 	student_sport_report : 'select a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.year=? and b.term=? and b.student_id is not null',
 	sport_item_report_rate : 'select  item_id, item, sum(level=\'3\') as three, sum(level=\'3\')/count(*)*100 as three_rate,  sum(level=\'2\') as two, sum(level=\'2\')/count(*)*100 as two_rate,  sum(level=\'1\') as one, sum(level=\'1\')/count(*)*100 as one_rate, sum(level=\'0\') as zero,sum(level=\'0\')/count(*)*100 as zero_rate, count(*) as total from report where year=? and class_id=? group by item',

@@ -52,6 +52,51 @@ exports.school_login = function(req, res, next){
 	})
 };
 
+exports.mod_password = function(req, res, next){
+	var account = req.body.account;
+	var password = req.body.password;
+	var old_password = req.body.old_password;
+	if (account == undefined || password == undefined || old_password == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [account];
+	sql.query(req, res, sql_mapping.school_login, values, next, function(err, ret){
+		try{
+			if (old_password != ret[0].password){
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {msg : '原始密码不正确', code : '-1'};
+				res.json(result);
+				return;
+			}
+		} catch(err){
+			result.header.code = "500";
+			result.header.msg  = "帐号不存在";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		values = [password, account];
+		sql.query(req, res, sql_mapping.mod_password, values, next, function(err, ret){
+			if (err){
+				result.header.code = "500";
+				result.header.msg  = "修改失败";
+				result.data        = {};
+				res.json(result);
+				return;
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {msg : '修改成功', code : '0'};
+			res.json(result);
+		});
+	});
+}
+
 exports.get_user_class = function(req, res, next){
 	var account = req.body.account;
 	if (account == undefined){
