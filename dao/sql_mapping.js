@@ -89,7 +89,7 @@ var sql = {
 	get_daily_training_rate : 'select a.ds, sum(a.sign=\'ok\')/count(*) as rate from (select ds, student_id, case when sum(score=\'\')=0 then \'ok\' else \'no\' end as sign from training_record WHERE student_id in (select student_id from student_info where class_id=?) group by ds, student_id) a group by a.ds order by ds desc limit ?',
 	add_report : 'insert into report(student_id,class_id,item_id,item,health_item,record,unit,score,level,year,term) values ?',
 	del_report : 'delete from report where student_id in (?) and year=? and term=?',
-	score_output : 'select grade, class_id, class, a.student_id, nationality, student_name, sex, birth, address, item_id, record from (select grade, class_id, class, student_id, nationality, student_name, sex, birth, address from student_info where school_id=? and class_id=? and is_delete=\'0\') a left outer join (select student_id, item_id, record from report where year=? and term=?) b on a.student_id = b.student_id where b.student_id is not null order by student_id, item_id'
+	score_output : 'select grade, class_id, class, a.student_id, nationality, student_name, sex, birth, address, item_id, record from (select grade, class_id, class, student_id, nationality, student_name, sex, birth, address from student_info where school_id=? and class_id like ? and is_delete=\'0\') a left outer join (select student_id, item_id, record from report where year=? and term=?) b on a.student_id = b.student_id where b.student_id is not null order by student_id, item_id'
 };
 
 module.exports = sql;

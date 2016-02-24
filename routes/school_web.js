@@ -814,7 +814,7 @@ exports.score_output = function(req, res, next){
 	var school_id = req.body.school_id;
 	var year = req.body.year;
 	var term = req.body.term;
-	var class_id = req.body.class_id;
+	var class_id = '%' + req.body.class_id + '%';
 	if (year == undefined || term == undefined || class_id == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
