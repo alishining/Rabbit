@@ -1,4 +1,7 @@
 var express = require('express');
+var path = require('path');
+var qiniu   = require('qiniu');
+var fs = require('fs');
 var xlsx = require("node-xlsx");
 var multipart = require('connect-multiparty');
 var qiniu   = require('qiniu');
@@ -571,16 +574,54 @@ exports.get_student = function(req, res, next){
 	});
 };
 
-exports.search_student = function(req, res, next){
-	var input = '%' + req.body.input + '%';
-	if (input == undefined){
+exports.get_all_student = function(req, res, next){
+	var school_id = req.body.school_id;
+	var page = req.body.page;
+	if (school_id == undefined || page == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [input, input];
+	var start = page * 20 - 20;
+	var end = start + 20;
+	var values = [school_id];
+	var student_list = [];
+	sql.query(req, res, sql_mapping.get_all_student, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "获取失败";
+			result.data        = {};
+			res.json(result);
+			return;	
+		}
+		for (var i=start;i<end;i++){
+			if (ret[i] != undefined){
+				student_list.push(ret[i]);
+			}	
+		}
+		var total = ret.length;
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {total : ret.length, student_list : student_list};
+		res.json(result);
+	});
+}
+
+exports.search_student = function(req, res, next){
+	var school_id = req.body.school_id;
+	var input = '%' + req.body.input + '%';
+	var cls = '%' + req.body.cls + '%';
+	var grade = '%' + req.body.grade + '%';
+	if (input == undefined || school_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, input, input, grade, cls];
 	sql.query(req, res, sql_mapping.search_student, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
@@ -886,14 +927,34 @@ exports.score_output = function(req, res, next){
 			}		
 			if (student_info.length !=0)
 				report_list.push(student_info);
-			result.header.code = "200";
-			result.header.msg  = "成功";
-			result.data = {report_list : report_list};
-			res.json(result);
+			
+			var file = xlsx.build([{name : "worksheets", "data" : report_list}]);
+			fs.writeFileSync('student.xlsx', file, 'binary');
+
+			var date  = new Date();
+			var key = 'student'+ school_id + '-' + date.getTime() + '.xlsx';
+			var extra = new qiniu.io.PutExtra();
+			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
+			var uptoken = putPolicy.token();
+			qiniu.io.putFile(uptoken, key, path.resolve()+'/student.xlsx', extra, function(err, ret) {
+				if (!err) {
+					var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data        = {url : file_name};
+					res.json(result);
+				} else {
+					result.header.code = '500';
+					result.header.msg  = '下载失败';
+					result.data		   = {};
+					res.json(result);
+				}
+			});
 		} catch(err){
+			console.log(err);
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {report_list : report_list};
+			result.data = {result : '-1', msg : '没有数据'};
 			res.json(result);
 		}
 	});
