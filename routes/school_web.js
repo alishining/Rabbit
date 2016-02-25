@@ -614,6 +614,7 @@ exports.search_student = function(req, res, next){
 	var input = '%' + req.body.input + '%';
 	var cls = '%' + req.body.cls + '%';
 	var grade = '%' + req.body.grade + '%';
+	var page = req.body.page;
 	if (input == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -629,11 +630,20 @@ exports.search_student = function(req, res, next){
 			result.data        = {};
 			res.json(result);
 			return;
+		} else {
+			var start = page * 20 - 20;
+			var end = start + 20;	
+			var student_list = [];
+			for (var i=start;i<end;i++){
+				if (ret[i] != undefined){
+					student_list.push(ret[i]);
+				}
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {total : ret.length, student_list : student_list};
+			res.json(result);
 		}
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {student_list : ret};
-		res.json(result);
 	});
 }
 
