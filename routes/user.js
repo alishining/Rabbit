@@ -185,7 +185,7 @@ exports.bind_student = function(req, res, next){
 						return;
 					}
 					if (type == -1){
-						values = [phone, student_name+'的家长', '家长', student_id, '0', ''];
+						values = [phone, student_name+'家长', '家长', student_id, '0', ''];
 						sql.query(req,res,sql_mapping.add_genearch_account,values,next, function(err, ret){
 							values = [student_id, phone];
 							sql.query(req, res, sql_mapping.update_child, values, next, function(err, ret){
@@ -397,7 +397,7 @@ exports.mod_genearch_info = function(req, res, next){
 			values = [child];
 			sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
 				try{
-					values = [ret[0].student_name + '的' + role,phone];
+					values = [ret[0].student_name + role,phone];
 				} catch(err){
 					console.log(err);
 					values = ['Null', phone];
@@ -437,7 +437,7 @@ exports.select_student = function(req, res, next){
 		values = [phone];
 		sql.query(req, res, sql_mapping.get_genearch_role, values, next, function(err, ret){
 			var role = ret[0].role;	
-			values = [name+'的'+role, phone];
+			values = [name+role, phone];
 			sql.query(req, res, sql_mapping.mod_genearch_name, values, next, function(err, ret){
 				try{
 					result.header.code = "200";
@@ -502,7 +502,7 @@ exports.add_assist_account = function(req, res, next){
 			sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
 				var title = role;
 				try{
-					title = ret[0].studnet_name + '的' +role; 
+					title = ret[0].student_name +role; 
 				} catch(err){
 					//
 				}
