@@ -598,7 +598,7 @@ exports.get_child_xeight = function(req, res, next){
 				y = [min-delta, min, min+delta, min+2*delta, min+3*delta, min+4*delta];
 			} else {
 				if (delta == 0)
-					y = [-min, 0, min, min*2, min*3, min*4];
+					y = [min-10, min, min+10, min+20, min+30, min+40];
 			}
 			values = [item];
 			var x = [];
