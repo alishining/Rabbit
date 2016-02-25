@@ -720,10 +720,10 @@ exports.score_input = function(req, res, next){
 				add_values.push(school_id);
 				add_values.push(school);
 				add_values.push(class_id);
-				add_values.push(grade%10);
-				add_values.push(cls);
+				add_values.push(parseInt(class_id)%1000 / 100);
+				add_values.push(parseInt(class_id)%100);
 				add_values.push(0);
-				add_values.push('no_pic');
+				add_values.push('');
 				add_values.push(student_id);
 				add_values.push('0');
 				add_str.push((add_values));
