@@ -666,10 +666,11 @@ exports.get_daily_training_rate = function(req, res, next){
 exports.score_input = function(req, res, next){
 	var year = req.body.year;
 	var term = req.body.term;
+	var account = req.body.account;
 	var school = req.body.school;
 	var school_id = req.body.school_id;
 	var tmp_filename = req.files.file_upload.path;
-	if (year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
+	if (account == undefined || year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -828,9 +829,21 @@ exports.score_input = function(req, res, next){
 		}
 		values = [add_str];
 		sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
-			if(err){
-				console.log(err);
-			}
+			values = [school_id];
+			sql.query(req, res, sql_mapping.get_class_list, values, next, function(err, ret){
+				try{
+					var class_id = ret[0].class_id;
+					for (var i=1;i<ret.length;i++){
+						class_id = class_id + ',' + ret[i].class_id;
+					}
+					values = [class_id, account];
+					sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
+						//
+					});
+				} catch(err) {
+					//
+				}
+			});
 		});
 	});
 	values = [del_values, year,term];
