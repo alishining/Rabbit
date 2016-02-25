@@ -92,8 +92,7 @@ var sql = {
 	score_output : 'select grade, class_id, class, a.student_id, nationality, student_name, sex, birth, address, item_id, record from (select grade, class_id, class, student_id, nationality, student_name, sex, birth, address from student_info where school_id=? and class_id like ? and is_delete=\'0\') a left outer join (select student_id, item_id, record from report where year=? and term=?) b on a.student_id = b.student_id where b.student_id is not null order by student_id, item_id',
 	get_all_student : 'select * from student_info where school_id=? and is_delete = \'0\' order by student_id',
 	get_class_list : 'select class_id from student_info where school_id=? and is_delete = \'0\' group by class_id',
-	update_class_list : 'update school_user set class_id=? where account=?'
-
+	update_class_list : 'update school_user set class_list=? where account=?'
 };
 
 module.exports = sql;
