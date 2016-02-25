@@ -1118,7 +1118,7 @@ exports.get_oil_table = function(req, res, next){
 				for(var i=0;i<ret.length;i++){
 					switch(ret[i].level){
 						case '0' : 
-							oil_list.push({level:'', record:ret[i].record, color:'', angle: 0, delta:delta});
+							oil_list.push({level:'', record:ret[i].record, color:'', angle: 0});
 							break;
 						case '1' :
 							oil_list.push({level  : '不及格', 
