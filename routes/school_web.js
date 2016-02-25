@@ -838,10 +838,12 @@ exports.score_input = function(req, res, next){
 					}
 					values = [class_id, account];
 					sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
-						//
+						if (err){
+							console.log(err);
+						}
 					});
 				} catch(err) {
-					//
+					console.log(err);
 				}
 			});
 		});
