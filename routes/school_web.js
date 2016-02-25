@@ -781,7 +781,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id);
 				item_list.push(class_id);
 				item_list.push('0');
-				item_list.push('50米往返跑');
+				item_list.push('50米跑');
 				item_list.push('');
 				item_list.push(run50);
 				item_list.push('s');
@@ -910,7 +910,7 @@ exports.score_output = function(req, res, next){
 				if (sign != ret[i].student_id)
 					break;
 				switch(ret[i].item_id){
-					case '0' :	student_info.push('50米往返跑');
+					case '0' :	student_info.push('50米跑');
 								break;
 					case '1' :	student_info.push('平衡');
 								break;

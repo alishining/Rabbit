@@ -328,9 +328,10 @@ exports.me = function(req, res, next){
 							student_select	:   '0'});
 					}
 				}
+				var url = '';
 				result.header.code = '200';
 				result.header.msg  = '成功';
-				result.data = {img, name, role, phone, major, clist};
+				result.data = {img, name, role, phone, major, url, clist};
 				res.json(result);
 			})
 		} else {
@@ -1036,20 +1037,20 @@ exports.get_oil_table = function(req, res, next){
 		if (item_id == '2')
 			scale = [60,90,120,150,180,210,240];
 		else
-			scale = [0,10,20,30,40,50,60];
+			scale = [0,20,40,60,80,100,120];
 		result.header.code = '200';
 		result.header.msg  = '成功';
-		result.data         = {scale : scale, color:'#33c8cf'};
+		result.data         = {scale : scale, color:'#33c8cf', delta : 0.1};
 		res.json(result);
 	} else {
 		if (item_id == '0'){
 			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
 				if (err || ret.length < 5) {
-					oil_list.push({level:'',		record:0, color:'',		   angle:0});
-					oil_list.push({level:'优秀',	record:0, color:'#55b7f6', angle:20});
-					oil_list.push({level:'良好',	record:0, color:'#6de58e', angle:30});
-					oil_list.push({level:'及格',	record:0, color:'#fccc5e', angle:40});
-					oil_list.push({level:'不及格',	record:0, color:'#ff7e78', angle:10});
+					oil_list.push({level:'',		record:0, color:'',		   angle:0,	 delta : 0.1});
+					oil_list.push({level:'优秀',	record:0, color:'#55b7f6', angle:20, delta : 0.1});
+					oil_list.push({level:'良好',	record:0, color:'#6de58e', angle:30, delta : 0.1});
+					oil_list.push({level:'及格',	record:0, color:'#fccc5e', angle:40, delta : 0.1});
+					oil_list.push({level:'不及格',	record:0, color:'#ff7e78', angle:10, delta : 0.1});
 					result.header.code = '200';
 					result.header.msg  = '成功';
 					result.data        = {oil_list : oil_list};
@@ -1063,31 +1064,36 @@ exports.get_oil_table = function(req, res, next){
 							oil_list.push({level  : '', 
 										   record : ret[4].record, 
 										   color  : '', 
-										   angle  : 0});
+										   angle  : 0,
+										   delta  : 0.1});
 							break;
 						case '1' :
 							oil_list.push({level  : '优秀', 
 										   record : ret[3].record, 
 										   color  : '#55b7f6', 
-										   angle  : (ret[3].record - ret[4].record)*100 / total});
+										   angle  : (ret[3].record - ret[4].record)*100 / total,
+										   delta  : 0.1});
 							break;
 						case '2' :
 							oil_list.push({level  : '良好',	
 										   record : ret[2].record, 
 										   color  : '#6de58e', 
-										   angle  : (ret[2].record - ret[3].record)*100 / total});
+										   angle  : (ret[2].record - ret[3].record)*100 / total,
+										   delta  : 0.1});
 							break;
 						case '3' :
 							oil_list.push({level  : '及格', 
 										   record : ret[1].record, 
 										   color  : '#fccc5e',
-										   angle  : (ret[1].record - ret[2].record)*100 / total});
+										   angle  : (ret[1].record - ret[2].record)*100 / total,
+										   delta  : 0.1});
 							break;
 						case '4' :
 							oil_list.push({level  : '不及格', 
 										   record : ret[0].record, 
 										   color  : '#ff7e78', 
-										   angle  : (ret[0].record - ret[1].record)*100 / total});
+										   angle  : (ret[0].record - ret[1].record)*100 / total,
+										   delta  : 0.1});
 							break;
 					}
 				}
@@ -1098,12 +1104,15 @@ exports.get_oil_table = function(req, res, next){
 			});
 		} else {
 			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
+				var delta = 0.1;
+				if (item_id == '7' || item_id == '6' || item_id == '3' || item_id == '9')
+					delta = 1;
 				if (err || ret.length < 5) {
-					oil_list.push({level:'',		record:0, color:'',		   angle:0});
-					oil_list.push({level:'不及格',	record:0, color:'#ff7e78', angle:10});
-					oil_list.push({level:'及格',	record:0, color:'#fccc5e', angle:40});
-					oil_list.push({level:'良好',	record:0, color:'#6de58e', angle:30});
-					oil_list.push({level:'优秀',	record:0, color:'#55b7f6', angle:20});
+					oil_list.push({level:'',		record:0, color:'',		   angle:0 , delta:delta});
+					oil_list.push({level:'不及格',	record:0, color:'#ff7e78', angle:10, delta:delta});
+					oil_list.push({level:'及格',	record:0, color:'#fccc5e', angle:40, delta:delta});
+					oil_list.push({level:'良好',	record:0, color:'#6de58e', angle:30, delta:delta});
+					oil_list.push({level:'优秀',	record:0, color:'#55b7f6', angle:20, delta:delta});
 					result.header.code = '200';
 					result.header.msg  = '成功';
 					result.data         = {oil_list : oil_list};
@@ -1114,31 +1123,35 @@ exports.get_oil_table = function(req, res, next){
 				for(var i=0;i<ret.length;i++){
 					switch(ret[i].level){
 						case '0' : 
-							oil_list.push({level:'', record:ret[i].record, color:'', angle: 0});
+							oil_list.push({level:'', record:ret[i].record, color:'', angle: 0, delta:delta});
 							break;
 						case '1' :
 							oil_list.push({level  : '不及格', 
 										   record : ret[i].record, 
 										   color  : '#ff7e78', 
-										   angle  : (ret[1].record - ret[0].record)*100 / total});
+										   angle  : (ret[1].record - ret[0].record)*100 / total,
+										   delta  : delta});
 							break;
 						case '2' :
 							oil_list.push({level  : '及格', 
 										   record : ret[i].record, 
 										   color  : '#fccc5e', 
-										   angle  : (ret[2].record - ret[1].record)*100 / total});
+										   angle  : (ret[2].record - ret[1].record)*100 / total,
+										   delta  : delta});
 							break;
 						case '3' :
 							oil_list.push({level  : '良好', 
 										   record : ret[i].record, 
 										   color  : '#6de58e', 
-										   angle  : (ret[3].record - ret[2].record)*100 / total});
+										   angle  : (ret[3].record - ret[2].record)*100 / total,
+										   delta  : delta});
 							break;
 						case '4' :
 							oil_list.push({level  : '优秀', 
 										   record : ret[i].record, 
 										   color  : '#55b7f6', 
-										   angle  : (ret[4].record - ret[3].record)*100 / total});
+										   angle  : (ret[4].record - ret[3].record)*100 / total,
+										   delta  : delta});
 							break;
 					}
 				}
