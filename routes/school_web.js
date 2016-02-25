@@ -832,10 +832,12 @@ exports.score_input = function(req, res, next){
 			values = [school_id];
 			sql.query(req, res, sql_mapping.get_class_list, values, next, function(err, ret){
 				try{
-					var class_list = ret[0].class_id;
-					for (var i=1;i<ret.length;i++){
-						class_list = class_list + ',' + ret[i].class_id;
+					var class_list = '';
+					for (var i=0;i<ret.length;i++){
+						if (ret[i].class_id.length == 4)
+							class_list = class_list + ret[i].class_id + ',';
 					}
+					class_list.substr(0, class_list.length-1);
 					values = [class_list, account];
 					sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
 						if (err){
