@@ -837,7 +837,7 @@ exports.score_input = function(req, res, next){
 						if (ret[i].class_id.length == 4)
 							class_list = class_list + ret[i].class_id + ',';
 					}
-					class_list.substr(0, class_list.length-1);
+					class_list = class_list.substr(0, class_list.length-1);
 					values = [class_list, account];
 					sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
 						if (err){
