@@ -296,12 +296,15 @@ exports.health_record = function(req, res, next){
 	var values = [sex, class_id, term, year];
 	sql.query(req, res, sql_mapping.health_record, values, next, function(err, ret){
 		try {
-			var health_record_list = [];
+			var one_student = [];
+			var all_student = [];
 			var id_set = new Set();
 			for (var i=0;i<ret.length;i++){
 				if (!id_set.has(ret[i].student_id)){
+					if (one_student.length != 0)
+						all_student.push(one_student);
 					id_set.add(ret[i].student_id);
-					health_record_list.push({student_id   : ret[i].student_id,
+					one_student.push({student_id   : ret[i].student_id,
 						   				     student_name : ret[i].student_name,
 											 class_id	  : ret[i].class_id,
 											 birth		  : ret[i].birth,
@@ -309,29 +312,23 @@ exports.health_record = function(req, res, next){
 											 nationality  : ret[i].nationality,
 											 year		  : ret[i].year,
 											 term		  : ret[i].term,
-											 item_list    : [{item			: ret[i].item, 
-															  health_item	: ret[i].health_item, 
-															  record		: ret[i].record,
-															  unit			: ret[i].unit,
-															  score			: ret[i].score, 
-															  level			: ret[i].level}]});
+											 form		  : [],
+											 enginery	  : [],
+											 stamina	  : []});
+				}
+				if (ret[i].item_id == '2' || ret[i].item_id == '7'){
+					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
+				} else if (ret[i].item_id == '6'){
+					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
 				} else {
-					for (var j=0;j<health_record_list.length;j++){
-						if (health_record_list[j].student_id == ret[i].student_id){
-							health_record_list[j].item_list.push({ item			 : ret[i].item,
-																   health_item   : ret[i].health_item,
-																   record		 : ret[i].record,
-																   unit			 : ret[i].unit,
-																   score		 : ret[i].score,
-																   level		 : ret[i].level});
-							break;
-						}
-					}	
+					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
 				}
 			}
+			if (one_student.length != 0)
+				all_student.push(one_student);
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data        = {health_record_list : health_record_list};
+			result.data        = {all_student : all_student};
 			res.json(result);
 		} catch(err) {
 			result.header.code = "500";
@@ -721,113 +718,28 @@ exports.score_input = function(req, res, next){
 				jump = record_list[14];
 				situp = record_list[15];
 				del_values.push(student_id);
-				add_values.push(student_id);
-				add_values.push(0);	
-				add_values.push(name); 
-				add_values.push(sex); 
-				add_values.push(nationality);
-				add_values.push(birth);
-				add_values.push(address);
-				add_values.push(school_id);
-				add_values.push(school);
-				add_values.push(class_id);
-				add_values.push(parseInt(class_id)%1000 / 100);
-				add_values.push(parseInt(class_id)%100);
-				add_values.push(0);
-				add_values.push('');
-				add_values.push(student_id);
-				add_values.push('0');
+				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id,'0');
 				add_str.push((add_values));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('2');
-				item_list.push('身高');
-				item_list.push('');
-				item_list.push(height);
-				item_list.push('cm');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'2','身高','',height,'cm','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('7');
-				item_list.push('体重');
-				item_list.push('');
-				item_list.push(weight);
-				item_list.push('kg');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'7','体重','',weight,'kg','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('6');
-				item_list.push('肺活量');
-				item_list.push('');
-				item_list.push(lung);
-				item_list.push('ml');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'6','肺活量','',lung,'ml','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('0');
-				item_list.push('50米跑');
-				item_list.push('');
-				item_list.push(run50);
-				item_list.push('s');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'0','50米跑','',run50,'s','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('4');
-				item_list.push('坐位体前驱');
-				item_list.push('');
-				item_list.push(sit_reach);
-				item_list.push('个');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'4','坐位体前驱','',sit_reach,'个','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('8');
-				item_list.push('跳绳');
-				item_list.push('');
-				item_list.push(jump);
-				item_list.push('个');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'8','跳绳','',jump,'个','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id);
-				item_list.push(class_id);
-				item_list.push('5');
-				item_list.push('仰卧起坐');
-				item_list.push('');
-				item_list.push(situp);
-				item_list.push('个');
-				item_list.push('');
-				item_list.push('');
-				item_list.push(year);
-				item_list.push(term);
+				item_list.push(student_id,sex,class_id,'5','仰卧起坐','',situp,'个','','',year,term);
 				score_list.push((item_list));
 			}
 		}
@@ -865,11 +777,43 @@ exports.score_input = function(req, res, next){
 		if (err){
 			console.log(err);
 		}
-		values = [score_list];
-		sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
-			if(err){
-				console.log(err);
+		var score_level_map = new Map();
+		var sign = '';
+		sql.query(req, res, sql_mapping.get_all_score_level, [], next, function(err, ret){ 
+			for (var i=0;i<ret.length;i++){
+				var key = ret[i].item_id + ret[i].grade + ret[i].sex;
+				if (sign != key){
+					sign = key;
+					score_level_map.set(key, []);
+				}
+				score_level_map.get(key).push({record:parseFloat(ret[i].record), level:parseInt(ret[i].level)})
 			}
+			for (var i=0;i<score_list.length;i++){
+				var key = score_list[i][3] + parseInt(score_list[i][2])%1000/100 + score_list[i][1];
+				var score_level_list = score_level_map.get(key);
+				console.log(score_level_list);
+				if (score_list[i][3] == '0'){
+					for (var j=0;j<score_level_list.length;j++){
+						if (score_level_list[j].record >= parseFloat(score_list[i][6]))
+							score_list[i][9] = score_level_list[j].level;
+						else
+							break;
+					}
+				} else {
+					for (var j=0;j<score_level_list.length;j++){
+						if (score_level_list[j].record <= parseFloat(score_list[i][6]))
+							score_list[i][9] = score_level_list[j].level;
+						else
+							break;
+					}
+				}
+			}
+			values = [score_list];
+			sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
+				if(err){
+					console.log(err);
+				}
+			});
 		});
 	});
 	result.header.code = "200";

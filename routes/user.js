@@ -653,7 +653,7 @@ exports.get_oneday_detail = function(req, res, next){
 			for (var i=0;i<ret.length;i++){
 				item_list.push({item_id : ret[i].item, 
 								score   : ret[i].score, 
-								level   : '0'});
+								level   : ret[i].level});
 			}
 			result.header.code = '200';
 			result.header.msg  = '成功';
@@ -805,8 +805,10 @@ exports.record_training_item = function(req, res, next){
 	var score = req.body.score;
 	var student_id = req.body.student_id; 
 	var item = req.body.item;
+	var sex = req.body.sex;
+	var grade = req.body.grade;
 	var ds = req.body.ds;
-	if (score == undefined || student_id == undefined || item == undefined || ds == undefined){
+	if (score == undefined || grade == undefined || student_id == undefined || item == undefined || ds == undefined || sex == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -817,26 +819,49 @@ exports.record_training_item = function(req, res, next){
 	var date  = new Date();
 	var values = [item, ds, student_id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
-		if (ret[0] == undefined) {
-			values      = [id, student_id, item, score, date.getTime() + ':' + score, '', ds];
-			sql_content = sql_mapping.record_training_item;
-		} else {
-			values      = [score, ',' + date.getTime() + ':' + score, item, student_id, ds];
-			sql_content = sql_mapping.update_training_item;
-		}
-		sql.query(req, res, sql_content, values, next, function(err, ret){
-			if (err){
-				result.header.code = '500';
-				result.header.msg  = '记录失败';
-				result.data			= {};
+		values = [item, grade, sex];
+		sql.query(req, res, sql_mapping.set_level, values, next, function(err, ret){
+			var level = 0;	
+			try {
+				if (item == '0'){
+					for (var i=0;i<ret.length;i++){
+						if (parseFloat(ret[i].record) >= parseFloat(score))
+							level = parseInt(ret[i].level);
+						else
+							break;
+					}
+				} else {
+					for (var i=0;i<ret.length;i++){
+						if (parseFloat(ret[i].record) <= parseFloat(score))
+							level = parseInt(ret[i].level);
+						else
+							break;
+					}
+				}
+			} catch(err) {
+				console.log(err);
+			}
+			if (ret[0] == undefined) {
+				values      = [id, student_id, item, score, level, date.getTime() + ':' + score + ':' + level, '', ds];
+				sql_content = sql_mapping.record_training_item;
+			} else {
+				values      = [score, level, ',' + date.getTime() + ':' + score + ':' + level, item, student_id, ds];
+				sql_content = sql_mapping.update_training_item;
+			}
+			sql.query(req, res, sql_content, values, next, function(err, ret){
+				if (err){
+					result.header.code = '500';
+					result.header.msg  = '记录失败';
+					result.data			= {};
+					res.json(result);
+					return;
+				} 
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data         = {result : '0',
+									   msg	  : '记录成功'};
 				res.json(result);
-				return;
-			} 
-			result.header.code = '200';
-			result.header.msg  = '成功';
-			result.data         = {result : '0',
-								   msg	  : '记录成功'};
-			res.json(result);
+			});
 		});
 	});
 };
@@ -870,7 +895,8 @@ exports.get_history_record = function(req, res, next){
 				try {
 					var time = records[j].split(':')[0];
 					var score = records[j].split(':')[1];
-					history_list.push({time : ds, id : time, score : score, level : '1'});
+					var level = records[j].split(':')[2];
+					history_list.push({time : ds, id : time, score : score, level : level});
 				} catch(err) {
 					//
 				}
@@ -896,6 +922,7 @@ exports.del_history_record = function(req, res, next){
 	var score = req.body.score;
 	var student_id = req.body.student_id;
 	var item = req.body.item;
+	var level = req.body.level;
 	var ds = req.body.ds;
 	if (id == undefined || score == undefined || student_id==undefined || item==undefined || ds==undefined){
 		result.header.code = '400';
@@ -913,17 +940,18 @@ exports.del_history_record = function(req, res, next){
 					values = [student_id, item, ds];
 					sql_content = sql_mapping.del_record;
 				} else {
-					var del_record = id + ':' + score;
+					var del_record = id + ':' + score + ':' + level;
 					var new_score_list = '';
 					var new_score = '';
 					for (var i=0;i<score_list.length;i++){
 						if (del_record != score_list[i]){
 							new_score_list = new_score_list + score_list[i] + ',';
 							new_score = score_list[i].split(':')[1];
+							new_level = score_list[i].split(':')[2];
 						}
 					}
 					new_score_list = new_score_list.substr(0, new_score_list.length-1);
-					values = [new_score, new_score_list, item, student_id, ds];
+					values = [new_score, new_level, new_score_list, item, student_id, ds];
 					sql_content = sql_mapping.del_history_record;
 				}
 				sql.query(req, res, sql_content, values, next, function(err, ret){
