@@ -818,7 +818,7 @@ exports.record_training_item = function(req, res, next){
 	var id = encrypt.md5(student_id + item + ds);
 	var date  = new Date();
 	var values = [item, ds, student_id];
-	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret){	
+	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret_search){	
 		values = [item, grade, sex];
 		sql.query(req, res, sql_mapping.set_level, values, next, function(err, ret){
 			var level = 0;	
@@ -841,7 +841,7 @@ exports.record_training_item = function(req, res, next){
 			} catch(err) {
 				console.log(err);
 			}
-			if (ret[0] == undefined) {
+			if (ret_search[0] == undefined) {
 				values      = [id, student_id, item, score, level, date.getTime() + ':' + score + ':' + level, '', ds];
 				sql_content = sql_mapping.record_training_item;
 			} else {
