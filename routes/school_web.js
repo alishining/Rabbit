@@ -304,17 +304,18 @@ exports.health_record = function(req, res, next){
 					if (one_student.length != 0)
 						all_student.push(one_student);
 					id_set.add(ret[i].student_id);
+					one_student = [];
 					one_student.push({student_id   : ret[i].student_id,
-						   				     student_name : ret[i].student_name,
-											 class_id	  : ret[i].class_id,
-											 birth		  : ret[i].birth,
-											 sex          : ret[i].sex,
-											 nationality  : ret[i].nationality,
-											 year		  : ret[i].year,
-											 term		  : ret[i].term,
-											 form		  : [],
-											 enginery	  : [],
-											 stamina	  : []});
+									  student_name : ret[i].student_name,
+									  class_id	   : ret[i].class_id,
+									  birth		   : ret[i].birth,
+									  sex          : ret[i].sex,
+									  nationality  : ret[i].nationality,
+									  year		   : ret[i].year,
+									  term		   : ret[i].term,
+									  form		   : [],
+									  enginery	   : [],
+									  stamina	   : []});
 				}
 				if (ret[i].item_id == '2' || ret[i].item_id == '7'){
 					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
@@ -789,22 +790,24 @@ exports.score_input = function(req, res, next){
 				score_level_map.get(key).push({record:parseFloat(ret[i].record), level:parseInt(ret[i].level)})
 			}
 			for (var i=0;i<score_list.length;i++){
-				var key = score_list[i][3] + parseInt(score_list[i][2])%1000/100 + score_list[i][1];
+				var key = score_list[i][3] + parseInt(parseInt(score_list[i][2])%1000/100) + score_list[i][1];
 				var score_level_list = score_level_map.get(key);
-				console.log(score_level_list);
-				if (score_list[i][3] == '0'){
-					for (var j=0;j<score_level_list.length;j++){
-						if (score_level_list[j].record >= parseFloat(score_list[i][6]))
-							score_list[i][9] = score_level_list[j].level;
-						else
-							break;
-					}
-				} else {
-					for (var j=0;j<score_level_list.length;j++){
-						if (score_level_list[j].record <= parseFloat(score_list[i][6]))
-							score_list[i][9] = score_level_list[j].level;
-						else
-							break;
+				//console.log(score_level_list);
+				if (score_level_list != undefined){
+					if (score_list[i][3] == '0'){
+						for (var j=0;j<score_level_list.length;j++){
+							if (score_level_list[j].record >= parseFloat(score_list[i][6]))
+								score_list[i][9] = score_level_list[j].level;
+							else
+								break;
+						}
+					} else {
+						for (var j=0;j<score_level_list.length;j++){
+							if (score_level_list[j].record <= parseFloat(score_list[i][6]))
+								score_list[i][9] = score_level_list[j].level;
+							else
+								break;
+						}
 					}
 				}
 			}
