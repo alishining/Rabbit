@@ -200,7 +200,7 @@ exports.sport_item_report_rate = function(req, res, next){
 exports.grade_sport_item_rank = function(req, res, next){
 	var year =  req.body.year;
 	var item_id =  req.body.item_id;
-	var grade = req.body.grade + '%';
+	var grade = '1' + req.body.grade + '%';
 	if (year == undefined || item_id == undefined || grade == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -697,7 +697,9 @@ exports.score_input = function(req, res, next){
 			if (record_list.length != 0){
 				var add_values = [];
 				grade = record_list[0];
-				class_id = record_list[1];
+				class_id = record_list[1]+'';
+				if (class_id.length != 4)
+					continue;
 				cls = record_list[2];
 				student_id = record_list[3];
 				nationality = record_list[4];
@@ -792,7 +794,6 @@ exports.score_input = function(req, res, next){
 			for (var i=0;i<score_list.length;i++){
 				var key = score_list[i][3] + parseInt(parseInt(score_list[i][2])%1000/100) + score_list[i][1];
 				var score_level_list = score_level_map.get(key);
-				//console.log(score_level_list);
 				if (score_level_list != undefined){
 					if (score_list[i][3] == '0'){
 						for (var j=0;j<score_level_list.length;j++){
