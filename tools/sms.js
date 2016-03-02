@@ -3,10 +3,10 @@ var http = require('http');
 exports.sms = function(num, phone) {
 	var options =
 	{
-		hostname : '222.185.228.25',
-		port : 8000,
+		hostname : '112.74.76.186',
+		port : 8030,
 		method : 'GET',
-		path : '/msm/sdk/http/sendsms.jsp?username=JSMB260900&scode=1mqp6qtf&content=@1@=' + num + '&mobile=' + phone + '&tempid=MB-2016010601',
+		path : '/msm/sdk/http/sendsms.jsp?username=JSM40419&scode=1mqp6qtf&veryCode=qy94z5c1glxh&content=@1@=' + num + '&mobile=' + phone + '&tempid=MB-2016010601',
 		handers: {
 		}
 	};

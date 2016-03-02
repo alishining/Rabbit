@@ -94,7 +94,11 @@ var sql = {
 	get_all_student : 'select * from student_info where school_id=? and is_delete = \'0\' order by student_id',
 	get_class_list : 'select class_id from student_info where school_id=? and is_delete = \'0\' group by class_id',
 	update_class_list : 'update school_user set class_list=? where account=?',
-	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level'
+	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level',
+	//-------------------------------------------------------------------
+	pad_login : 'select * from school_user where account=?',
+	get_account_class_list : 'select class_list from school_user where account=?'
+
 };
 
 module.exports = sql;

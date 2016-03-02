@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var user_route = require('./routes/user');
 var web_route = require('./routes/web');
 var school_web_route = require('./routes/school_web');
+var pad_route = require('./routes/pad');
 
 var app = express();
 
@@ -119,6 +120,9 @@ app.post('/get_daily_training_rate', school_web_route.get_daily_training_rate);
 app.post('/score_output', school_web_route.score_output);
 app.post('/mod_password', school_web_route.mod_password);
 app.post('/get_all_student', school_web_route.get_all_student);
+//------------------------------------------------------------------
+app.post('/pad_login', pad_route.pad_login);
+app.post('/pad_init, pad_route.pad_init');
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
