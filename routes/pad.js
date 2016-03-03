@@ -48,7 +48,7 @@ exports.pad_login = function(req, res, next){
 	})
 }
 
-exports.init = function(req, res, next){
+exports.pad_init = function(req, res, next){
 	var uid = req.body.uid;
 	if (uid == undefined){
 		result.header.code = "400";
@@ -59,27 +59,65 @@ exports.init = function(req, res, next){
 	}
 	var values = [uid];
 	sql.query(req, res, sql_mapping.get_account_class_list, values, next, function(err, ret){
-		var class_list = ret[0].class_list.split(',');
+		var class_id_list = ret[0].class_list.split(',');
+		var class_list = [];
 		var sport_item = [];
-		for (var i=0;i<class_list;i++){
-			if (class_list[i][0] == '1'){
-				switch(class_list[i][1]){
+		for (var i=0;i<class_id_list.length;i++){
+			if (class_id_list[i][0] == '1'){
+				var cls = class_id_list[i][2] + class_id_list[i][3];
+				switch(class_id_list[i][1]){
 					case '1' : 
-						sport_item.push({class_id : class_list[i], item : });
+						class_list.push({class_id : class_id_list[i], name : '一年级' + cls + '班', 
+										 sport_item : [0, 2, 4, 6, 7, 8]});
 						break;
 					case '2' :
+						class_list.push({class_id : class_id_list[i], name : '二年级' + cls + '班',
+										 sport_item : [0, 2, 4, 6, 7, 8]});
 						break;
 					case '3' :
+						class_list.push({class_id : class_id_list[i], name : '三年级' + cls + '班',
+										 sport_item : [0, 2, 4, 5, 6, 7, 8]});
 						break;
 					case '4' :
+						class_list.push({class_id : class_id_list[i], name : '四年级' + cls + '班',
+										 sport_item : [0, 2, 4, 5, 6, 7, 8]});
 						break;
 					case '5' :
+						class_list.push({class_id : class_id_list[i], name : '五年级' + cls + '班',
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9]});
 						break;
-					case '6' ''
+					case '6' :
+						class_list.push({class_id : class_id_list[i], name : '六年级' + cls + '班',
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9]});
+						break;
+					case '7' :
+						class_list.push({class_id : class_id_list[i], name : '七年级' + cls + '班',
+										 sport_item : [0, 4, 5, 10, 11, 12, 13]});
+						break;
+					case '8' :
+						class_list.push({class_id : class_id_list[i], name : '八年级' + cls + '班',
+										 sport_item : [0, 4, 5, 10, 11, 12, 13]}); 
+						break;
+					case '9' :
+						class_list.push({class_id : class_id_list[i], name : '九年级' + cls + '班',
+										 sport_item : [0, 4, 5, 10, 11, 12, 13]}); 
 						break;
 				}
+			} else {
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data = {};
+				res.json(result);
 			}
 		}
-
+		var date = new Date();
+		var year = date.getFullYear();
+		values = ['%' + year + '%'];
+		sql.query(req, res, sql_mapping.get_class_student, values, next, function(err, ret){
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {class_list : class_list, student : ret};
+			res.json(result);
+		});
 	})
 };

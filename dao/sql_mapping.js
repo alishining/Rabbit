@@ -97,8 +97,8 @@ var sql = {
 	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level',
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=?',
-	get_account_class_list : 'select class_list from school_user where account=?'
-
+	get_account_class_list : 'select class_list from school_user where account=?',
+	get_class_student : 'select a.class_id, GROUP_CONCAT(a.student_id, \'|\',a.student_number, \'|\',a.student_name,\'|\', a.sex,\'|\', b.avg SEPARATOR \';\') as student from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where b.student_id is not null group by class_id'
 };
 
 module.exports = sql;
