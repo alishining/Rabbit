@@ -123,6 +123,7 @@ app.post('/get_all_student', school_web_route.get_all_student);
 //------------------------------------------------------------------
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);
+app.post('/pad_teacher_info', pad_route.pad_teacher_info);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

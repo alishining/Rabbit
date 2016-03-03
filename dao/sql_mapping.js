@@ -68,7 +68,7 @@ var sql = {
 	get_score_level : 'select * from score_level where item_id=?',
 	//-------------------------------------------------------------------
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
-	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete) values(?,?,?,?,?,?,?,?,?)',
+	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete,img) values(?,?,?,?,?,?,?,?,?,?)',
 	reset_default_password   : 'update school_user set password=123456 where school_id=?',
 	mod_password : 'update school_user set password=? where account=?',
 	get_user_class : 'select class_list from school_user where account=?',
@@ -96,9 +96,10 @@ var sql = {
 	update_class_list : 'update school_user set class_list=? where account=?',
 	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level',
 	//-------------------------------------------------------------------
-	pad_login : 'select * from school_user where account=?',
+	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
-	get_class_student : 'select a.class_id, GROUP_CONCAT(a.student_id, \'|\',a.student_number, \'|\',a.student_name,\'|\', a.sex,\'|\', b.avg SEPARATOR \';\') as student from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where b.student_id is not null group by class_id'
+	get_class_student : 'select a.class_id, GROUP_CONCAT(a.student_id, \'|\',a.student_number, \'|\',a.student_name,\'|\', a.sex,\'|\', b.avg SEPARATOR \';\') as student from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where b.student_id is not null group by class_id', 
+	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\''
 };
 
 module.exports = sql;

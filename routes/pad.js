@@ -121,3 +121,28 @@ exports.pad_init = function(req, res, next){
 		});
 	})
 };
+
+exports.pad_teacher_info = function(req, res, next){
+	var uid = req.body.uid;
+	if (uid == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [uid];
+	sql.query(req, res, sql_mapping.pad_teacher_info, values, next, function(err, ret){
+		if (ret.length == 0){
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {msg : '老师不存在'};
+			res.json(result);
+		} else {
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {teacher_info : ret};
+			res.json(result);
+		}
+	});
+}
