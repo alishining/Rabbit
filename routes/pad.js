@@ -145,4 +145,26 @@ exports.pad_teacher_info = function(req, res, next){
 			res.json(result);
 		}
 	});
+};
+
+exports.submit_report_forms = function(req, res, next){
+	var title = req.body.title;
+	var class_id = req.body.class_id;
+	var update_time = req.body.update_time;
+	var create_time = req.body.create_time;
+	var student_score_list = req.body.student_score_list;
+	if (class_id == undefined || title == undefined || create_time == undefined || update_time == undefined || student_score_list == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [];
+	sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+		values = [];
+		sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+		});		
+	});
+	
 }

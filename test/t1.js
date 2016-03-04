@@ -1,12 +1,8 @@
 
 
+var count = 1000;
 
-var a = [];
-
-a.push({a : 0, b : 1, c : ['w']});
-
-console.log(a[0].c);
-
-a[0].c.push('d');
-
-console.log(a[0].c);
+for (var i=0;i<50;i++){
+	count = count*1.9;
+	console.log(i+1 ,count);
+}

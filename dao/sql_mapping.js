@@ -99,7 +99,8 @@ var sql = {
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
 	get_class_student : 'select a.class_id, GROUP_CONCAT(a.student_id, \'|\',a.student_number, \'|\',a.student_name,\'|\', a.sex,\'|\', b.avg SEPARATOR \';\') as student from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where b.student_id is not null group by class_id', 
-	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\''
+	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\'',
+	add_test_report : 'insert into test_list(title, item, class, rate, create_time, update_time) values (?,?,?,?,?,?)'
 };
 
 module.exports = sql;
