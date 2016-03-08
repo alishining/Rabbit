@@ -793,30 +793,38 @@ exports.training = function(req, res, next){
 		}
 		values = [school_id, class_id]; 
 		sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
-			try{
-				var item_list = ret[0].item_list.split(',');
-				for (var i=0;i<9;i++){
-					sign = 0;	
-					for (var j=0;j<item_list.length;j++){
-						if (parseInt(item_list[j].split(':')[0]) == i){
-							var count = item_list[j].split(':')[1];
-							used_list.push({item_id : i, count : count});	
-							sign = 1;
+			values = [ds, student_id];
+			sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret_count){
+				console.log(ret_count);
+				try{
+					var item_list = ret[0].item_list.split(',');
+					for (var i=0;i<9;i++){
+						sign = 0;	
+						for (var j=0;j<item_list.length;j++){
+							for (var u=0;u<ret_count.length;u++){
+								if (parseInt(ret_count[u].item) == i){
+									if (parseInt(item_list[j].split(':')[0]) == i){
+										var count = ret_count[u].score_list.split(',').length;
+										used_list.push({item_id : i, count : count});	
+										sign = 1;
+									}
+								}
+							}
 						}
+						if (sign == 0)
+							unused_list.push({item_id : i, hint : '', count : 0});
 					}
-					if (sign == 0)
-						unused_list.push({item_id : i, hint : '', count : 0});
+					result.header.code = "200";
+					result.header.msg  = "成功";
+					result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
+					res.json(result);
+				} catch(err){
+					result.header.code = "500";
+					result.header.msg  = "失败";
+					result.data        = {};
+					res.json(result);
 				}
-				result.header.code = "200";
-				result.header.msg  = "成功";
-				result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
-				res.json(result);
-			} catch(err){
-				result.header.code = "500";
-				result.header.msg  = "失败";
-				result.data        = {};
-				res.json(result);
-			}
+			});
 		});
 	});
 };
