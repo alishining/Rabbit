@@ -8,7 +8,7 @@ var sql = {
 	get_default_child : 'select child from genearch_info where phone=?',
 	rate_total : 'select ds,count(*) as count from training_record WHERE student_id=? and ds like ? group by ds ORDER BY ds ASC',
 	rate_finish : 'select ds,count(*) as count from training_record WHERE student_id=? and score!=\'\' and ds like ? group by ds ORDER BY ds ASC',
-	get_student_info : 'select student_id, sex, grade, img, student_name, score from student_info where student_id=?',
+	get_student_info : 'select student_id, sex, grade, img, student_name, score, school_id, class_id from student_info where student_id=?',
 	get_student_height:'select score from training_record where item=2 and student_id=? group by ds desc limit 1',
 	get_student_weight:'select score from training_record where item=7 and student_id=? group by ds desc limit 1',
 	get_children_list : 'select a.student_id, b.student_number, b.img, b.student_name, b.sex, b.school from children_list a left outer join student_info b on a.student_id=b.student_id WHERE a.phone=? and b.student_id is not null group by student_id',
@@ -105,7 +105,9 @@ var sql = {
 	del_student_test : 'delete from student_test where student_id in (?)',
 	update_test_report : 'update test_list set rate=? or update_time=? where id=?',
 	get_test_report : 'select * from test_list where school_id = ? and class_id = ?',
-	del_test_report : 'DELETE FROM TEST_LIST WHERE id in (?)'
+	del_test_report : 'DELETE FROM TEST_LIST WHERE id in (?)',
+	add_homework : 'insert into homework(school_id, class_id, item_list) values ?',
+	get_homework : 'select * from homework where school_id = ? and class_id = ?'
 };
 
 module.exports = sql;

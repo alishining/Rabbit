@@ -127,6 +127,10 @@ app.post('/pad_teacher_info', pad_route.pad_teacher_info);
 app.post('/submit_report_forms', pad_route.submit_report_forms);
 app.post('/get_test_report', pad_route.get_test_report);
 app.post('/del_test_report', pad_route.del_test_report);
+app.post('/add_homework', pad_route.add_homework);
+app.post('/mod_homework', pad_route.mod_homework);
+app.post('/get_homework', pad_route.get_homework);
+app.post('/detail_homework', pad_route.detail_homework);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');

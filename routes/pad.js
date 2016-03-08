@@ -259,3 +259,66 @@ exports.del_test_report = function(req, res, next){
 		res.json(result);
 	});
 };
+
+exports.add_homework = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_list = req.body.class_list;
+	var item_list = req.body.item_list;
+	if (school_id == undefined || class_list == undefined || item_list == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var class_list = class_list.split(',');
+	var insert = [];
+	var one_class = [];
+	for (var i=0;i<class_list.length;i++){
+		one_class = [];
+		one_class.push(school_id);
+		one_class.push(class_list[i]);
+		one_class.push(item_list);
+		insert.push(one_class);
+	}
+	var values = [insert];
+	sql.query(req, res, sql_mapping.add_homework, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {};
+		res.json(result);
+	});
+};
+
+exports.mod_homework = function(req, res, next){
+};
+
+exports.get_homework = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	if (school_id == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, class_id];
+	sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
+
+		var item_list = ret[0].item_list.split(',');
+		
+		for (var i=0;i<item_list.length;i++){
+			var item = item_list[i].split(':')[0];
+			var count = item_list[i].split(':')[1];
+		}
+
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {homework_list : ret};
+		res.json(result);
+	});
+};
+
+exports.detail_homework = function(req, res, next){
+};
