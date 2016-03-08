@@ -148,24 +148,114 @@ exports.pad_teacher_info = function(req, res, next){
 };
 
 exports.submit_report_forms = function(req, res, next){
+	var sign = req.body.sign;
+	var tid = req.body.tid;
 	var title = req.body.title;
+	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
+	var item_id = req.body.item_id;
 	var update_time = req.body.update_time;
 	var create_time = req.body.create_time;
-	var student_score_list = req.body.student_score_list;
-	if (class_id == undefined || title == undefined || create_time == undefined || update_time == undefined || student_score_list == undefined){
+	var student_score = req.body.student_score;
+	if (sign == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || update_time == undefined || create_time == undefined || student_score == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [];
-	sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
-		values = [];
-		sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
-		});		
-	});
-	
-}
+	var student_score_list = JSON.parse(student_score);
+	var del_values = [];
+	var add_values = [];
+	var item_values = [];
+	var rate = student_score_list.length;
+	for(var i=0;i<rate;i++){
+		del_values.push(student_score_list[i].student_id);
+		item_values = [];
+		item_values.push(tid);
+		item_values.push(student_score_list[i].student_id);
+		item_values.push(student_score_list[i].student_number);
+		item_values.push(student_score_list[i].student_name);
+		item_values.push(student_score_list[i].sex);
+		item_values.push(student_score_list[i].score);
+		item_values.push(student_score_list[i].level);
+		add_values.push(item_values);
+	}
+	try{
+		if (sign == 0){
+			var values = [title, school_id, item_id, class_id, rate, create_time, update_time];
+			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+				values = [add_values];
+				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+					result.header.code = "200";
+					result.header.msg  = "提交成功";
+					result.data = {};
+					res.json(result);
+				});		
+			});
+		} else {
+			var values = [del_values];
+			sql.query(req, res, sql_mapping.del_student_test, values, next, function(err, ret){
+				values = [add_values];
+				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+					values = [rate, update_time, tid]; 
+					sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
+						result.header.code = "200";
+						result.header.msg  = "提交成功";
+						result.data = {};
+						res.json(result);
+					});
+				});  
+			});
+		}
+	} catch(err){
+		result.header.code = "500";
+		result.header.msg  = "提交失败";
+		result.data = {};
+		res.json(result);
+	}
+};
 
+exports.get_test_report = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	if (school_id == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, class_id];
+	sql.query(req, res, sql_mapping.get_test_report, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {report_list : ret};
+		res.json(result);
+	});
+
+};
+
+exports.del_test_report = function(req, res, next){
+	var tid = req.body.tid_list;
+	if (tid == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};    
+		res.json(result);
+		return;  
+	}
+	var values = [tid_list];
+	sql.query(req, res, sql_mapping.del_test_report, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data = {};
+			res.json(result);
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {};
+		res.json(result);
+	});
+};

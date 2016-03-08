@@ -125,6 +125,8 @@ app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);
 app.post('/pad_teacher_info', pad_route.pad_teacher_info);
 app.post('/submit_report_forms', pad_route.submit_report_forms);
+app.post('/get_test_report', pad_route.get_test_report);
+app.post('/del_test_report', pad_route.del_test_report);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
