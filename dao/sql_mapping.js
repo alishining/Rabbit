@@ -107,7 +107,9 @@ var sql = {
 	get_test_report : 'select * from test_list where school_id = ? and class_id = ?',
 	del_test_report : 'DELETE FROM TEST_LIST WHERE id in (?)',
 	add_homework : 'insert into homework(school_id, class_id, item_list) values ?',
-	get_homework : 'select * from homework where school_id = ? and class_id = ?'
+	get_homework : 'select * from homework where school_id = ? and class_id = ?',
+	get_homework_rate : 'select b.item, sum(length(score_list)-length(replace(score_list,\',\',\'\'))+1) as count from student_info a left outer join training_record b on a.student_id = b.student_id where b.student_id is not null and a.class_id=? and a.school_id=? and b.ds=? and a.is_delete=\'0\' GROUP BY b.item',
+	count_student : 'select count(distinct student_id) as total from student_info where class_id=? and school_id=? and is_delete=\'0\''
 };
 
 module.exports = sql;

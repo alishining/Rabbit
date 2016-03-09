@@ -41,7 +41,7 @@ exports.pad_login = function(req, res, next){
 			}
 		} catch(err) {
 			result.header.code = "500";
-			result.header.msg  = "内部错误";
+			result.header.msg  = "用户不存在";
 			result.data = {};
 			res.json(result);
 		}
@@ -141,7 +141,7 @@ exports.pad_teacher_info = function(req, res, next){
 		} else {
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {teacher_info : ret};
+			result.data = {teacher_info : ret[0]};
 			res.json(result);
 		}
 	});
@@ -283,6 +283,13 @@ exports.add_homework = function(req, res, next){
 	}
 	var values = [insert];
 	sql.query(req, res, sql_mapping.add_homework, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "重复添加";
+			result.data = {};
+			res.json(result);
+			return;
+		}
 		result.header.code = "200";
 		result.header.msg  = "成功";
 		result.data = {};
@@ -305,18 +312,36 @@ exports.get_homework = function(req, res, next){
 	}
 	var values = [school_id, class_id];
 	sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
-
-		var item_list = ret[0].item_list.split(',');
-		
-		for (var i=0;i<item_list.length;i++){
-			var item = item_list[i].split(':')[0];
-			var count = item_list[i].split(':')[1];
-		}
-
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {homework_list : ret};
-		res.json(result);
+		var date  = new Date();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		if (date.getMonth()+1 < 10)
+			month = '0'+ (date.getMonth()+1);
+		if (date.getDate() < 10)
+			day = '0' + date.getDate();
+		var ds = date.getFullYear() + '-' + month  + '-' + day;
+		values = [class_id, school_id, ds];
+		sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
+			values = [class_id, school_id];
+			sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
+				var total = parseInt(__ret[0].total); 
+				var homework_list = [];
+				var item_list = ret[0].item_list.split(',');
+				for (var i=0;i<item_list.length;i++){
+					var item = item_list[i].split(':')[0];
+					var count = parseInt(item_list[i].split(':')[1]);
+					for (var u=0;u<_ret.length;u++){
+						if (_ret[u].item == item){
+							homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100)});
+						}
+					}
+				}
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data = {id : ret[0].id, homework_list : homework_list};
+				res.json(result);
+			});
+		})
 	});
 };
 
