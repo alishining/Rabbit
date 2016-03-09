@@ -812,16 +812,19 @@ exports.training = function(req, res, next){
 							}
 						}
 						if (sign == 0)
-							unused_list.push({item_id : i, hint : '', count : 0});
+							unused_list.push({item_id : i, count : 0});
 					}
 					result.header.code = "200";
 					result.header.msg  = "成功";
 					result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
 					res.json(result);
 				} catch(err){
-					result.header.code = "500";
-					result.header.msg  = "失败";
-					result.data        = {};
+					for (var i=0;i<9;i++){
+						unused_list.push({item_id : i, count : 0});
+					}
+					result.header.code = "200";
+					result.header.msg  = "成功";
+					result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
 					res.json(result);
 				}
 			});
