@@ -1,6 +1,11 @@
 
-result = '{ list : [{name : \'shining\', sex : 2}, {name : \'mm\', sex : 1}, {name : \'xxx\', sex : 2}]}';
 
-var json=JSON.parse(result);
 
-console.log(json);
+var ret = 1;
+
+
+if (ret){
+	console.log('ok');
+} else {
+	console.log('no');
+}

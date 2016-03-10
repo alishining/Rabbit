@@ -298,6 +298,33 @@ exports.add_homework = function(req, res, next){
 };
 
 exports.mod_homework = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	var item_list = req.body.item_list;
+	if (school == undefined || class_id == undefined || item_list == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	if (item_list == ''){
+		var values = [school_id, class_id];
+		sql.query(req, res, sql_mapping.mov_homework, values, next, function(err, ret){
+			result.header.code = "200";
+			result.header.msg  = "编辑成功";
+			result.data = {};
+			res.json(result);
+		});
+	} else {
+		var values = [item_list, school_id, class_id];
+		sql.query(req, res, sql_mapping.update_homework, values, next, function(err, ret){
+			result.header.code = "200";
+			result.header.msg  = "编辑成功";
+			result.data = {};
+			res.json(result);
+		});
+	}
 };
 
 exports.get_homework = function(req, res, next){
@@ -326,19 +353,21 @@ exports.get_homework = function(req, res, next){
 			sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
 				var total = parseInt(__ret[0].total); 
 				var homework_list = [];
-				var item_list = ret[0].item_list.split(',');
-				for (var i=0;i<item_list.length;i++){
-					var item = item_list[i].split(':')[0];
-					var count = parseInt(item_list[i].split(':')[1]);
-					for (var u=0;u<_ret.length;u++){
-						if (_ret[u].item == item){
-							homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100)});
+				if (ret != undefined){
+					var item_list = ret[0].item_list.split(',');
+					for (var i=0;i<item_list.length;i++){
+						var item = item_list[i].split(':')[0];
+						var count = parseInt(item_list[i].split(':')[1]);
+						for (var u=0;u<_ret.length;u++){
+							if (_ret[u].item == item){
+								homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100)});
+							}
 						}
 					}
 				}
 				result.header.code = "200";
 				result.header.msg  = "成功";
-				result.data = {id : ret[0].id, homework_list : homework_list};
+				result.data = {homework_list : homework_list};
 				res.json(result);
 			});
 		})
@@ -346,4 +375,59 @@ exports.get_homework = function(req, res, next){
 };
 
 exports.detail_homework = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	var item_id = req.body.item_id;
+	var count = req.body.count;
+	if (class_id == undefined || school_id == undefined || item_id == undefined || count == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data = {};
+		res.json(result);
+		return;
+	}
+	var date  = new Date();
+	var month = date.getMonth()+1;
+	var day = date.getDate();
+	if (date.getMonth()+1 < 10)
+		month = '0'+ (date.getMonth()+1);
+	if (date.getDate() < 10)
+		day = '0' + date.getDate();
+	var ds = date.getFullYear() + '-' + month  + '-' + day;
+	var values = [school_id, class_id, item_id, ds];
+	var finished_list = [];
+	var unfinished_list = [];
+	sql.query(req, res, sql_mapping.get_detail_homework, values, next, function(err, ret){
+		if (ret){
+			for (var i=0;i<ret.length;i++){
+				var number = ret[i].student_number;
+				var name = ret[i].student_name;
+				var sex = ret[i].sex;
+				try{
+					var score_list = ret[i].score_list.split(',');
+				} catch(err){
+					var score_list = [];
+				}
+				var score_list_len = score_list.length;
+				var score = [];
+				for (var u=0;u<score_list_len;u++){
+					score.push(score_list[u].split(':')[1]);
+				}
+				if (score_list_len != count){
+					unfinished_list.push({rate : score.length + '/' + count, name : name, sex : sex, number : number, score_list : score});
+				} else {
+					finished_list.push({rate : score.length + '/' + count, name : name, sex : sex, number : number, score_list : score});
+				}
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {date : ds, finished_list : finished_list, unfinished_list : unfinished_list, unfinished_count : unfinished_list.length, finished_count : finished_list.length};  
+			res.json(result);
+		} else {
+			result.header.code = "500";
+			result.header.msg  = "数据不存在";
+			result.data = {};  
+			res.json(result);
+		}
+	});
 };

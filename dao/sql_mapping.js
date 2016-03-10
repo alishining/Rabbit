@@ -109,7 +109,10 @@ var sql = {
 	add_homework : 'insert into homework(school_id, class_id, item_list) values ?',
 	get_homework : 'select * from homework where school_id = ? and class_id = ?',
 	get_homework_rate : 'select b.item, sum(length(score_list)-length(replace(score_list,\',\',\'\'))+1) as count from student_info a left outer join training_record b on a.student_id = b.student_id where b.student_id is not null and a.class_id=? and a.school_id=? and b.ds=? and a.is_delete=\'0\' GROUP BY b.item',
-	count_student : 'select count(distinct student_id) as total from student_info where class_id=? and school_id=? and is_delete=\'0\''
+	count_student : 'select count(distinct student_id) as total from student_info where class_id=? and school_id=? and is_delete=\'0\'',
+	update_homework : 'update homework set item_list = ? where school_id = ? and class_id = ?',
+	mov_homework : 'delete from homework where school_id = ? and class_id = ?',
+	get_detail_homework : 'select student_name, student_number, sex, score_list from student_info a left outer join training_record b on a.student_id = b.student_id where a.is_delete=\'0\' and a.school_id=? and a.class_id=? and b.item=? and ds=?'
 };
 
 module.exports = sql;
