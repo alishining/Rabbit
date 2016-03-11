@@ -301,7 +301,7 @@ exports.mod_homework = function(req, res, next){
 	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
 	var item_list = req.body.item_list;
-	if (school == undefined || class_id == undefined || item_list == undefined){
+	if (school_id == undefined || class_id == undefined || item_list == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -312,16 +312,16 @@ exports.mod_homework = function(req, res, next){
 		var values = [school_id, class_id];
 		sql.query(req, res, sql_mapping.mov_homework, values, next, function(err, ret){
 			result.header.code = "200";
-			result.header.msg  = "编辑成功";
-			result.data = {};
+			result.header.msg  = "发布成功";
+			result.data = {result : '0', msg : '发布成功'};
 			res.json(result);
 		});
 	} else {
 		var values = [item_list, school_id, class_id];
 		sql.query(req, res, sql_mapping.update_homework, values, next, function(err, ret){
 			result.header.code = "200";
-			result.header.msg  = "编辑成功";
-			result.data = {};
+			result.header.msg  = "发布成功";
+			result.data = {result : '0', msg : '发布成功'};
 			res.json(result);
 		});
 	}
@@ -358,7 +358,7 @@ exports.get_homework = function(req, res, next){
 					console.log(err);
 				}
 				var homework_list = [];
-				if (ret && ret[0].item_list != undefined){
+				if (ret.length != 0){
 					var item_list = ret[0].item_list.split(',');
 					for (var i=0;i<item_list.length;i++){
 						var item = item_list[i].split(':')[0];

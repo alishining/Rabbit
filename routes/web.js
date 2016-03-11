@@ -23,7 +23,7 @@ exports.reset_default_password = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [id];
+	var values = [parseInt(id)];
 	sql.query(req, res, sql_mapping.reset_default_password, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
