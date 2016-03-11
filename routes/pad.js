@@ -440,3 +440,29 @@ exports.detail_homework = function(req, res, next){
 		}
 	});
 };
+
+exports.get_form = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	var is_history = req.body.is_history;
+	if (school_id == undefined || class_id == undefined || sign == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, class_id, is_history];
+	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {content : ret[0].content};
+		res.json(result);
+	});
+};
+
+exports.submit_to_school = function(req, res, next){
+};
+
+exports.get_form_list = function(req, res, next){
+};
