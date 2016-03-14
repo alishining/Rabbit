@@ -358,21 +358,25 @@ exports.get_homework = function(req, res, next){
 					console.log(err);
 				}
 				var homework_list = [];
-				if (ret.length != 0){
-					var item_list = ret[0].item_list.split(',');
-					for (var i=0;i<item_list.length;i++){
-						var item = item_list[i].split(':')[0];
-						var count = parseInt(item_list[i].split(':')[1]);
-						if (_ret.length != 0){
-							for (var u=0;u<_ret.length;u++){
-								if (_ret[u].item == item){
-									homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
+				try{
+					if (ret.length != 0){
+						var item_list = ret[0].item_list.split(',');
+						for (var i=0;i<item_list.length;i++){
+							var item = item_list[i].split(':')[0];
+							var count = parseInt(item_list[i].split(':')[1]);
+							if (_ret.length != 0){
+								for (var u=0;u<_ret.length;u++){
+									if (_ret[u].item == item){
+										homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
+									}
 								}
+							} else {
+								homework_list.push({item : item, count : count, rate : 0+'%'});
 							}
-						} else {
-							homework_list.push({item : item, count : count, rate : 0+'%'});
 						}
 					}
+				}catch(err){
+					console.log(err);
 				}
 				result.header.code = "200";
 				result.header.msg  = "成功";
