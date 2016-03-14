@@ -180,7 +180,7 @@ exports.student_sport_report = function(req, res, next){
 
 exports.sport_item_report_rate = function(req, res, next){
 	var year =  req.body.year;
-	var class_id = req.body.class_id;
+	var class_id = req.body.class_id + '%';
 	if (year == undefined || class_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -376,7 +376,7 @@ exports.add_teacher = function(req, res, next){
 				res.json(result);
 				return;
 			}
-			values = [teacher_phone,num, teacher_name, teacher_phone, school_id, school, class_list, '0', '0'];
+			values = [teacher_phone,num, teacher_name, teacher_phone, school_id, school, class_list, '0', '0', ''];
 			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
 				if (err){
 					result.header.code = "500";
@@ -707,8 +707,8 @@ exports.score_input = function(req, res, next){
 				sex = record_list[6];
 				var date = new Date(1000*(parseInt(record_list[7])*86400 - 2209161600)); 
 				var yy = date.getFullYear(); 
-				var mm = date.getMonth();
-				var dd = date.getDay();
+				var mm = date.getMonth()+1;
+				var dd = date.getDate();
 				if (mm < 10) mm = '0'+mm;
 				if (dd < 10) dd = '0'+dd;
 				birth = yy+'-'+mm+'-'+dd;
