@@ -444,15 +444,14 @@ exports.detail_homework = function(req, res, next){
 exports.get_form = function(req, res, next){
 	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
-	var is_history = req.body.is_history;
-	if (school_id == undefined || class_id == undefined || sign == undefined){
+	if (school_id == undefined || class_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data = {};
 		res.json(result);
 		return;
 	}
-	var values = [school_id, class_id, is_history];
+	var values = [school_id, class_id];
 	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
 		result.header.code = "200";
 		result.header.msg  = "成功";
@@ -461,8 +460,96 @@ exports.get_form = function(req, res, next){
 	});
 };
 
+exports.get_history_form = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.get_history_form, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {content : ret[0].content};
+		res.json(result);
+	});
+};
+
 exports.submit_to_school = function(req, res, next){
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	if (school_id == undefined || class_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data = {};
+		res.json(result);
+		return;
+	}
+	var date  = new Date();
+	var month = date.getMonth()+1;
+	if (month < 8){
+		var year = date.getFullYear() - 1;
+		var term = 2;
+	} else {
+		var year = date.getFullYear();
+		var term = 1;
+	}
+	var values = [school_id, class_id];
+	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
+		for (var i=0;i<ret.length;i++){
+			var name = ret[i].name;
+			var id = ret[i].id;
+			var class_id = ret[i].class_id;
+			var num = ret[i].num;
+			var sex = ret[i].sex;
+			var score_list = ret[i].score_list;
+			for (var u=0;u<score_list.length;u++){
+				var item_id = ret[i].score_list[u].item_id;
+				var record = ret[i].score_list[u].record;
+				var score = ret[i].score_list[u].score;
+				var level = ret[i].score_list[u].level;
+			}
+		}
+
+		values = [del_values, year, term];
+		sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
+			values = [score_list];
+			sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
+				if(err){
+					console.log(err);
+				}
+			});
+		});
+
+
+
+
+
+
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {content : ret[0].content};
+		res.json(result);
+	});
 };
 
 exports.get_form_list = function(req, res, next){
+	var school_id = req.body.school_id;
+	if (school_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id];
+	sql.query(req, res, sql_mapping.get_form_list, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {content : ret};
+		res.json(result);
+	});
 };

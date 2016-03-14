@@ -113,9 +113,9 @@ var sql = {
 	update_homework : 'update homework set item_list = ? where school_id = ? and class_id = ?',
 	mov_homework : 'delete from homework where school_id = ? and class_id = ?',
 	get_detail_homework : 'select student_name, student_number, sex, score_list from student_info a left outer join training_record b on a.student_id = b.student_id where a.is_delete=\'0\' and a.school_id=? and a.class_id=? and b.item=? and ds=?',
-	get_form : 'select * from form where school_id = ? and class_id = ? and is_history = ?',
-	submit_to_school : '',
-	get_form_list : ''
+	get_form : 'select * from form where school_id = ? and class_id = ? and is_history = 0',
+	get_history_form : 'select * from form where id=?',
+	get_form_list : 'select id,class_id,title,submit_time,submit_teacher from form where school_id = ?'
 };
 
 module.exports = sql;
