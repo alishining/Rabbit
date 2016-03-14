@@ -132,6 +132,7 @@ app.post('/mod_homework', pad_route.mod_homework);
 app.post('/get_homework', pad_route.get_homework);
 app.post('/detail_homework', pad_route.detail_homework);
 app.post('/get_form', pad_route.get_form);
+app.post('/get_history_form', pad_route.get_history_form);
 app.post('/submit_to_school', pad_route.submit_to_school);
 app.post('/get_form_list', pad_route.get_form_list);
 

@@ -457,9 +457,28 @@ exports.get_form = function(req, res, next){
 	}
 	var values = [school_id, class_id];
 	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
+		var student_obj = [];
+		var content = JSON.parse(ret[0].content);
+		for (var i=0;i<content.length;i++){
+			var name = content[i].name;
+			var num = content[i].num;
+			var sex = content[i].sex;
+			var class_id = content[i].class_id;
+			var id = content[i].id;
+			var score_list = content[i].score_list;	
+			var score_obj = [];
+			for (var u=0;u<score_list.length;u++){
+				var item_id = score_list[u].item_id;
+				var record = score_list[u].record;
+				var score = score_list[u].score;
+				var level = score_list[u].level;
+				score_obj.push({item_id:item_id, record:record, score:score, level:level});
+			}
+			student_obj.push({name : name, num : num, sex : sex, class_id : class_id, id : id, score_list : score_obj});
+		}	
 		result.header.code = "200";
 		result.header.msg  = "成功";
-		result.data = {content : ret[0].content};
+		result.data = {content : student_obj, teacher : ret[0].submit_teacher, title : ret[0].title, time : ret[0].submit_time};
 		res.json(result);
 	});
 };
@@ -475,9 +494,28 @@ exports.get_history_form = function(req, res, next){
 	}
 	var values = [id];
 	sql.query(req, res, sql_mapping.get_history_form, values, next, function(err, ret){
+		var student_obj = [];
+		var content = JSON.parse(ret[0].content);
+		for (var i=0;i<content.length;i++){
+			var name = content[i].name;
+			var num = content[i].num;
+			var sex = content[i].sex;
+			var class_id = content[i].class_id;
+			var id = content[i].id;
+			var score_list = content[i].score_list;
+			var score_obj = [];
+			for (var u=0;u<score_list.length;u++){
+				var item_id = score_list[u].item_id;
+				var record = score_list[u].record;
+				var score = score_list[u].score;
+				var level = score_list[u].level;
+				score_obj.push({item_id:item_id, record:record, score:score, level:level});
+			}
+			student_obj.push({name : name, num : num, sex : sex, class_id : class_id, id : id, score_list : score_obj});
+		}
 		result.header.code = "200";
 		result.header.msg  = "成功";
-		result.data = {content : ret[0].content};
+		result.data = {content : student_obj, teacher : ret[0].submit_teacher, title : ret[0].title, time : ret[0].submit_time    };
 		res.json(result);
 	});
 };
@@ -517,7 +555,6 @@ exports.submit_to_school = function(req, res, next){
 				var level = ret[i].score_list[u].level;
 			}
 		}
-
 		values = [del_values, year, term];
 		sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
 			values = [score_list];
@@ -527,12 +564,6 @@ exports.submit_to_school = function(req, res, next){
 				}
 			});
 		});
-
-
-
-
-
-
 		result.header.code = "200";
 		result.header.msg  = "成功";
 		result.data = {content : ret[0].content};
