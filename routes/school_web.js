@@ -724,25 +724,25 @@ exports.score_input = function(req, res, next){
 				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id,'0');
 				add_str.push((add_values));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'2','身高','',height,'cm','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'2','身高','',height,'cm','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'7','体重','',weight,'kg','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'7','体重','',weight,'kg','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'6','肺活量','',lung,'ml','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'6','肺活量','',lung,'ml','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'0','50米跑','',run50,'s','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'0','50米跑','',run50,'s','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'4','坐位体前驱','',sit_reach,'个','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'4','坐位体前驱','',sit_reach,'个','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'8','跳绳','',jump,'个','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'8','跳绳','',jump,'个','','',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,class_id,'5','仰卧起坐','',situp,'个','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个','','',year,term);
 				score_list.push((item_list));
 			}
 		}
@@ -775,7 +775,7 @@ exports.score_input = function(req, res, next){
 			});
 		});
 	});
-	values = [del_values, year,term];
+	values = [year,term,school_id,'%%'];
 	sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
 		if (err){
 			console.log(err);
