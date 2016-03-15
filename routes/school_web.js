@@ -933,4 +933,29 @@ exports.score_output = function(req, res, next){
 			res.json(result);
 		}
 	});
+};
+
+exports.reset_school_user_password = function(){
+	var account = req.body.account;
+	if (account == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [account];
+	sql.query(req, res, sql_mapping.reset_school_user_password, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "重置失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "重置成功";
+		result.data        = {};
+		res.json(result);
+	});
 }

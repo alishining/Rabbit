@@ -69,7 +69,7 @@ var sql = {
 	//-------------------------------------------------------------------
 	school_login     : 'select school_id, school, password, is_root from school_user where account=?',
 	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete,img) values(?,?,?,?,?,?,?,?,?,?)',
-	reset_default_password   : 'update school_user set password=123456 where school_id=?',
+	reset_default_password   : 'update school_user set password=123456 where school_id=? and is_root=1',
 	mod_password : 'update school_user set password=? where account=?',
 	get_user_class : 'select class_list from school_user where account=?',
 	student_sport_report : 'select a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id where a.sex like ? and a.class_id=? and b.year=? and b.term=? and b.student_id is not null',
@@ -95,6 +95,7 @@ var sql = {
 	get_class_list : 'select class_id from student_info where school_id=? group by class_id',
 	update_class_list : 'update school_user set class_list=? where account=?',
 	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level',
+	reset_school_user_password : 'update school_user set password=123456 where account=?',
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
