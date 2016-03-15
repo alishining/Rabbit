@@ -474,7 +474,7 @@ exports.add_student = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', student_id, '0'];
+	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', student_id];
 	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
