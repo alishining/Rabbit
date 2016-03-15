@@ -935,7 +935,7 @@ exports.score_output = function(req, res, next){
 	});
 };
 
-exports.reset_school_user_password = function(){
+exports.reset_school_user_password = function(req, res, next){
 	var account = req.body.account;
 	if (account == undefined){
 		result.header.code = "400";
