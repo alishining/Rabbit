@@ -1,8 +1,10 @@
 
 
-var count = 1;
 
-for (var i=0;i<50;i++){
-	count = count*1.02;
-	console.log(i+1 ,count);
-}
+
+var a = ['1', '2', '3', '33'];
+
+if ('1' in a)
+	console.log('ok');
+else
+	console.log('no');

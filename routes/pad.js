@@ -149,71 +149,140 @@ exports.pad_teacher_info = function(req, res, next){
 
 exports.submit_report_forms = function(req, res, next){
 	var sign = req.body.sign;
+	var check_better = req.body.check_better;
 	var tid = req.body.tid;
 	var title = req.body.title;
 	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
 	var item_id = req.body.item_id;
-	var update_time = req.body.update_time;
-	var create_time = req.body.create_time;
+	var time = req.body.time;
 	var student_score = req.body.student_score;
-	if (sign == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || update_time == undefined || create_time == undefined || student_score == undefined){
+	var teacher = req.body.teacher;
+	if (sign == undefined || check_better == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var student_score_list = JSON.parse(student_score);
-	var del_values = [];
-	var add_values = [];
-	var item_values = [];
-	var rate = student_score_list.length;
-	for(var i=0;i<rate;i++){
-		del_values.push(student_score_list[i].student_id);
-		item_values = [];
-		item_values.push(tid);
-		item_values.push(student_score_list[i].student_id);
-		item_values.push(student_score_list[i].student_number);
-		item_values.push(student_score_list[i].student_name);
-		item_values.push(student_score_list[i].sex);
-		item_values.push(student_score_list[i].score);
-		item_values.push(student_score_list[i].level);
-		add_values.push(item_values);
-	}
-	try{
-		if (sign == 0){
-			var values = [title, school_id, item_id, class_id, rate, create_time, update_time];
-			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
-				values = [add_values];
-				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
-					result.header.code = "200";
-					result.header.msg  = "提交成功";
+
+	var score_map = new Map();
+	var values = [school_id, class_id, item_id];
+	sql.query(req, res, sql_mapping.get_current_form, values, next, function(err, ret){
+		for (var i=0;i<ret.length;i++){
+			score_map.set(ret[i].student_id, {record : ret[i].record, level : ret[i].level});
+		}
+		var student_score_list = JSON.parse(student_score);
+		var del_values = [];
+		var add_values = [];
+		var add_current = [];
+		var item_values = [];
+		var rate = student_score_list.length;
+		for(var i=0;i<rate;i++){
+			del_values.push(student_score_list[i].student_id);
+			item_values = [];
+			item_values.push(tid);
+			item_values.push(student_score_list[i].student_id);
+			item_values.push(student_score_list[i].student_number);
+			item_values.push(student_score_list[i].student_name);
+			item_values.push(student_score_list[i].sex);
+			item_values.push(student_score_list[i].score);
+			item_values.push(student_score_list[i].level);
+			add_values.push(item_values);
+			item_values = [];
+			item_values.push(student_score_list[i].student_id);
+			item_values.push(student_score_list[i].student_number);
+			item_values.push(student_score_list[i].student_name);
+			item_values.push(student_score_list[i].sex);
+			item_values.push(school_id);
+			item_values.push(class_id);
+			item_values.push(item_id);
+	
+			var flag = 0;
+			try{
+				var map_record = parseFloat(score_map.get(student_score_list[i].student_id).record);
+				var map_level = parseInt(score_map.get(student_score_list[i].student_id).level); 
+				var st_record = parseFloat(student_score_list[i].score); 
+				var st_level = parseInt(student_score_list[i].level);
+				if (st_record == undefined || st_level == undefined){
+					flag = -1;
+				}
+			} catch(err){
+				console.log('exp',err);
+				flag = -1;
+			}
+			if (check_better == 1 && ret.length != 0 && flag == 0){
+				if (item_id == '0' || item_id == '9' || item_id == '12' ||  item_id == '13'){
+					if (map_record > st_record){
+						item_values.push(st_record);
+						item_values.push(st_level);
+					} else {
+						item_values.push(map_record);
+						item_values.push(map_level);
+					}
+				} else {
+					if (map_record > st_record){
+						item_values.push(map_record);
+						item_values.push(map_level);
+					} else {
+						item_values.push(st_record);
+						item_values.push(st_level);
+					}
+				}
+			} else {
+				item_values.push(student_score_list[i].score);
+				item_values.push(student_score_list[i].level);
+			}
+			add_current.push(item_values);
+		}
+		var date  = new Date();
+		var month = date.getMonth()+1;
+		if (month < 8){
+			var year = date.getFullYear() - 1;
+		} else {
+			var year = date.getFullYear();
+		}
+
+		values = [class_id, school_id, item_id];
+		sql.query(req, res, sql_mapping.del_current_form, values, next, function(err, ret){
+			values = [add_current];
+			sql.query(req, res, sql_mapping.add_current_form, values, next, function(err, ret){
+				try{
+					if (sign == 0){
+						values = [title, school_id, item_id, class_id, rate, time, time];
+						sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+							values = [add_values];
+							sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+								result.header.code = "200";
+								result.header.msg  = "提交成功";
+								result.data = {};
+								res.json(result);
+							});		
+						});
+					} else {
+						var values = [del_values, tid];
+						sql.query(req, res, sql_mapping.del_student_test, values, next, function(err, ret){
+							values = [add_values];
+							sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+								values = [rate, time, tid]; 
+								sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
+									result.header.code = "200";
+									result.header.msg  = "提交成功";
+									result.data = {};
+									res.json(result);
+								});
+							});  
+						});
+					}
+				} catch(err){
+					result.header.code = "500";
+					result.header.msg  = "提交失败";
 					result.data = {};
 					res.json(result);
-				});		
+				}
 			});
-		} else {
-			var values = [del_values];
-			sql.query(req, res, sql_mapping.del_student_test, values, next, function(err, ret){
-				values = [add_values];
-				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
-					values = [rate, update_time, tid]; 
-					sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
-						result.header.code = "200";
-						result.header.msg  = "提交成功";
-						result.data = {};
-						res.json(result);
-					});
-				});  
-			});
-		}
-	} catch(err){
-		result.header.code = "500";
-		result.header.msg  = "提交失败";
-		result.data = {};
-		res.json(result);
-	}
+		});
+	});
 };
 
 exports.get_test_report = function(req, res, next){
@@ -343,47 +412,47 @@ exports.get_homework = function(req, res, next){
 		var month = date.getMonth()+1;
 		var day = date.getDate();
 		if (date.getMonth()+1 < 10)
-			month = '0'+ (date.getMonth()+1);
-		if (date.getDate() < 10)
-			day = '0' + date.getDate();
-		var ds = date.getFullYear() + '-' + month  + '-' + day;
-		values = [class_id, school_id, ds];
-		sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
-			values = [class_id, school_id];
-			sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
-				var total = 0;
-				try{
-					total = parseInt(__ret[0].total); 
-				} catch(err){
-					console.log(err);
-				}
-				var homework_list = [];
-				try{
-					if (ret.length != 0){
-						var item_list = ret[0].item_list.split(',');
-						for (var i=0;i<item_list.length;i++){
-							var item = item_list[i].split(':')[0];
-							var count = parseInt(item_list[i].split(':')[1]);
-							if (_ret.length != 0){
-								for (var u=0;u<_ret.length;u++){
-									if (_ret[u].item == item){
-										homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
-									}
+		month = '0'+ (date.getMonth()+1);
+	if (date.getDate() < 10)
+		day = '0' + date.getDate();
+	var ds = date.getFullYear() + '-' + month  + '-' + day;
+	values = [class_id, school_id, ds];
+	sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
+		values = [class_id, school_id];
+		sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
+			var total = 0;
+			try{
+				total = parseInt(__ret[0].total); 
+			} catch(err){
+				console.log(err);
+			}
+			var homework_list = [];
+			try{
+				if (ret.length != 0){
+					var item_list = ret[0].item_list.split(',');
+					for (var i=0;i<item_list.length;i++){
+						var item = item_list[i].split(':')[0];
+						var count = parseInt(item_list[i].split(':')[1]);
+						if (_ret.length != 0){
+							for (var u=0;u<_ret.length;u++){
+								if (_ret[u].item == item){
+									homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
 								}
-							} else {
-								homework_list.push({item : item, count : count, rate : 0+'%'});
 							}
+						} else {
+							homework_list.push({item : item, count : count, rate : 0+'%'});
 						}
 					}
-				}catch(err){
-					console.log(err);
 				}
-				result.header.code = "200";
-				result.header.msg  = "成功";
-				result.data = {homework_list : homework_list};
-				res.json(result);
-			});
-		})
+			}catch(err){
+				console.log(err);
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data = {homework_list : homework_list};
+			res.json(result);
+		});
+	})
 	});
 };
 
@@ -530,6 +599,7 @@ exports.get_history_form = function(req, res, next){
 exports.submit_to_school = function(req, res, next){
 	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
+	var teacher = req.body.teacher;
 	if (school_id == undefined || class_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -548,55 +618,66 @@ exports.submit_to_school = function(req, res, next){
 	}
 	var values = [school_id, class_id];
 	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
-		var del_values = [];
-		var score_list = [];
-		var content = JSON.parse(ret[0].content);
-		for (var i=0;i<content.length;i++){
-			var name = content[i].name;
-			var num = content[i].num;
-			var sex = content[i].sex;
-			var class_id = content[i].class_id;
-			var id = content[i].id;
-			del_values.push(id);
-			var score_list_obj = content[i].score_list;
-			for (var u=0;u<score_list_obj.length;u++){
-				var item_id = score_list_obj[u].item_id;
-				var record = score_list_obj[u].record;
-				var score = score_list_obj[u].score;
-				var level = score_list_obj[u].level;
-				var item_list = [];
-				switch(item_id){
-					case 2 : 
-						item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 7 :
-						item_list.push(id,sex,school_id,class_id,'7','体重','',record,'kg',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 6 :
-						item_list.push(id,sex,school_id,class_id,'6','肺活量','',record,'ml',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 0 :
-						item_list.push(id,sex,school_id,class_id,'0','50米跑','',record,'s',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 4 :
-						item_list.push(id,sex,school_id,class_id,'4','坐位体前驱','',record,'个',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 8 :
-						item_list.push(id,sex,school_id,class_id,'8','跳绳','',record,'个',score,level,year,term);
-						score_list.push((item_list));
-						break;
-					case 5 :
-						item_list.push(id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
-						score_list.push((item_list));
-						break;
+		values = [school_id, class_id, ret[0].year, ret[0].title, teacher, date.toLocaleString(), ret[0].content, 1];
+		sql.query(req, res, sql_mapping.add_form, values, next, function(err, ret){
+			if (err){
+				console.log('ADD_FORM_ERR',err);
+				result.header.code = "500";
+				result.header.msg  = "提交失败";
+				result.data = {};
+				res.json(result);
+				return;
+			}
+			var del_values = [];
+			var score_list = [];
+			var content = JSON.parse(ret[0].content);
+			for (var i=0;i<content.length;i++){
+				var name = content[i].name;
+				var num = content[i].num;
+				var sex = content[i].sex;
+				var class_id = content[i].class_id;
+				var id = content[i].id;
+				del_values.push(id);
+				var score_list_obj = content[i].score_list;
+				for (var u=0;u<score_list_obj.length;u++){
+					var item_id = score_list_obj[u].item_id;
+					var record = score_list_obj[u].record;
+					var score = score_list_obj[u].score;
+					var level = score_list_obj[u].level;
+					var item_list = [];
+					switch(item_id){
+						case 2 : 
+							item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 7 :
+							item_list.push(id,sex,school_id,class_id,'7','体重','',record,'kg',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 6 :
+							item_list.push(id,sex,school_id,class_id,'6','肺活量','',record,'ml',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 0 :
+							item_list.push(id,sex,school_id,class_id,'0','50米跑','',record,'s',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 4 :
+							item_list.push(id,sex,school_id,class_id,'4','坐位体前驱','',record,'个',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 8 :
+							item_list.push(id,sex,school_id,class_id,'8','跳绳','',record,'个',score,level,year,term);
+							score_list.push((item_list));
+							break;
+						case 5 :
+							item_list.push(id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
+							score_list.push((item_list));
+							break;
+					}
 				}
 			}
-		}
+		})
 		console.log(del_values);
 		values = [year, term, school_id, class_id + '%'];
 		sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
@@ -621,14 +702,15 @@ exports.submit_to_school = function(req, res, next){
 
 exports.get_form_list = function(req, res, next){
 	var school_id = req.body.school_id;
-	if (school_id == undefined){
+	var class_id = req.body.class_id;
+	if (school_id == undefined || class_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data = {};
 		res.json(result);
 		return;
 	}
-	var values = [school_id];
+	var values = [school_id, class_id];
 	sql.query(req, res, sql_mapping.get_form_list, values, next, function(err, ret){
 		result.header.code = "200";
 		result.header.msg  = "成功";

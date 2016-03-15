@@ -103,8 +103,8 @@ var sql = {
 	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\'',
 	add_test_report : 'insert into test_list(title, school_id, item_id, class_id, rate, create_time, update_time) values (?,?,?,?,?,?,?)',
 	add_student_test : 'insert into student_test(tid, student_id, student_number, student_name, sex, score, level) values ?',
-	del_student_test : 'delete from student_test where student_id in (?)',
-	update_test_report : 'update test_list set rate=? or update_time=? where id=?',
+	del_student_test : 'delete from student_test where student_id in (?) and tid=?',
+	update_test_report : 'update test_list set rate=? , update_time=? where id=?',
 	get_test_report : 'select * from test_list where school_id = ? and class_id = ?',
 	del_test_report : 'DELETE FROM TEST_LIST WHERE id in (?)',
 	add_homework : 'insert into homework(school_id, class_id, item_list) values ?',
@@ -116,7 +116,12 @@ var sql = {
 	get_detail_homework : 'select student_name, student_number, sex, score_list from student_info a left outer join training_record b on a.student_id = b.student_id where a.school_id=? and a.class_id=? and b.item=? and ds=?',
 	get_form : 'select * from form where school_id = ? and class_id = ? and is_history = 0',
 	get_history_form : 'select * from form where id=?',
-	get_form_list : 'select id,class_id,title,submit_time,submit_teacher from form where school_id = ?'
+	get_form_list : 'select id,class_id,title,submit_time,submit_teacher from form where school_id = ? and class_id = ?',
+	add_form : 'insert into form(school_id, class_id, year, title, submit_teacher, submit_time, content, is_history) values (?,?,?,?,?,?,?,?)',
+	update_form : 'update form set year=? and title=? and submit_teacher=? and submit_time=? and content=? where is_history=0 and school_id=? and class_id=?',
+	get_current_form : 'SELECT * FROM current_form WHERE school_id =? and class_id=? and item_id=?',
+	del_current_form : 'delete from current_form where class_id = ? and school_id = ? and item_id = ?',
+	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?'
 };
 
 module.exports = sql;
