@@ -678,7 +678,6 @@ exports.score_input = function(req, res, next){
 	var school = req.body.school;
 	var school_id = req.body.school_id;
 	var tmp_filename = req.files.file_upload.path;
-	console.log(req.body);
 	if (account == undefined || year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";

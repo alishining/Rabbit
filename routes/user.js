@@ -788,7 +788,6 @@ exports.training = function(req, res, next){
 		sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
 			values = [ds, student_id];
 			sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret_count){
-				console.log(ret_count);
 				try{
 					var item_list = ret[0].item_list.split(',');
 					for (var i=0;i<9;i++){
