@@ -245,26 +245,19 @@ exports.unbind_student = function(req, res, next){
 			if (major_default_child != student_id) {
 				values = [phone, student_id];
 				sql.query(req, res, sql_mapping.unbind_student, values, next, function(err, ret){
-					values = [student_id];
-					sql.query(req, res, sql_mapping.get_default_child_father, values, next, function(err, ret){
-						var child_list = [];
-						for (var i=0;i<ret.length;i++){
-							child_list.push(ret[i].phone);
+					values = [major_default_child, student_id];
+					sql.query(req, res, sql_mapping.update_default_child, values, next, function(err, ret){
+						try {
+							result.header.code = "200";
+							result.header.msg  = "成功"; 
+							result.data        = {result : '0', msg    : '解绑成功'};
+							res.json(result);
+						} catch(err) {
+							result.header.code = "500";
+							result.header.msg  = "解绑失败";
+							result.data        = {};
+							res.json(result); 
 						}
-						values = [major_default_child, child_list];
-						sql.query(req, res, sql_mapping.update_default_child, values, next, function(err, ret){
-							try {
-								result.header.code = "200";
-								result.header.msg  = "成功"; 
-								result.data        = {result : '0', msg    : '解绑成功'};
-								res.json(result);
-							} catch(err) {
-								result.header.code = "500";
-								result.header.msg  = "解绑失败";
-								result.data        = {};
-								res.json(result); 
-							}
-						});
 					});
 				})
 			} else {
