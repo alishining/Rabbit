@@ -6,7 +6,7 @@ exports.sms = function(num, phone) {
 		hostname : '112.74.76.186',
 		port : 8030,
 		method : 'GET',
-		path : '/msm/sdk/http/sendsms.jsp?username=JSM40886&scode=gm7glvnt&veryCode=xgcgjlael00d&content=@1@=' + num + '&mobile=' + phone + '&tempid=JSM40886-0002',
+		path : '/service/httpService/httpInterface.do?method=sendMsg&username=JSM40419&password=1mqp6qtf&veryCode=qy94z5c1glxh&mobile=' + phone + '&content=@1@=' +  num + '&msgtype=2&tempid=JSM40419-0009',
 		handers: {
 		}
 	};
