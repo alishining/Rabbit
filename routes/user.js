@@ -271,7 +271,7 @@ exports.unbind_student = function(req, res, next){
 				result.header.code = "200";
 				result.header.msg  = "成功";
 				result.data        = {result : '-1',
-									  msg    : '默认孩子ID为空'};
+									  msg    : '无法删除默认孩子'};
 				res.json(result);
 			}
 		} catch(err) {

@@ -678,6 +678,7 @@ exports.score_input = function(req, res, next){
 	var school = req.body.school;
 	var school_id = req.body.school_id;
 	var tmp_filename = req.files.file_upload.path;
+	console.log(req.body);
 	if (account == undefined || year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -721,7 +722,7 @@ exports.score_input = function(req, res, next){
 				jump = record_list[14];
 				situp = record_list[15];
 				del_values.push(student_id);
-				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id,'0');
+				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id);
 				add_str.push((add_values));
 				item_list = [];
 				item_list.push(student_id,sex,school_id,class_id,'2','身高','',height,'cm','','',year,term);
