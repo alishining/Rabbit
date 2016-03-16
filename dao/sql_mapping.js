@@ -4,6 +4,8 @@ var sql = {
 	unbind_student : 'delete from children_list where phone=? and student_id=?',
 	bind_assist   : 'insert into assist_list(phone, assist_phone, role, img) values(?,?,?,?)',
 	unbind_assist : 'delete from assist_list where assist_phone=?',
+	get_default_child_father : 'select * from children_list where student_id = ?',
+	update_default_child : 'update genearch_info set child=? where phone in (?)',
 	login : 'select child from genearch_info where phone=?',
 	get_default_child : 'select child from genearch_info where phone=?',
 	rate_total : 'select ds,count(*) as count from training_record WHERE student_id=? and ds like ? group by ds ORDER BY ds ASC',
