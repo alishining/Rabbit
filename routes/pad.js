@@ -414,46 +414,50 @@ exports.get_homework = function(req, res, next){
 		var day = date.getDate();
 		if (date.getMonth()+1 < 10)
 		month = '0'+ (date.getMonth()+1);
-	if (date.getDate() < 10)
-		day = '0' + date.getDate();
-	var ds = date.getFullYear() + '-' + month  + '-' + day;
-	values = [class_id, school_id, ds];
-	sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
-		values = [class_id, school_id];
-		sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
-			var total = 0;
-			try{
-				total = parseInt(__ret[0].total); 
-			} catch(err){
-				console.log(err);
-			}
-			var homework_list = [];
-			try{
-				if (ret.length != 0){
-					var item_list = ret[0].item_list.split(',');
-					for (var i=0;i<item_list.length;i++){
-						var item = item_list[i].split(':')[0];
-						var count = parseInt(item_list[i].split(':')[1]);
-						if (_ret.length != 0){
-							for (var u=0;u<_ret.length;u++){
-								if (_ret[u].item == item){
-									homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
+		if (date.getDate() < 10)
+			day = '0' + date.getDate();
+		var ds = date.getFullYear() + '-' + month  + '-' + day;
+		values = [class_id, school_id, ds];
+		sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
+			values = [class_id, school_id];
+			sql.query(req, res, sql_mapping.count_student, values, next, function(err, __ret){
+				var total = 0;
+				try{
+					total = parseInt(__ret[0].total); 
+				} catch(err){
+					console.log(err);
+				}
+				var homework_list = [];
+				try{
+					if (ret.length != 0){
+						var item_list = ret[0].item_list.split(',');
+						for (var i=0;i<item_list.length;i++){
+							var item = item_list[i].split(':')[0];
+							var count = parseInt(item_list[i].split(':')[1]);
+							if (_ret.length != 0){
+								var flag = 0;
+								for (var u=0;u<_ret.length;u++){
+									if (_ret[u].item == item){
+										homework_list.push({item : item, count : count, rate : parseInt((parseInt(_ret[u].count)/(count*total))*100) + '%'});
+										flag = 1;
+									}
 								}
+								if (flag == 0)
+									homework_list.push({item : item, count : count, rate : 0+'%'});
+							} else {
+								homework_list.push({item : item, count : count, rate : 0+'%'});
 							}
-						} else {
-							homework_list.push({item : item, count : count, rate : 0+'%'});
 						}
 					}
+				}catch(err){
+					console.log(err);
 				}
-			}catch(err){
-				console.log(err);
-			}
-			result.header.code = "200";
-			result.header.msg  = "成功";
-			result.data = {homework_list : homework_list};
-			res.json(result);
-		});
-	})
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data = {homework_list : homework_list};
+				res.json(result);
+			});
+		})
 	});
 };
 
