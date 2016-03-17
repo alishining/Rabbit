@@ -353,7 +353,7 @@ exports.add_homework = function(req, res, next){
 	}
 	var values = [school_id, class_list];
 	sql.query(req, res, sql_mapping.del_homework, values, next, function(err, ret){
-		var values = [insert];
+		values = [insert];
 		sql.query(req, res, sql_mapping.add_homework, values, next, function(err, ret){
 			if (err){
 				result.header.code = "500";
@@ -364,7 +364,7 @@ exports.add_homework = function(req, res, next){
 			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {};
+			result.data = {result : '0', msg : '发布成功'};
 			res.json(result);
 		});
 	});
