@@ -50,6 +50,7 @@ exports.pad_login = function(req, res, next){
 
 exports.pad_init = function(req, res, next){
 	var uid = req.body.uid;
+	var school_id = req.body.school_id;
 	if (uid == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -112,7 +113,7 @@ exports.pad_init = function(req, res, next){
 		}
 		var date = new Date();
 		var year = date.getFullYear();
-		values = ['%' + year + '%'];
+		values = ['%' + year + '%', class_id_list, school_id];
 		sql.query(req, res, sql_mapping.get_class_student, values, next, function(err, ret){
 			result.header.code = "200";
 			result.header.msg  = "成功";
@@ -570,8 +571,10 @@ exports.get_history_form = function(req, res, next){
 exports.submit_to_school = function(req, res, next){
 	var school_id = req.body.school_id;
 	var class_id = req.body.class_id;
+	var title = req.body.title;
 	var teacher = req.body.teacher;
-	if (school_id == undefined || class_id == undefined){
+	var time = req.body.time;
+	if (school_id == undefined || class_id == undefined || teacher == undefined || time == undefined || title == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data = {};
@@ -587,85 +590,84 @@ exports.submit_to_school = function(req, res, next){
 		var year = date.getFullYear();
 		var term = 1;
 	}
-	var values = [school_id, class_id];
-	sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
-		values = [school_id, class_id, ret[0].year, ret[0].title, teacher, date.toLocaleString(), ret[0].content, 1];
-		sql.query(req, res, sql_mapping.add_form, values, next, function(err, ret){
-			if (err){
-				console.log('ADD_FORM_ERR',err);
-				result.header.code = "500";
-				result.header.msg  = "提交失败";
-				result.data = {};
-				res.json(result);
-				return;
-			}
-			var del_values = [];
+	var values = [school_id, class_id, title, teacher, time];
+	sql.query(req, res, sql_mapping.add_form_list, values, next, function(err, ret){
+		var tid = ret.insertId;
+		values = [school_id, class_id];
+		sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
+			var student_list = [];
 			var score_list = [];
-			var content = JSON.parse(ret[0].content);
-			for (var i=0;i<content.length;i++){
-				var name = content[i].name;
-				var num = content[i].num;
-				var sex = content[i].sex;
-				var class_id = content[i].class_id;
-				var id = content[i].id;
-				del_values.push(id);
-				var score_list_obj = content[i].score_list;
-				for (var u=0;u<score_list_obj.length;u++){
-					var item_id = score_list_obj[u].item_id;
-					var record = score_list_obj[u].record;
-					var score = score_list_obj[u].score;
-					var level = score_list_obj[u].level;
-					var item_list = [];
-					switch(item_id){
-						case 2 : 
-							item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 7 :
-							item_list.push(id,sex,school_id,class_id,'7','体重','',record,'kg',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 6 :
-							item_list.push(id,sex,school_id,class_id,'6','肺活量','',record,'ml',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 0 :
-							item_list.push(id,sex,school_id,class_id,'0','50米跑','',record,'s',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 4 :
-							item_list.push(id,sex,school_id,class_id,'4','坐位体前驱','',record,'个',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 8 :
-							item_list.push(id,sex,school_id,class_id,'8','跳绳','',record,'个',score,level,year,term);
-							score_list.push((item_list));
-							break;
-						case 5 :
-							item_list.push(id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
-							score_list.push((item_list));
-							break;
-					}
+			for (var i=0;i<ret.length;i++){
+				var one_record = [];
+				one_record.push(tid);
+				one_record.push(ret[i].student_id);
+				one_record.push(ret[i].num);
+				one_record.push(ret[i].name);
+				one_record.push(ret[i].sex);
+				one_record.push(ret[i].school_id);
+				one_record.push(ret[i].class_id);
+				one_record.push(ret[i].item_id);
+				one_record.push(ret[i].record);
+				one_record.push(ret[i].level);
+				student_list.push(one_record);
+				var item_list = [];
+				var id = ret[i].student_id;
+				var sex = ret[i].sex;
+				var item_id = ret[i].item_id;
+				var record = ret[i].record;
+				var score = '';
+				var level = ret[i].level;
+				switch(item_id){
+					case 2 : 
+						item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 7 :
+						item_list.push(id,sex,school_id,class_id,'7','体重','',record,'kg',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 6 :
+						item_list.push(id,sex,school_id,class_id,'6','肺活量','',record,'ml',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 0 :
+						item_list.push(id,sex,school_id,class_id,'0','50米跑','',record,'s',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 4 :
+						item_list.push(id,sex,school_id,class_id,'4','坐位体前驱','',record,'个',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 8 :
+						item_list.push(id,sex,school_id,class_id,'8','跳绳','',record,'个',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 5 :
+						item_list.push(id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
+						score_list.push((item_list));
+						break;
 				}
 			}
-		})
-		console.log(del_values);
-		values = [year, term, school_id, class_id + '%'];
-		sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
-			values = [score_list];
-			sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
-				if(err){
-					console.log(err);
-					result.header.code = "500";
-					result.header.msg  = "提交失败";
-					result.data = {};
-					res.json(result);
-					return;
-				}
-				result.header.code = "200";
-				result.header.msg  = "成功";
-				result.data = {result : '0', msg : '提交成功'};
-				res.json(result);
+			values = [student_list];
+			sql.query(req, res, sql_mapping.add_history_form, values, next, function(err, ret){
+				values = [year, term, school_id, class_id + '%'];
+				sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
+					values = [score_list];
+					sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
+						if(err){
+							console.log(err);
+							result.header.code = "500";
+							result.header.msg  = "提交失败";
+							result.data = {};
+							res.json(result);
+							return;
+						}
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data = {};
+						res.json(result);
+					})
+				})
 			});
 		});
 	});

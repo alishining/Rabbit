@@ -100,7 +100,7 @@ var sql = {
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
-	get_class_student : 'select a.class_id, GROUP_CONCAT(a.student_id, \'|\',a.student_number, \'|\',a.student_name,\'|\', a.sex,\'|\', b.avg SEPARATOR \';\') as student from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where b.student_id is not null group by class_id', 
+	get_class_student : 'select a.class_id as class_id, a.student_id as id, a.student_number as num, a.student_name as name, a.sex as sex, case when b.avg IS NULL then \'\' else b.avg  end as avg from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', FORMAT(sum(cast(score as DECIMAL(9,2)))/count(*),2)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where a.class_id in ? and school_id=?',
 	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\'',
 	add_test_report : 'insert into test_list(title, school_id, item_id, class_id, rate, create_time, update_time) values (?,?,?,?,?,?,?)',
 	add_student_test : 'insert into student_test(tid, student_id, student_number, student_name, sex, score, level) values ?',
@@ -117,12 +117,12 @@ var sql = {
 	get_detail_homework : 'select student_name, student_number, sex, score_list from student_info a left outer join training_record b on a.student_id = b.student_id where a.school_id=? and a.class_id=? and b.item=? and ds=?',
 	get_form : 'select * from current_form WHERE school_id=? and class_id=?',
 	get_history_form : 'select * from form WHERE school_id=? and class_id=? and tid = ?',
-	get_form_list : 'select id,class_id,title,submit_time,submit_teacher from form where school_id = ? and class_id = ?',
-	add_form : 'insert into form(school_id, class_id, year, title, submit_teacher, submit_time, content, is_history) values (?,?,?,?,?,?,?,?)',
-	update_form : 'update form set year=? and title=? and submit_teacher=? and submit_time=? and content=? where is_history=0 and school_id=? and class_id=?',
+	get_form_list : 'select id,class_id,title,time,teacher from form_list where school_id = ? and class_id = ?',
 	get_current_form : 'SELECT * FROM current_form WHERE school_id =? and class_id=? and item_id=?',
 	del_current_form : 'delete from current_form where class_id = ? and school_id = ? and item_id = ?',
-	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?'
+	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
+	add_form_list : 'insert into form_list(school_id, class_id, title, teacher, time) values(?,?,?,?,?)',
+	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?'
 };
 
 module.exports = sql;
