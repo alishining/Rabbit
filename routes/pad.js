@@ -351,19 +351,22 @@ exports.add_homework = function(req, res, next){
 		one_class.push(item_list);
 		insert.push(one_class);
 	}
-	var values = [insert];
-	sql.query(req, res, sql_mapping.add_homework, values, next, function(err, ret){
-		if (err){
-			result.header.code = "500";
-			result.header.msg  = "重复添加";
+	var values = [school_id, class_list];
+	sql.query(req, res, sql_mapping.del_homework, values, next, function(err, ret){
+		var values = [insert];
+		sql.query(req, res, sql_mapping.add_homework, values, next, function(err, ret){
+			if (err){
+				result.header.code = "500";
+				result.header.msg  = "重复添加";
+				result.data = {};
+				res.json(result);
+				return;
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
 			result.data = {};
 			res.json(result);
-			return;
-		}
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {};
-		res.json(result);
+		});
 	});
 };
 
