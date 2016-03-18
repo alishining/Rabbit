@@ -705,3 +705,14 @@ exports.get_form_list = function(req, res, next){
 		res.json(result);
 	});
 };
+
+exports.get_test_detail = function(req, res, next){
+	var tid = req.body.tid;
+	var values = [tid];
+	sql.query(req, res, sql_mapping.get_test_detail, values, next, function(err, ret){
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data = {student_list : ret};
+		res.json(result);
+	});
+}

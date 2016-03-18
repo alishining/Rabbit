@@ -123,7 +123,8 @@ var sql = {
 	del_current_form : 'delete from current_form where class_id = ? and school_id = ? and item_id = ?',
 	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
 	add_form_list : 'insert into form_list(school_id, class_id, title, teacher, time) values(?,?,?,?,?)',
-	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?'
+	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
+	get_test_detail : 'select * from student_test where tid = ?'
 };
 
 module.exports = sql;
