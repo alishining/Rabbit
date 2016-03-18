@@ -624,7 +624,7 @@ exports.submit_to_school = function(req, res, next){
 				var record = ret[i].record;
 				var score = '';
 				var level = ret[i].level;
-				switch(item_id){
+				switch(parseInt(item_id)){
 					case 2 : 
 						item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
 						score_list.push((item_list));
@@ -656,26 +656,33 @@ exports.submit_to_school = function(req, res, next){
 				}
 			}
 			values = [student_list];
-			sql.query(req, res, sql_mapping.add_history_form, values, next, function(err, ret){
-				values = [year, term, school_id, class_id + '%'];
-				sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
-					values = [score_list];
-					sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
-						if(err){
-							console.log(err);
-							result.header.code = "500";
-							result.header.msg  = "提交失败";
-							result.data = {};
+			if (score_list.length != 0){
+				sql.query(req, res, sql_mapping.add_history_form, values, next, function(err, ret){
+					values = [year, term, school_id, class_id + '%'];
+					sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
+						values = [score_list];
+						sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
+							if(err){
+								console.log(err);
+								result.header.code = "500";
+								result.header.msg  = "提交失败";
+								result.data = {};
+								res.json(result);
+								return;
+							}
+							result.header.code = "200";
+							result.header.msg  = "成功";
+							result.data = {result : '0', msg : '提交成功'};
 							res.json(result);
-							return;
-						}
-						result.header.code = "200";
-						result.header.msg  = "成功";
-						result.data = {};
-						res.json(result);
+						})
 					})
-				})
-			});
+				});
+			} else {
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data = {result : '-1', msg : '提交失败'};
+				res.json(result);
+			}
 		});
 	});
 };
