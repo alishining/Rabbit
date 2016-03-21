@@ -137,6 +137,7 @@ app.post('/get_form', pad_route.get_form);
 app.post('/get_history_form', pad_route.get_history_form);
 app.post('/submit_to_school', pad_route.submit_to_school);
 app.post('/get_form_list', pad_route.get_form_list);
+app.post('update_teacher_img', pad_route.update_teacher_img);
 
 app.use(function(req, res, next) {
 	var err = new Error('Not Found');
