@@ -125,7 +125,9 @@ var sql = {
 	add_form_list : 'insert into form_list(school_id, class_id, title, teacher, time) values(?,?,?,?,?)',
 	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
 	get_test_detail : 'select * from student_test where tid = ?',
-	update_teacher_img : 'update school_user set img=? where account=?'
+	update_teacher_img : 'update school_user set img=? where account=?',
+	//-------------------------------------------------------------------
+	load_score_level : 'select * from score_level order by item_id, grade, sex, record'
 };
 
 module.exports = sql;

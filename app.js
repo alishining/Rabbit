@@ -11,6 +11,7 @@ var user_route = require('./routes/user');
 var web_route = require('./routes/web');
 var school_web_route = require('./routes/school_web');
 var pad_route = require('./routes/pad');
+var tools = require('./tools/load_score_level');
 
 var app = express();
 
@@ -36,6 +37,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
+global.scoreMap = new Map();
+tools.load_score_level(undefined, undefined, undefined);
+
+//RESET SCOREMAP
+app.post('/update_score_map', tools.load_score_level);
 //User routes
 app.post('/sms', user_route.sms);								//短信接口
 app.post('/login', user_route.login);							//登录接口
