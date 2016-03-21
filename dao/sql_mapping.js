@@ -124,7 +124,8 @@ var sql = {
 	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
 	add_form_list : 'insert into form_list(school_id, class_id, title, teacher, time) values(?,?,?,?,?)',
 	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, level) values ?',
-	get_test_detail : 'select * from student_test where tid = ?'
+	get_test_detail : 'select * from student_test where tid = ?',
+	update_teacher_img : 'update school_user set img=? where account=?'
 };
 
 module.exports = sql;

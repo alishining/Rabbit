@@ -715,4 +715,42 @@ exports.get_test_detail = function(req, res, next){
 		result.data = {student_list : ret};
 		res.json(result);
 	});
+};
+
+exports.update_teacher_img = function(req, res, next){
+	var uid = req.body.uid;
+	var tmp_filename = req.files.value.path;
+	if (uid == undefined || tmp_filename == undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+
+	var date  = new Date();
+	var key = encrypt.md5(uid+date) + '.jpg';
+	var extra = new qiniu.io.PutExtra();
+	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
+	var uptoken = putPolicy.token();
+	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) {
+		if (!err) {
+			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+			var values = [file_name, uid];
+			sql.query(req, res, sql_mapping.update_teacher_img, values, next, function(err, ret){
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data        = {result : '0',
+									  msg    : '上传成功'};
+				res.json(result);
+			});
+		} else {
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data        = {result : '-1',
+								  msg    : '上传失败' ,
+								  err    : err};
+			res.json(result);
+		}
+	});
 }
