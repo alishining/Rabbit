@@ -758,8 +758,7 @@ exports.update_teacher_img = function(req, res, next){
 
 exports.get_grade_sport_item = function(req, res, next){
 	var grade = req.body.grade;
-	var type = 0;
-	if (grade == undefined || type == undefined){
+	if (grade == undefined){
 		result.header.code = '400';
 		result.header.msg  = '参数不存在';
 		result.data        = {};
