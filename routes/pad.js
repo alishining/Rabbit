@@ -754,4 +754,29 @@ exports.update_teacher_img = function(req, res, next){
 			res.json(result);
 		}
 	});
-}
+};
+
+exports.get_grade_sport_item = function(req, res, next){
+	var grade = req.body.grade;
+	var type = 0;
+	if (grade == undefined || type == undefined){
+		result.header.code = '400';
+		result.header.msg  = '参数不存在';
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [grade];
+	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
+		var sport_list = new Set();
+		for (var i=0;i<ret.length;i++){
+			var tmp = ret[i].item_list.split(',');
+			for (var j=0;j<tmp.length;j++)
+				sport_list.add(tmp[j]);
+		}
+		result.header.code = '200';
+		result.header.msg  = '成功';
+		result.data        = {sport_item : sport_list);
+		res.json(result);
+	});
+}	

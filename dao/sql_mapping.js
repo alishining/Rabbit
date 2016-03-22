@@ -127,7 +127,8 @@ var sql = {
 	get_test_detail : 'select * from student_test where tid = ?',
 	update_teacher_img : 'update school_user set img=? where account=?',
 	//-------------------------------------------------------------------
-	load_score_level : 'select * from score_level order by item_id, grade, sex, record'
+	load_score_level : 'select * from score_level order by item_id, grade, sex, record',
+	get_grade_sport_item : 'select item_list from sport_item where grade in (?)'
 };
 
 module.exports = sql;
