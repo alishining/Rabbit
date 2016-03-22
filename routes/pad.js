@@ -776,7 +776,7 @@ exports.get_grade_sport_item = function(req, res, next){
 		}
 		result.header.code = '200';
 		result.header.msg  = '成功';
-		result.data        = {sport_item : sport_list);
+		result.data        = {sport_item : sport_list};
 		res.json(result);
 	});
 }	
