@@ -765,17 +765,24 @@ exports.get_grade_sport_item = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [grade];
+	var sport_list = new Set();
+	var values = [grade.split(',')];
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
-		var sport_list = new Set();
 		for (var i=0;i<ret.length;i++){
 			var tmp = ret[i].item_list.split(',');
-			for (var j=0;j<tmp.length;j++)
+			for (var j=0;j<tmp.length;j++){
 				sport_list.add(tmp[j]);
+			}
+		}
+		var res_list = [];
+		for (var i=0;i<50;i++){
+			if (sport_list.has(i+'')){
+				res_list.push(i);
+			}
 		}
 		result.header.code = '200';
 		result.header.msg  = '成功';
-		result.data        = {sport_item : sport_list};
+		result.data        = {sport_item : res_list};
 		res.json(result);
 	});
 }	
