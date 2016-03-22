@@ -149,6 +149,7 @@ exports.pad_teacher_info = function(req, res, next){
 };
 
 exports.submit_report_forms = function(req, res, next){
+	var uid = req.body.uid;
 	var sign = req.body.sign;
 	var check_better = req.body.check_better;
 	var tid = req.body.tid;
@@ -159,7 +160,7 @@ exports.submit_report_forms = function(req, res, next){
 	var time = req.body.time;
 	var student_score = req.body.student_score;
 	var teacher = req.body.teacher;
-	if (sign == undefined || check_better == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
+	if (uid == undefined || sign == undefined || check_better == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -250,7 +251,7 @@ exports.submit_report_forms = function(req, res, next){
 			sql.query(req, res, sql_mapping.add_current_form, values, next, function(err, ret){
 				try{
 					if (sign == 0){
-						values = [title, school_id, item_id, class_id, rate, time, time];
+						values = [uid, title, school_id, item_id, class_id, rate, time, time, '1'];
 						sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
 							values = [add_values];
 							sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
@@ -287,16 +288,15 @@ exports.submit_report_forms = function(req, res, next){
 };
 
 exports.get_test_report = function(req, res, next){
-	var school_id = req.body.school_id;
-	var class_id = req.body.class_id;
-	if (school_id == undefined || class_id == undefined){
+	var uid = req.body.uid;
+	if (uid == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [school_id, class_id];
+	var values = [uid];
 	sql.query(req, res, sql_mapping.get_test_report, values, next, function(err, ret){
 		result.header.code = "200";
 		result.header.msg  = "成功";
@@ -307,28 +307,99 @@ exports.get_test_report = function(req, res, next){
 };
 
 exports.del_test_report = function(req, res, next){
-	var tid = req.body.tid_list;
-	if (tid == undefined){
+	var tid_list = req.body.tid_list;
+	if (tid_list == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};    
 		res.json(result);
 		return;  
 	}
-	var values = [tid_list];
+	var values = [tid_list.split(',')];
 	sql.query(req, res, sql_mapping.del_test_report, values, next, function(err, ret){
-		if (err){
-			result.header.code = "500";
-			result.header.msg  = "删除失败";
+		sql.query(req, res, sql_mapping.mov_student_test, values, next, function(err, ret){
+			if (err){
+				result.header.code = "500";
+				result.header.msg  = "删除失败";
+				result.data = {};
+				res.json(result);
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
 			result.data = {};
 			res.json(result);
-		}
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data = {};
-		res.json(result);
+		});
 	});
 };
+
+exports.save_test_report = function(req, res, next){
+	var sign = req.body.sign;
+	var tid = req.body.tid;
+	var uid = req.body.uid;
+	var title = req.body.title;
+	var school_id = req.body.school_id;
+	var class_id = req.body.class_id;
+	var item_id = req.body.item_id;
+	var time = req.body.time;
+	var student_score = req.body.student_score;	
+	if (sign == undefined || tid == undefined || uid == undefined || title == undefined || school_id == undefined ||class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var student_score_list = JSON.parse(student_score);
+	var del_values = [];
+	var add_values = [];
+	var item_values = [];
+	var rate = student_score_list.length;
+	for(var i=0;i<rate;i++){
+		del_values.push(student_score_list[i].student_id);
+		item_values = [];
+		item_values.push(tid);
+		item_values.push(student_score_list[i].student_id);
+		item_values.push(student_score_list[i].student_number);
+		item_values.push(student_score_list[i].student_name);
+		item_values.push(student_score_list[i].sex);
+		item_values.push(student_score_list[i].score);
+		item_values.push(student_score_list[i].level);
+		add_values.push(item_values);
+	}
+	try{
+		if (sign == 0){
+			values = [uid, title, school_id, item_id, class_id, rate, time, time, '1'];
+			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+				values = [add_values];
+				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+					result.header.code = "200";
+					result.header.msg  = "保存成功";
+					result.data = {};
+					res.json(result);
+				});
+			});
+		} else {
+			var values = [del_values, tid];
+			sql.query(req, res, sql_mapping.del_student_test, values, next, function(err, ret){
+				values = [add_values];
+				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
+					values = [rate, time, tid];
+					sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
+						result.header.code = "200";
+						result.header.msg  = "保存成功";
+						result.data = {};
+						res.json(result);
+					});
+				});
+			});
+		}
+	} catch(err){
+		result.header.code = "500";
+		result.header.msg  = "保存失败";
+		result.data = {};
+		res.json(result);
+	}
+}
 
 exports.add_homework = function(req, res, next){
 	var school_id = req.body.school_id;
