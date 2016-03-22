@@ -753,7 +753,8 @@ exports.get_calendar = function(req, res, _next){
 
 exports.training = function(req, res, next){
 	var student_id = req.body.student_id;
-	if (student_id == undefined){
+	var grade = req.body.grade;
+	if (student_id == undefined || grade == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -788,36 +789,41 @@ exports.training = function(req, res, next){
 		sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
 			values = [ds, student_id];
 			sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret_count){
-				try{
-					var item_list = ret[0].item_list.split(',');
-					for (var i=0;i<9;i++){
-						sign = 0;	
-						for (var j=0;j<item_list.length;j++){
-							for (var u=0;u<ret_count.length;u++){
-								if (parseInt(ret_count[u].item) == i){
-									if (parseInt(item_list[j].split(':')[0]) == i){
-										var count = ret_count[u].score_list.split(',').length;
-										used_list.push({item_id : i, count : count});	
-										sign = 1;
+				values = [grade];
+				sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret_sport_item){
+					var grade_homework_sport_item = ret_sport_item.split(','); 
+					try{
+						var item_list = ret[0].item_list.split(',');
+						for (var i=0;i<grade_homework_sport_item.length;i++){
+							var tmp = grade_homework_sport_item[i];
+							sign = 0;	
+							for (var j=0;j<item_list.length;j++){
+								for (var u=0;u<ret_count.length;u++){
+									if (parseInt(ret_count[u].item) == parseInt(tmp)){
+										if (parseInt(item_list[j].split(':')[0]) == parseInt(tmp)){
+											var count = ret_count[u].score_list.split(',').length;
+											used_list.push({item_id : parseInt(tmp), count : count});	
+											sign = 1;
+										}
 									}
 								}
 							}
+							if (sign == 0)
+								unused_list.push({item_id : parseInt(tmp), count : 0});
 						}
-						if (sign == 0)
-							unused_list.push({item_id : i, count : 0});
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
+						res.json(result);
+					} catch(err){
+						for (var i=0;i<grade_homework_sport_item.length;i++){
+							unused_list.push({item_id : parseInt(grade_homework_sport_item[i]), count : 0});
+						}
+						result.header.code = "200";
+						result.header.msg  = "成功";
+						result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
+						res.json(result);
 					}
-					result.header.code = "200";
-					result.header.msg  = "成功";
-					result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
-					res.json(result);
-				} catch(err){
-					for (var i=0;i<9;i++){
-						unused_list.push({item_id : i, count : 0});
-					}
-					result.header.code = "200";
-					result.header.msg  = "成功";
-					result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
-					res.json(result);
 				}
 			});
 		});
