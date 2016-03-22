@@ -697,7 +697,7 @@ exports.score_input = function(req, res, next){
 			var record_list = student_list[j];
 			if (record_list.length != 0){
 				var add_values = [];
-				grade = record_list[0];
+				grade = parseInt(record_list[0])%10;
 				class_id = record_list[1]+'';
 				if (class_id.length != 4)
 					continue;
