@@ -44,7 +44,7 @@ exports.load_score_level = function(req, res, next) {
 exports.get_score_level = function(item_id, grade, sex, record){
 	var key = item_id + grade + sex;
 	var list = global.scoreMap.get(key);
-	if (item_id == '0'){
+	if (item_id == '0' || item_id == '9' || item_id == '12' || item_id == '13'){
 		for (var i=0;i<list.length;i++){
 			if (list[i].record < record){
 				console.log(list[i]);
@@ -52,7 +52,7 @@ exports.get_score_level = function(item_id, grade, sex, record){
 			}
 		}
 	} else {
-		for (var i=list.length-1;i>=0;i++){
+		for (var i=list.length-1;i>=0;i--){
 			if (list[i].record < record){
 				console.log(list[i]);
 				return list[i];

@@ -4,7 +4,7 @@ var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
 var sql_mapping = require('../dao/sql_mapping');
-var tools = require('../tools/sms');
+var tools = require('../tools/load_score_level');
 
 var result = {
 	header : {
@@ -622,8 +622,9 @@ exports.submit_to_school = function(req, res, next){
 				var sex = ret[i].sex;
 				var item_id = ret[i].item_id;
 				var record = ret[i].record;
-				var score = '';
-				var level = ret[i].level;
+				var grade = ret[i].class_id[1];
+				var score = tools.get_score_level(item_id, grade, sex, record).score;
+				var level = tools.get_score_level(item_id, grade, sex, record).level;
 				switch(parseInt(item_id)){
 					case 2 : 
 						item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
