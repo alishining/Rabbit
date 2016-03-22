@@ -31,7 +31,7 @@ exports.pad_login = function(req, res, next){
 			if (ret[0].password == password){
 				result.header.code = "200";
 				result.header.msg  = "成功";
-				result.data = {result : '0', uid : account, msg : '登录成功', school_id : ret[0].school_id};
+				result.data = {result : '0', uid : account, msg : '登录成功', school_id : ret[0].school_id, school : ret[0].school};
 				res.json(result);
 			} else {
 				result.header.code = "200";
