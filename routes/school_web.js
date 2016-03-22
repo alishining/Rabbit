@@ -7,7 +7,8 @@ var multipart = require('connect-multiparty');
 var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
-var tools = require('../tools/sms');
+var tool = require('../tools/sms');
+var tools = require('../tools/load_score_level');
 var sql_mapping = require('../dao/sql_mapping');
 
 var result = {
@@ -369,7 +370,7 @@ exports.add_teacher = function(req, res, next){
 	var values = [teacher_phone];
 	sql.query(req, res, sql_mapping.check_school_user, values, next, function(err, ret){
 		if (ret && ret[0] == undefined){
-			if (!tools.sms(num, teacher_phone)){
+			if (!tool.sms(num, teacher_phone)){
 				result.header.code = "500";
 				result.header.msg  = "短信发送失败";
 				result.data        = {};
