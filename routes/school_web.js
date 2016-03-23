@@ -150,8 +150,10 @@ exports.student_sport_report = function(req, res, next){
 				var id_set = new Set();
 				var height = '';
 				var weight = '';
+				var flag = 0;
 				for (var i=0;i<ret.length;i++){
 					if (!id_set.has(ret[i].student_id)){
+						flag = 0;
 						height = ''; 
 						weight = '';	
 						id_set.add(ret[i].student_id);
@@ -164,23 +166,26 @@ exports.student_sport_report = function(req, res, next){
 														   level  : ret[i].level}]});
 					} else {
 						for (var j=0;j<report_list.length;j++){
-							if (ret[i].item == '2')
-								height = ret[i].record;
-							if (ret[i].item == '7')
-								weight = ret[i].record;
 							if (report_list[j].student_id == ret[i].student_id){
+								if (parseInt(ret[i].item_id) == 2) 
+									height = ret[i].record;
+								if (parseInt(ret[i].item_id) == 7) 
+									weight = ret[i].record;
 								report_list[j].item_list.push({ item   : ret[i].item,
 																record : ret[i].record,
 																score  : ret[i].score,
 																level  : ret[i].level});
-								break;
-							}
-							if (height != '' && weight != ''){
-								var bmi = Math.round(parseFloat(weight)/(parseFloat(height)*parseFloat(height))*10)*0.1;
-								report_list[j].item_list.push({ item   : '-1',
-																record : bmi,
-																score  : tools.get_bmi_level(grade, sex, bmi).score,
-																level  : tools.get_bmi_level(grade, sex, bmi).level});
+								if (height != '' && weight != '' && flag == 0){
+									flag = 1;
+									height = parseFloat(height) / 100;
+									weight = parseFloat(weight);
+									var bmi = Math.round(weight/(height*height)*10)*0.1;
+									bmi = bmi.toFixed(1);
+									report_list[j].item_list.push({ item   : 'BMI',
+																	record : bmi,
+																	score  : tools.get_bmi_level(grade, ret[i].sex, bmi).score,
+																	level  : tools.get_bmi_level(grade, ret[i].sex, bmi).level});
+								}
 							}
 						}	
 					}
