@@ -231,7 +231,7 @@ exports.sport_item_report_rate = function(req, res, next){
 			result.data        = {sport_item_rate : []};
 			res.json(result);
 		}
-	}
+	})
 };
 
 exports.grade_sport_item_rank = function(req, res, next){
