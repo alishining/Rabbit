@@ -727,7 +727,7 @@ exports.submit_to_school = function(req, res, next){
 						score_list.push((item_list));
 						break;
 					case 9 : 
-						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,'s',score,level,year,term);
 						score_list.push((item_list));
 						break;
 				}

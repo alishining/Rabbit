@@ -10,6 +10,7 @@ var sql = require('../dao/sql_tool');
 var tool = require('../tools/sms');
 var tools = require('../tools/load_score_level');
 var sql_mapping = require('../dao/sql_mapping');
+var constant = require('../tools/constant');
 
 var result = {
 	header : {
@@ -139,43 +140,46 @@ exports.student_sport_report = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [sex, class_id, year,term];
-	sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
-		try {
-			var report_list = [];
-			var id_set = new Set();
-			for (var i=0;i<ret.length;i++){
-				if (!id_set.has(ret[i].student_id)){
-					id_set.add(ret[i].student_id);
-					report_list.push({student_id   : ret[i].student_id,
-									  student_name : ret[i].student_name,
-									  sex          : ret[i].sex,
-									  item_list    : [{item   : ret[i].item, 
-												   	   record : ret[i].record, 
-													   score  : ret[i].score, 
-													   level  : ret[i].level}]});
-				} else {
-					for (var j=0;j<report_list.length;j++){
-						if (report_list[j].student_id == ret[i].student_id){
-							report_list[j].item_list.push({ item   : ret[i].item,
-															record : ret[i].record,
-															score  : ret[i].score,
-															level  : ret[i].level});
-							break;
-						}
-					}	
+	var values = [class_id[1]];
+	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
+		values = [ret[0].item_list.split(','), sex, class_id, year,term];
+		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
+			try {
+				var report_list = [];
+				var id_set = new Set();
+				for (var i=0;i<ret.length;i++){
+					if (!id_set.has(ret[i].student_id)){
+						id_set.add(ret[i].student_id);
+						report_list.push({student_id   : ret[i].student_id,
+										  student_name : ret[i].student_name,
+										  sex          : ret[i].sex,
+										  item_list    : [{item   : ret[i].item, 
+														   record : ret[i].record, 
+														   score  : ret[i].score, 
+														   level  : ret[i].level}]});
+					} else {
+						for (var j=0;j<report_list.length;j++){
+							if (report_list[j].student_id == ret[i].student_id){
+								report_list[j].item_list.push({ item   : ret[i].item,
+																record : ret[i].record,
+																score  : ret[i].score,
+																level  : ret[i].level});
+								break;
+							}
+						}	
+					}
 				}
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {report_list : report_list};
+				res.json(result);
+			} catch(err) {
+				result.header.code = "500";
+				result.header.msg  = "获取失败";
+				result.data        = {};
+				res.json(result);
 			}
-			result.header.code = "200";
-			result.header.msg  = "成功";
-			result.data        = {report_list : report_list};
-			res.json(result);
-		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "获取失败";
-			result.data        = {};
-			res.json(result);
-		}
+		})
 	})
 };
 
@@ -721,43 +725,49 @@ exports.score_input = function(req, res, next){
 				sit_reach = record_list[13];
 				jump = record_list[14];
 				situp = record_list[15];
+				run8_50 = record_list[16];
 				del_values.push(student_id);
 				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id);
 				add_str.push((add_values));
 				item_list = [];
 				var score = tools.get_score_level('2', grade, sex, height).score;
 				var level = tools.get_score_level('2', grade, sex, height).level;
-				item_list.push(student_id,sex,school_id,class_id,'2','身高','',height,'cm',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'2',constant.height,'',height,'cm',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('7', grade, sex, weight).score;
 				level = tools.get_score_level('7', grade, sex, weight).level;
-				item_list.push(student_id,sex,school_id,class_id,'7','体重','',weight,'kg',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'7',constant.weight,'',weight,'kg',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('6', grade, sex, lung).score;
 				level = tools.get_score_level('6', grade, sex, lung).level;
-				item_list.push(student_id,sex,school_id,class_id,'6','肺活量','',lung,'ml',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'6',constant.lung,'',lung,'ml',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('0', grade, sex, run50).score;
 				level = tools.get_score_level('0', grade, sex, run50).level;
-				item_list.push(student_id,sex,school_id,class_id,'0','50米跑','',run50,'s',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'0',constant.run50,'',run50,'s',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('4', grade, sex, sit_reach).score;
 				level = tools.get_score_level('4', grade, sex, sit_reach).level;
-				item_list.push(student_id,sex,school_id,class_id,'4','坐位体前驱','',sit_reach,'个',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'4',constant.sit_reach,'',sit_reach,'个',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('8', grade, sex, jump).score;
 				level = tools.get_score_level('8', grade, sex, jump).level;
-				item_list.push(student_id,sex,school_id,class_id,'8','跳绳','',jump,'个',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'8',constant.jump,'',jump,'个',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
 				score = tools.get_score_level('5', grade, sex, situp).score;
 				level = tools.get_score_level('5', grade, sex, situp).level;
-				item_list.push(student_id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
+				item_list.push(student_id,sex,school_id,class_id,'5',constant.situp,'',situp,'个',score,level,year,term);
+				score_list.push((item_list));
+				item_list = [];
+				score = tools.get_score_level('9', grade, sex, run8_50).score;
+				level = tools.get_score_level('9', grade, sex, run8_50).level;
+				item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,'s',score,level,year,term);
 				score_list.push((item_list));
 			}
 		}
@@ -840,23 +850,25 @@ exports.score_output = function(req, res, next){
 				if (sign != ret[i].student_id)
 					break;
 				switch(ret[i].item_id){
-					case '0' :	student_info.push('50米跑');
+					case '0' :	student_info.push(constant.run50);
 								break;
-					case '1' :	student_info.push('平衡');
+					case '1' :	student_info.push(constant.balance);
 								break;
-					case '2' :	student_info.push('身高');
+					case '2' :	student_info.push(constant.height);
 								break;
-					case '3' :	student_info.push('俯卧撑');
+					case '3' :	student_info.push(constant.updown);
 								break;
-					case '4' :	student_info.push('坐位体前屈');
+					case '4' :	student_info.push(constant.sit_reach);
 								break;
-					case '5' :	student_info.push('1分钟仰卧起坐');
+					case '5' :	student_info.push(constant.situp);
 								break;
-					case '6' :	student_info.push('肺活量');
+					case '6' :	student_info.push(constant.lung);
 								break;
-					case '7' :	student_info.push('体重');
+					case '7' :	student_info.push(constant.weight);
 								break;
-					case '8' :	student_info.push('1分钟跳绳');
+					case '8' :	student_info.push(constant.jump);
+								break;
+					case '9' :  student_info.push(constant.run8_50);
 								break;
 				}
 			}
