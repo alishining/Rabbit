@@ -5,6 +5,7 @@ var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
 var sql_mapping = require('../dao/sql_mapping');
 var tools = require('../tools/load_score_level');
+var constant = require('../tools/constant');
 
 var result = {
 	header : {
@@ -698,31 +699,35 @@ exports.submit_to_school = function(req, res, next){
 				var level = tools.get_score_level(item_id, grade, sex, record).level;
 				switch(parseInt(item_id)){
 					case 2 : 
-						item_list.push(id,sex,school_id,class_id,'2','身高','',record,'cm',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'2', constant.height,'',record,'cm',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 7 :
-						item_list.push(id,sex,school_id,class_id,'7','体重','',record,'kg',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'7', constant.weight,'',record,'kg',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 6 :
-						item_list.push(id,sex,school_id,class_id,'6','肺活量','',record,'ml',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'6', constant.lung,'',record,'ml',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 0 :
-						item_list.push(id,sex,school_id,class_id,'0','50米跑','',record,'s',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'0', constant.50run,'',record,'s',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 4 :
-						item_list.push(id,sex,school_id,class_id,'4','坐位体前驱','',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'4', constant.sit_reach,'',record,'个',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 8 :
-						item_list.push(id,sex,school_id,class_id,'8','跳绳','',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'8', constant.jump,'',record,'个',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 5 :
-						item_list.push(id,sex,school_id,class_id,'5','仰卧起坐','',situp,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'5', constant.situp,'',record,'个',score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 9 : 
+						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,'个',score,level,year,term);
 						score_list.push((item_list));
 						break;
 				}
