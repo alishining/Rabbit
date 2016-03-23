@@ -1107,7 +1107,17 @@ exports.get_oil_table = function(req, res, next){
 		res.json(result);
 	} else {
 		if (item_id == '0'){
-			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
+			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, _ret){
+				var ret = [];
+				if (_ret.length > 0){
+					ret.push({record : _ret[0].record, level : _ret[0].level});
+					for (var i=0;i<_ret.length;i++){
+						if (_ret[i].score == '60' || _ret[i].score == '80' || _ret[i].score == '90'){
+							ret.push({record : _ret[i].record, level : _ret[i].level});
+						}
+					}
+					ret.push({record : _ret[_ret.length-1].record, level : _ret[_ret.length-1].level});
+				}
 				if (err || ret.length < 5) {
 					oil_list.push({level:'',		record:0, color:'',		   angle:0});
 					oil_list.push({level:'优秀',	record:0, color:'#55b7f6', angle:20});
@@ -1161,7 +1171,17 @@ exports.get_oil_table = function(req, res, next){
 				res.json(result);
 			});
 		} else {
-			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, ret){
+			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, _ret){
+				var ret = [];
+				if (_ret.length > 0){
+					ret.push({record : _ret[0].record, level : _ret[0].level});
+					for (var i=0;i<_ret.length;i++){
+						if (_ret[i].score == '60' || _ret[i].score == '80' || _ret[i].score == '90'){
+							ret.push({record : _ret[i].record, level : _ret[i].level});
+						}
+					}
+					ret.push({record : _ret[_ret.length-1].record, level : _ret[_ret.length-1].level});
+				}
 				var delta = 0.1;
 				if (item_id == '8' || item_id == '6' || item_id == '3' || item_id == '5')
 					delta = 1;
