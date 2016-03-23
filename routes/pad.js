@@ -711,7 +711,7 @@ exports.submit_to_school = function(req, res, next){
 						score_list.push((item_list));
 						break;
 					case 0 :
-						item_list.push(id,sex,school_id,class_id,'0', constant.50run,'',record,'s',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'0', constant.run50,'',record,'s',score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 4 :
