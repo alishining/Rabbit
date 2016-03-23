@@ -143,7 +143,9 @@ exports.student_sport_report = function(req, res, next){
 	}
 	var values = [grade];
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
-		values = [ret[0].item_list.split(','), sex, class_id, year,term];
+		var sport_item_list = ret[0].item_list.split(',');
+		sport_item_list.push('-1');
+		values = [sport_item_list, sex, class_id, year,term];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
 				var report_list = [];
@@ -167,25 +169,10 @@ exports.student_sport_report = function(req, res, next){
 					} else {
 						for (var j=0;j<report_list.length;j++){
 							if (report_list[j].student_id == ret[i].student_id){
-								if (parseInt(ret[i].item_id) == 2) 
-									height = ret[i].record;
-								if (parseInt(ret[i].item_id) == 7) 
-									weight = ret[i].record;
 								report_list[j].item_list.push({ item   : ret[i].item,
 																record : ret[i].record,
 																score  : ret[i].score,
 																level  : ret[i].level});
-								if (height != '' && weight != '' && flag == 0){
-									flag = 1;
-									height = parseFloat(height) / 100;
-									weight = parseFloat(weight);
-									var bmi = Math.round(weight/(height*height)*10)*0.1;
-									bmi = bmi.toFixed(1);
-									report_list[j].item_list.push({ item   : 'BMI',
-																	record : bmi,
-																	score  : tools.get_bmi_level(grade, ret[i].sex, bmi).score,
-																	level  : tools.get_bmi_level(grade, ret[i].sex, bmi).level});
-								}
 							}
 						}	
 					}
@@ -218,7 +205,9 @@ exports.sport_item_report_rate = function(req, res, next){
 	var values = [grade];
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
 		try {
-			values = [ret[0].item_list.split(','), year, class_id];
+			var sport_item_list = ret[0].item_list.split(',');
+			sport_item_list.push('-1');
+			values = [sport_item_list, year, class_id];
 			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
 				result.header.code = "200";
 				result.header.msg  = "成功";
@@ -354,12 +343,12 @@ exports.health_record = function(req, res, next){
 									  enginery	   : [],
 									  stamina	   : []});
 				}
-				if (ret[i].item_id == '2' || ret[i].item_id == '7'){
-					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
+				if (ret[i].item_id == '2' || ret[i].item_id == '7' || ret[i].item_id == '-1'){
+					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
 				} else if (ret[i].item_id == '6'){
-					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
+					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
 				} else {
-					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, unit : ret[i].unit});
+					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
 				}
 			}
 			if (one_student.length != 0)
@@ -800,6 +789,15 @@ exports.score_input = function(req, res, next){
 				score = tools.get_score_level('9', grade, sex, run8_50).score;
 				level = tools.get_score_level('9', grade, sex, run8_50).level;
 				item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,'s',score,level,year,term);
+				score_list.push((item_list));
+				item_list = [];
+				height = parseFloat(height) / 100;
+				weight = parseFloat(weight);
+				var bmi = Math.round(weight/(height*height)*10)*0.1;
+				bmi = bmi.toFixed(1);
+				score = tools.get_bmi_level(grade, sex, bmi).score;
+				level = tools.get_bmi_level(grade, sex, bmi).level;
+				item_list.push(student_id,sex,school_id,class_id,'-1',constant.bmi,'',bmi,'',score,level,year,term);
 				score_list.push((item_list));
 			}
 		}
