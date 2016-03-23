@@ -63,4 +63,142 @@ exports.get_score_level = function(item_id, grade, sex, record){
 	} else {
 		return {record : record, score : '0', level : '0', is_dev : '0'};
 	}
+};
+
+exports.get_bmi_level = function(grade, sex, bmi){
+	var grade = parseInt(grade);
+	var sex   = parseInt(sex);
+	var bmi   = parseFloat(bmi);
+	if (!isNaN(grade) && !isNaN(sex) && !isNaN(bmi)){
+		switch(grade){
+			case 1:
+				if (sex == 1){
+					if (bmi <= 13.4)
+						return {score : 80, level : 0};
+					if (bmi >= 20.4)
+						return {score : 60, level : 3};
+					if (20.3 >= bmi && bmi >=18.2)
+						return {score : 80, level : 2};
+					if (18.1 >= bmi && bmi >=13.5)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 13.2)
+						return {score : 80, level : 0};
+					if (bmi >= 19.3)
+						return {score : 60, level : 3};
+					if (19.2 >= bmi && bmi >=17.4)
+						return {score : 80, level : 2};
+					if (17.3 >= bmi && bmi >=13.3)
+						return {score : 100, level : 1};
+				}
+				break;
+			case 2:
+				if (sex == 1){
+					if (bmi <= 13.6)
+						return {score : 80, level : 0};
+					if (bmi >= 20.5)
+						return {score : 60, level : 3};
+					if (20.4 >= bmi && bmi >=18.5)
+						return {score : 80, level : 2};
+					if (18.4 >= bmi && bmi >=13.7)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 13.4)
+						return {score : 80, level : 0};
+					if (bmi >= 20.3)
+						return {score : 60, level : 3};
+					if (20.2 >= bmi && bmi >=17.9)
+						return {score : 80, level : 2};
+					if (17.8 >= bmi && bmi >=13.5)
+						return {score : 100, level : 1};
+				}
+				break;
+			case 3:
+				if (sex == 1){
+					if (bmi <= 13.8)
+						return {score : 80, level : 0};
+					if (bmi >= 22.2)
+						return {score : 60, level : 3};
+					if (22.1 >= bmi && bmi >=19.5)
+						return {score : 80, level : 2};
+					if (19.4 >= bmi && bmi >=13.9)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 13.5)
+						return {score : 80, level : 0};
+					if (bmi >= 21.2)
+						return {score : 60, level : 3};
+					if (21.1 >= bmi && bmi >=18.7)
+						return {score : 80, level : 2};
+					if (18.6 >= bmi && bmi >=13.6)
+						return {score : 100, level : 1};
+				}
+				break;
+			case 4:
+				if (sex == 1){
+					if (bmi <= 14.1)
+						return {score : 80, level : 0};
+					if (bmi >= 22.7)
+						return {score : 60, level : 3};
+					if (22.6 >= bmi && bmi >=20.2)
+						return {score : 80, level : 2};
+					if (20.1 >= bmi && bmi >=14.2)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 13.6)
+						return {score : 80, level : 0};
+					if (bmi >= 22.1)
+						return {score : 60, level : 3};
+					if (22.0 >= bmi && bmi >=19.5)
+						return {score : 80, level : 2};
+					if (19.4 >= bmi && bmi >=13.7)
+						return {score : 100, level : 1};
+				}
+				break;
+			case 5:
+				if (sex == 1){
+					if (bmi <= 14.3)
+						return {score : 80, level : 0};
+					if (bmi >= 24.2)
+						return {score : 60, level : 3};
+					if (24.1 >= bmi && bmi >=21.5)
+						return {score : 80, level : 2};
+					if (21.4 >= bmi && bmi >=14.4)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 13.7)
+						return {score : 80, level : 0};
+					if (bmi >= 23.0)
+						return {score : 60, level : 3};
+					if (22.9 >= bmi && bmi >=20.6)
+						return {score : 80, level : 2};
+					if (20.5 >= bmi && bmi >=13.8)
+						return {score : 100, level : 1};
+				}
+				break;
+			case 6:
+				if (sex == 1){
+					if (bmi <= 14.6)
+						return {score : 80, level : 0};
+					if (bmi >= 24.6)
+						return {score : 60, level : 3};
+					if (24.5 >= bmi && bmi >=21.9)
+						return {score : 80, level : 2};
+					if (21.8 >= bmi && bmi >=14.7)
+						return {score : 100, level : 1};
+				} else {
+					if (bmi <= 14.1)
+						return {score : 80, level : 0};
+					if (bmi >= 23.7)
+						return {score : 60, level : 3};
+					if (23.6 >= bmi && bmi >=20.9)
+						return {score : 80, level : 2};
+					if (20.8 >= bmi && bmi >=14.2)
+						return {score : 100, level : 1};
+				}
+				break;
+		} 
+	} else {
+			return {score : 0, level : 0};
+	}
 }

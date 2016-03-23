@@ -1,10 +1,8 @@
 
 
 
-
-var a = ['1', '2', '3', '33'];
-
-if ('1' in a)
-	console.log('ok');
+var t = parseInt('sdf');
+if (!isNaN(t))
+	console.log(t);
 else
-	console.log('no');
+	console.log('null');

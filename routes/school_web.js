@@ -133,6 +133,7 @@ exports.student_sport_report = function(req, res, next){
 	var class_id = req.body.class_id;
 	var year	 = req.body.year;
 	var term	 = req.body.term;
+	var grade	 = class_id[1]; 
 	if (sex == undefined || class_id == undefined || year == undefined || term == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -140,15 +141,19 @@ exports.student_sport_report = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [class_id[1]];
+	var values = [grade];
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
 		values = [ret[0].item_list.split(','), sex, class_id, year,term];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
 				var report_list = [];
 				var id_set = new Set();
+				var height = '';
+				var weight = '';
 				for (var i=0;i<ret.length;i++){
 					if (!id_set.has(ret[i].student_id)){
+						height = ''; 
+						weight = '';	
 						id_set.add(ret[i].student_id);
 						report_list.push({student_id   : ret[i].student_id,
 										  student_name : ret[i].student_name,
@@ -159,12 +164,23 @@ exports.student_sport_report = function(req, res, next){
 														   level  : ret[i].level}]});
 					} else {
 						for (var j=0;j<report_list.length;j++){
+							if (ret[i].item == '2')
+								height = ret[i].record;
+							if (ret[i].item == '7')
+								weight = ret[i].record;
 							if (report_list[j].student_id == ret[i].student_id){
 								report_list[j].item_list.push({ item   : ret[i].item,
 																record : ret[i].record,
 																score  : ret[i].score,
 																level  : ret[i].level});
 								break;
+							}
+							if (height != '' && weight != ''){
+								var bmi = Math.round(parseFloat(weight)/(parseFloat(height)*parseFloat(height))*10)*0.1;
+								report_list[j].item_list.push({ item   : '-1',
+																record : bmi,
+																score  : tools.get_bmi_level(grade, sex, bmi).score,
+																level  : tools.get_bmi_level(grade, sex, bmi).level});
 							}
 						}	
 					}
