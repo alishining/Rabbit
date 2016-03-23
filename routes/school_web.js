@@ -207,6 +207,7 @@ exports.student_sport_report = function(req, res, next){
 exports.sport_item_report_rate = function(req, res, next){
 	var year =  req.body.year;
 	var class_id = req.body.class_id + '%';
+	var grade = class_id[1];
 	if (year == undefined || class_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -214,13 +215,23 @@ exports.sport_item_report_rate = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [year, class_id];
-	sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data        = {sport_item_rate : ret};
-		res.json(result);
-	});
+	var values = [grade];
+	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
+		try {
+			values = [ret[0].item_list.split(','), year, class_id];
+			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {sport_item_rate : ret};
+				res.json(result);
+			});
+		} catch(err){
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {sport_item_rate : []};
+			res.json(result);
+		}
+	}
 };
 
 exports.grade_sport_item_rank = function(req, res, next){
