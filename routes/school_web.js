@@ -269,39 +269,40 @@ exports.class_level_chart = function(req, res, next){
 		var boy_failed = [];
 		var girl_failed = [];
 		for (var i=0;i<ret.length;i++){
+			var sex = parseInt(ret[i].sex);
 			switch(ret[i].level){
 				case '0' :
-					if (ret[i].sex == 1){
+					if (sex == 1){
 						boy_failed.push(ret[i].student_name);
 					} else {
-						if (ret[i].sex == 2){
+						if (sex == 2){
 							girl_failed.push(ret[i].student_name);
 						}
 					};
 					break;
 				case '1' :
-					if (ret[i].sex == 1){
+					if (sex == 1){
 						boy_normal.push(ret[i].student_name);
 					} else {
-						if (ret[i].sex == 2){
+						if (sex == 2){
 							girl_normal.push(ret[i].student_name);
 						}
 					};
 					break;
 				case '2' :
-					if (ret[i].sex == 1){
+					if (sex == 1){
 						boy_good.push(ret[i].student_name);
 					} else {
-						if (ret[i].sex == 2){
+						if (sex == 2){
 							girl_good.push(ret[i].student_name);
 						}
 					};
 					break;
 				case '3' :
-					if (ret[i].sex == 1){
+					if (sex == 1){
 						boy_great.push(ret[i].student_name);
 					} else {
-						if (ret[i].sex == 2){
+						if (sex == 2){
 							girl_great.push(ret[i].student_name);
 						}
 					};
@@ -338,6 +339,7 @@ exports.health_record = function(req, res, next){
 			var all_student = [];
 			var total_score = 0;
 			var id_set = new Set();
+			var sight_flag = 0;
 			for (var i=0;i<ret.length;i++){
 				var grade = ret[i].class_id[1];
 				var item_id = ret[i].item_id;
@@ -350,6 +352,9 @@ exports.health_record = function(req, res, next){
 				if (!id_set.has(ret[i].student_id)){
 					if (one_student.length != 0){
 						one_student[0].total_score = total_score;
+						if (sight_flag == 0){
+							one_student[0].enginery.push({item : constant.sight, record : ',', score : '', level : '', unit : '', area : ''});
+						}
 						all_student.push(one_student);
 					}
 					id_set.add(ret[i].student_id);
@@ -414,6 +419,8 @@ exports.health_record = function(req, res, next){
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
 				} else if (item_id == '6' || item_id == '14'){
+					if (item_id == '14')
+						sight_flag = 1;
 					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
