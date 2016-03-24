@@ -341,14 +341,22 @@ exports.health_record = function(req, res, next){
 									  term		   : ret[i].term,
 									  form		   : [],
 									  enginery	   : [],
-									  stamina	   : []});
+									  stamina	   : [],
+									  suggestion   : []});
 				}
+				var content = global.suggestionMap.get(ret[i].item_id + ret[i].level + tools.get_area_level(ret[i].score));
 				if (ret[i].item_id == '2' || ret[i].item_id == '7' || ret[i].item_id == '-1'){
 					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+					if (content != undefined)
+						one_student[0].suggestion.push({content : ret[i].item + content});
 				} else if (ret[i].item_id == '6'){
 					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+					if (content != undefined)
+						one_student[0].suggestion.push({content : ret[i].item + content});
 				} else {
 					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+					if (content != undefined)
+						one_student[0].suggestion.push({content : ret[i].item + content});
 				}
 			}
 			if (one_student.length != 0)
