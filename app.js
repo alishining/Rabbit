@@ -40,6 +40,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 global.scoreMap = new Map();
 tools.load_score_level(undefined, undefined, undefined);
 
+global.suggestionMap = new Map();
+tools.load_sport_suggestion();
+
 //RESET SCOREMAP
 app.post('/update_score_map', tools.load_score_level);
 //User routes

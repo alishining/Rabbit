@@ -201,4 +201,39 @@ exports.get_bmi_level = function(grade, sex, bmi){
 	} else {
 			return {score : 0, level : 0};
 	}
+};
+
+exports.load_sport_suggestion = function(){
+	var values = [];
+	pool.getConnection(function(err, connection) {
+		connection.query(sql_mapping.load_sport_suggestion, values, function(err, ret){
+			for (var i=0;i<ret.length;i++){
+				var item_id = ret[i].item_id;
+				var national = ret[i].national;
+				var area = ret[i].area;
+				var content = ret[i].content;
+				var key = item_id + national + area;
+				global.suggestionMap.set(key, content);
+			}
+			connection.release();
+		});
+	})
+};
+
+exports.get_area_level = function(score){
+	var score = parseInt(score);
+	if (isNaN(score)){
+		return 1;
+	} else {
+		if (score < 60)
+			return 1;
+		else if (score < 70)
+			return 2;
+		else if (score < 80)
+			return 3;
+		else if (score < 90)
+			return 4;
+		else
+			return 5;
+	}
 }
