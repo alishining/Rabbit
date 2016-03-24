@@ -11,7 +11,8 @@ var constant = {
 	'run8_50': '50*8往返跑',
 	'balance': '平衡',
 	'updown' : '俯卧撑',
-	'bmi'	 : 'BMI'
+	'bmi'	 : 'BMI',
+	'sight'  : '视力'
 };
 
 module.exports = constant;

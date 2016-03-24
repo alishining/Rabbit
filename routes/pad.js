@@ -70,39 +70,39 @@ exports.pad_init = function(req, res, next){
 				switch(class_id_list[i][1]){
 					case '1' : 
 						class_list.push({class_id : class_id_list[i], name : '一年级' + cls + '班', 
-										 sport_item : [0, 2, 4, 6, 7, 8]});
+										 sport_item : [0, 2, 4, 6, 7, 8, 14]});
 						break;
 					case '2' :
 						class_list.push({class_id : class_id_list[i], name : '二年级' + cls + '班',
-										 sport_item : [0, 2, 4, 6, 7, 8]});
+										 sport_item : [0, 2, 4, 6, 7, 8, 14]});
 						break;
 					case '3' :
 						class_list.push({class_id : class_id_list[i], name : '三年级' + cls + '班',
-										 sport_item : [0, 2, 4, 5, 6, 7, 8]});
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 14]});
 						break;
 					case '4' :
 						class_list.push({class_id : class_id_list[i], name : '四年级' + cls + '班',
-										 sport_item : [0, 2, 4, 5, 6, 7, 8]});
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 14]});
 						break;
 					case '5' :
 						class_list.push({class_id : class_id_list[i], name : '五年级' + cls + '班',
-										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9]});
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9, 14]});
 						break;
 					case '6' :
 						class_list.push({class_id : class_id_list[i], name : '六年级' + cls + '班',
-										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9]});
+										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9, 14]});
 						break;
 					case '7' :
 						class_list.push({class_id : class_id_list[i], name : '七年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13]});
+										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]});
 						break;
 					case '8' :
 						class_list.push({class_id : class_id_list[i], name : '八年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13]}); 
+										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]}); 
 						break;
 					case '9' :
 						class_list.push({class_id : class_id_list[i], name : '九年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13]}); 
+										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]}); 
 						break;
 				}
 			} else {
@@ -730,6 +730,11 @@ exports.submit_to_school = function(req, res, next){
 						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,'s',score,level,year,term);
 						score_list.push((item_list));
 						break;
+					case 14 : 
+						item_list.push(id,sex,school_id,class_id,'14', constant.sight,'',record,'度',score,level,year,term);
+						score_list.push((item_list));
+						break;
+
 				}
 			}
 			values = [student_list];

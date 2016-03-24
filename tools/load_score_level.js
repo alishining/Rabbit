@@ -44,6 +44,22 @@ exports.load_score_level = function(req, res, next) {
 exports.get_score_level = function(item_id, grade, sex, record){
 	var key = item_id + grade + sex;
 	var list = global.scoreMap.get(key);
+	if (item_id == '14'){
+		var sight = record.split(',');
+		var left = parseFloat(sight[0]);
+		var right = parseFloat(sight[1]);
+		if (left < 5){
+			if (right < 5)
+				return {record : record, score : '0', level : '0', is_dev : '0'};
+			else
+				return {record : record, score : '60', level : '1', is_dev : '0'};
+		} else {
+			if (right < 5)
+				return {record : record, score : '60', level : '2', is_dev : '0'};
+			else
+				return {record : record, score : '100', level : '3', is_dev : '0'};
+		}
+	}
 	if (list != undefined){
 		if (item_id == '0' || item_id == '9' || item_id == '12' || item_id == '13'){
 			for (var i=0;i<list.length;i++){
