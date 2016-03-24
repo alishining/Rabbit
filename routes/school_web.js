@@ -134,7 +134,8 @@ exports.student_sport_report = function(req, res, next){
 	var year	 = req.body.year;
 	var term	 = req.body.term;
 	var grade	 = class_id[1]; 
-	if (sex == undefined || class_id == undefined || year == undefined || term == undefined){
+	var school_id = req.body.school_id;
+	if (sex == undefined || class_id == undefined || year == undefined || term == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data		   = {};
@@ -145,7 +146,7 @@ exports.student_sport_report = function(req, res, next){
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
 		var sport_item_list = ret[0].item_list.split(',');
 		sport_item_list.push('-1');
-		values = [sport_item_list, sex, class_id, year,term];
+		values = [sport_item_list, sex, class_id, year,term, school_id];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
 				var report_list = [];
@@ -195,7 +196,8 @@ exports.sport_item_report_rate = function(req, res, next){
 	var year =  req.body.year;
 	var class_id = req.body.class_id + '%';
 	var grade = class_id[1];
-	if (year == undefined || class_id == undefined){
+	var school_id = req.body.school_id;
+	if (year == undefined || class_id == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -207,7 +209,7 @@ exports.sport_item_report_rate = function(req, res, next){
 		try {
 			var sport_item_list = ret[0].item_list.split(',');
 			sport_item_list.push('-1');
-			values = [sport_item_list, year, class_id];
+			values = [sport_item_list, year, class_id, school_id];
 			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
 				result.header.code = "200";
 				result.header.msg  = "成功";
@@ -227,14 +229,15 @@ exports.grade_sport_item_rank = function(req, res, next){
 	var year =  req.body.year;
 	var item_id =  req.body.item_id;
 	var grade = '1' + req.body.grade + '%';
-	if (year == undefined || item_id == undefined || grade == undefined){
+	var school_id = req.body.school_id;
+	if (year == undefined || item_id == undefined || grade == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result); 
 		return;
 	}
-	var values = [year, item_id, grade];
+	var values = [year, item_id, grade, school_id];
 	sql.query(req, res, sql_mapping.grade_sport_item_rank, values, next, function(err, ret){
 		result.header.code = "200";
 		result.header.msg  = "成功";
@@ -247,7 +250,15 @@ exports.class_level_chart = function(req, res, next){
 	var year = req.body.year;
 	var class_id = req.body.class_id;
 	var item_id = req.body.item_id;
-	var values = [year, class_id, item_id];
+	var school_id = req.body.school_id;
+	var values = [year, class_id, item_id, school_id];
+	if (year == undefined || class_id == undefined || item_id == undefined || school_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
 	sql.query(req, res, sql_mapping.class_level_chart, values, next, function(err, ret){
 		var boy_great = [];
 		var girl_great = [];
@@ -312,24 +323,37 @@ exports.health_record = function(req, res, next){
 	var term = req.body.term;
 	var sex  = '%' + req.body.sex + '%';
 	var class_id = req.body.class_id;
-	if (year == undefined || term == undefined || sex == undefined || class_id == undefined){
+	var school_id = req.body.school_id;
+	if (year == undefined || term == undefined || sex == undefined || class_id == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [sex, class_id, term, year];
+	var values = [sex, class_id, term, year, school_id];
 	sql.query(req, res, sql_mapping.health_record, values, next, function(err, ret){
 		try {
 			var one_student = [];
 			var all_student = [];
+			var total_score = 0;
 			var id_set = new Set();
 			for (var i=0;i<ret.length;i++){
+				var grade = ret[i].class_id[1];
+				var item_id = ret[i].item_id;
+				if ((grade == '1' || grade == '2') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14'))
+					continue;
+				if ((grade == '3' || grade == '4') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14' || item_id == '5'))
+					continue;
+				if ((grade == '5' || grade == '6') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14' || item_id == '5' || item_id == '9'))
+					continue;
 				if (!id_set.has(ret[i].student_id)){
-					if (one_student.length != 0)
+					if (one_student.length != 0){
+						one_student[0].total_score = total_score;
 						all_student.push(one_student);
+					}
 					id_set.add(ret[i].student_id);
+					total_score = 0;
 					one_student = [];
 					one_student.push({student_id   : ret[i].student_id,
 									  student_name : ret[i].student_name,
@@ -342,19 +366,59 @@ exports.health_record = function(req, res, next){
 									  form		   : [],
 									  enginery	   : [],
 									  stamina	   : [],
-									  suggestion   : []});
+									  suggestion   : [],
+									  total_score  : 0});
 				}
-				var content = global.suggestionMap.get(ret[i].item_id + ret[i].level + tools.get_area_level(ret[i].score));
-				if (ret[i].item_id == '2' || ret[i].item_id == '7' || ret[i].item_id == '-1'){
-					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+				switch(item_id){
+					case '-1':
+						total_score += 0.15 * parseInt(ret[i].score);
+						break;
+					case '0':
+						total_score += 0.2 * parseInt(ret[i].score);
+						break;
+					case '4':
+						if (grade == '1' || grade == '2'){
+							total_score += 0.3* parseInt(ret[i].score);
+						} else if (grade == '3' || grade == '4'){
+							total_score += 0.2* parseInt(ret[i].score);
+						} else if (grade == '5' || grade == '6'){
+							total_score += 0.1* parseInt(ret[i].score);
+						}
+						break;
+					case '5':
+						if (grade == '3' || grade == '4'){
+							total_score += 0.1* parseInt(ret[i].score);
+						} else if (grade == '5' || grade == '6'){
+							total_score += 0.2* parseInt(ret[i].score);
+						}
+						break;
+					case '6':
+						total_score += 0.15 * parseInt(ret[i].score);
+						break;
+					case '8':
+						if (grade == '1' || grade == '2' || grade == '3' || grade == '4'){
+							total_score += 0.2* parseInt(ret[i].score);
+						} else if (grade == '5' || grade == '6'){
+							total_score += 0.1* parseInt(ret[i].score);
+						}
+						break;
+					case '9':
+						if (grade == '5' || grade == '6'){
+							total_score += 0.1* parseInt(ret[i].score);
+						}
+						break;
+				}
+				var content = global.suggestionMap.get(item_id + ret[i].level + tools.get_area_level(ret[i].score));
+				if (item_id == '2' || item_id == '7' || item_id == '-1'){
+					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
-				} else if (ret[i].item_id == '6'){
-					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+				} else if (item_id == '6' || item_id == '14'){
+					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
 				} else {
-					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit});
+					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
 				}
@@ -803,6 +867,8 @@ exports.score_input = function(req, res, next){
 				weight = parseFloat(weight);
 				var bmi = Math.round(weight/(height*height)*10)*0.1;
 				bmi = bmi.toFixed(1);
+				if (isNaN(bmi))
+					bmi = '';
 				score = tools.get_bmi_level(grade, sex, bmi).score;
 				level = tools.get_bmi_level(grade, sex, bmi).level;
 				item_list.push(student_id,sex,school_id,class_id,'-1',constant.bmi,'',bmi,'',score,level,year,term);
