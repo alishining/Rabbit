@@ -885,7 +885,8 @@ exports.score_input = function(req, res, next){
 			}
 		}
 	}
-	var values = [del_values];
+	//var values = [del_values];
+	var values = [school_id];
 	sql.query(req, res, sql_mapping.mov_student, values, next, function(err, ret){
 		if (err){
 			console.log(err);

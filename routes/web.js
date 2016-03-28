@@ -121,10 +121,11 @@ exports.add_school = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [school,'',province,city,district,school,'','',0,0,'',is_cooperate,'0'];
+	var date = new Date();
+	var values = [school+date.getTime(),'',province,city,district,school,'','',0,0,'',is_cooperate,'0'];
 	try {
 		sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
-			values = [school, '123456', '', '', ret.insertId, school, '', '1', '0', ''];
+			values = [school+date.getTime(), '123456', '', '', ret.insertId, school, '', '1', '0', ''];
 			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
 				try {
 					result.header.code = "200";

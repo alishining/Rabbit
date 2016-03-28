@@ -61,7 +61,11 @@ exports.pad_init = function(req, res, next){
 	}
 	var values = [uid];
 	sql.query(req, res, sql_mapping.get_account_class_list, values, next, function(err, ret){
-		var class_id_list = ret[0].class_list.split(',');
+		try{
+			var class_id_list = ret[0].class_list.split(',');
+		}catch(err){
+			var class_id_list = [];
+		}
 		var class_list = [];
 		var sport_item = [];
 		for (var i=0;i<class_id_list.length;i++){
@@ -564,9 +568,9 @@ exports.detail_homework = function(req, res, next){
 	if (date.getDate() < 10)
 		day = '0' + date.getDate();
 	var ds = date.getFullYear() + '-' + month  + '-' + day;
-	var values = [school_id, class_id, item_id, ds];
 	var finished_list = [];
 	var unfinished_list = [];
+	var values = [item_id, ds, school_id, class_id];
 	sql.query(req, res, sql_mapping.get_detail_homework, values, next, function(err, ret){
 		if (ret){
 			for (var i=0;i<ret.length;i++){
