@@ -254,11 +254,15 @@ exports.submit_report_forms = function(req, res, next){
 					if (sign == 0){
 						values = [uid, title, school_id, item_id, class_id, rate, time, time, '1'];
 						sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+							tid = ret.insertId;
+							for (var i=0;i<add_values.length;i++){
+								add_values[i][0] = tid;
+							}
 							values = [add_values];
 							sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
 								result.header.code = "200";
 								result.header.msg  = "提交成功";
-								result.data = {};
+								result.data = {result : '0', msg : '提交成功'};
 								res.json(result);
 							});		
 						});
@@ -271,7 +275,7 @@ exports.submit_report_forms = function(req, res, next){
 								sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
 									result.header.code = "200";
 									result.header.msg  = "提交成功";
-									result.data = {};
+									result.data = {result : '0', msg : '提交成功'};
 									res.json(result);
 								});
 							});  
@@ -280,7 +284,7 @@ exports.submit_report_forms = function(req, res, next){
 				} catch(err){
 					result.header.code = "500";
 					result.header.msg  = "提交失败";
-					result.data = {};
+					result.data = {result : '0', msg : '提交失败'};
 					res.json(result);
 				}
 			});
@@ -371,11 +375,15 @@ exports.save_test_report = function(req, res, next){
 		if (sign == 0){
 			values = [uid, title, school_id, item_id, class_id, rate, time, time, '1'];
 			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
+				tid = ret.insertId;
+				for (var i=0;i<add_values.length;i++){
+					add_values[i][0] = tid;
+				}
 				values = [add_values];
 				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
 					result.header.code = "200";
-					result.header.msg  = "保存成功";
-					result.data = {};
+					result.header.msg  = "成功";
+					result.data = {result : '0', msg : '保存成功'};
 					res.json(result);
 				});
 			});
@@ -387,8 +395,8 @@ exports.save_test_report = function(req, res, next){
 					values = [rate, time, tid];
 					sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
 						result.header.code = "200";
-						result.header.msg  = "保存成功";
-						result.data = {};
+						result.header.msg  = "成功";
+						result.data = {result : '0', msg : '保存成功'};
 						res.json(result);
 					});
 				});
@@ -397,7 +405,7 @@ exports.save_test_report = function(req, res, next){
 	} catch(err){
 		result.header.code = "500";
 		result.header.msg  = "保存失败";
-		result.data = {};
+		result.data = {result : '0', msg : '保存失败'};
 		res.json(result);
 	}
 }
@@ -866,4 +874,11 @@ exports.get_grade_sport_item = function(req, res, next){
 		result.data        = {sport_item : res_list};
 		res.json(result);
 	});
-}	
+};
+
+exports.get_static_level = function(req, res, next){
+	result.header.code = '200';
+	result.header.msg  = '成功';
+	result.data = { items: [{ "id":6, "type":2, "boy":[ [1200,1000,600], [1400,1200,700], [1600,1400,800], [1800,1600,900], [2050,1850,1050], [2300,2100,1200] ], "girl":[ [1500,1300,700], [1800,1500,800], [2100,1700,900], [2400,1900,1100], [2700,2200,1300], [3000,2500,1500] ] }, { "id":0, "type":1, "boy":[ [10.4,10.6,12.6], [9.8,10.0,12.0], [9.3,9.5,11.5], [8.9,9.1,11.1], [8.6,8.8,10.8], [8.4,8.6,10.6] ], "girl":[ [11.2,11.8,13.8], [10.2,10.8,12.8], [9.4,10.0,12.0], [8.9,9.5,11.5], [8.5,9.1,9.0], [8.4,9.0,11.0] ] }, { "id":4, "type":2, "boy":[ [13.0,11.0,0.0], [13.2,10.6,-0.4], [13.4,10.2,-0.8], [13.6,9.8,-2.2], [13.8,9.4,-2.6], [14.0,9.0,-4.0] ], "girl":[ [16.0,13.4,2.4], [16.3,13.3,2.3], [16.6,13.2,2.2], [16.9,13.1,2.1], [17.2,13.0,2.0], [17.5,12.9,1.9] ] }, { "id":8, "type":2, "boy":[ [99,87,17], [107,95,25], [116,104,34], [127,115,45], [138,126,56], [147,135,65] ], "girl":[ [103,87,17], [113,97,27], [125,109,39], [135,119,49], [144,128,58], [152,136,66] ] }, { "id":5, "type":2, "boy":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19] ], "girl":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19] ] }, { "id":9, "type":1, "boy":[ [ ], [ ], [ ], [ ], [102,108,138], [96,102,132] ], "girl":[ [ ], [ ], [ ], [ ], [107,113,143], [103,109,139] ] } ] };
+	res.json(result);
+}

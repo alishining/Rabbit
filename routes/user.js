@@ -5,6 +5,7 @@ var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
 var sql_mapping = require('../dao/sql_mapping');
 var tools = require('../tools/sms');
+var tool = require('../tools/load_score_level');
 
 var result = {
 	header : {
@@ -639,19 +640,39 @@ exports.get_oneday_detail = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [ds, student_id];
 	var item_list = [];
 	try{
-		sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
-			for (var i=0;i<ret.length;i++){
-				item_list.push({item_id : ret[i].item, 
-								score   : ret[i].score, 
-								level   : ret[i].level});
-			}
-			result.header.code = '200';
-			result.header.msg  = '成功';
-			result.data        = {item_list};
-			res.json(result);
+		var values = [student_id];
+		sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
+			var school_id = ret[0].school_id; 
+			var class_id = ret[0].class_id;
+			values = [school_id, class_id];
+			sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
+				var homework_list = ret[0].item_list.split(',');
+				values = [ds, student_id];
+				sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret){
+					for (var i=0;i<homework_list.length;i++){
+						var flag = 0;
+						for (var u=0;u<ret.length;u++){
+							if (parseInt(homework_list[i].split(':')[0]) == parseInt(ret[u].item)){
+								flag = 1;
+								item_list.push({item_id : ret[u].item, 
+												score   : ret[u].score, 
+												level   : ret[u].level});
+							}
+						}
+						if (flag == 0){
+							item_list.push({item_id : homework_list[i].split(':')[0],
+											score   : '',
+											level   : ''});	
+						}
+					}
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data        = {item_list};
+					res.json(result);
+				});
+			});
 		});
 	} catch(err) {
 		result.header.code = '500';
@@ -718,37 +739,43 @@ exports.get_calendar = function(req, res, _next){
 		res.json(result);
 		return;
 	}
-	var date_month = '%'+ year + '-' + month + '%';
-	var values = [student_id, date_month];
-	try {
-		sql.query(req, res, sql_mapping.rate_total, values, _next, function(err, ret){
-			for (var i=0;i<ret.length;i++){
-				for (var j=0;j<calendar.length;j++)
-					if (ret[i].ds == calendar[j].day){
-						calendar[j].rate_total = ret[i].count;
-						break;
-					}
+	var values = [student_id];
+	sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
+		var school_id = ret[0].school_id;
+		var class_id = ret[0].class_id;
+		values = [school_id, class_id];
+		sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
+			var item_list = ret[0].item_list.split(',');
+			var homework_list = [];
+			for (var i=0;i<item_list.length;i++){
+				homework_list.push(item_list[i].split(':')[0]);
 			}
-			sql.query(req, res, sql_mapping.rate_finish, values, _next, function(err, ret){
-				for (var i=0;i<ret.length;i++){
-					for (var j=0;j<calendar.length;j++)
-						if (ret[i].ds == calendar[j].day){
-							calendar[j].rate_finish = ret[i].count;
-							break;
-						}
-				}
-				result.header.code = '200';
-				result.header.msg  = '成功';
-				result.data = {date : year+'年'+month+'月', calendar:calendar, next:next, last:last};
+			var date_month = '%'+ year + '-' + month + '%';
+			values = [student_id, homework_list, date_month];
+			try {
+				for (var j=0;j<calendar.length;j++)
+					calendar[j].rate_total = homework_list.length;
+				sql.query(req, res, sql_mapping.rate_finish, values, _next, function(err, ret){
+					for (var i=0;i<ret.length;i++){
+						for (var j=0;j<calendar.length;j++)
+							if (ret[i].ds == calendar[j].day){
+								calendar[j].rate_finish = ret[i].count;
+								break;
+							}
+					}
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data = {date : year+'年'+month+'月', calendar:calendar, next:next, last:last};
+					res.json(result);
+				});
+			} catch(err) {
+				result.header.code = '500';
+				result.header.msg  = '返回日历失败';
+				result.data = {};
 				res.json(result);
-			});
+			}
 		});
-	} catch(err) {
-		result.header.code = '500';
-		result.header.msg  = '返回日历失败';
-		result.data = {};
-		res.json(result);
-	}
+	});
 };
 
 exports.training = function(req, res, next){
@@ -794,26 +821,28 @@ exports.training = function(req, res, next){
 					var grade_homework_sport_item = ret_sport_item[0].item_list.split(','); 
 					try{
 						var item_list = ret[0].item_list.split(',');
+						var hint = 1;
 						for (var i=0;i<grade_homework_sport_item.length;i++){
 							var grade_item = parseInt(grade_homework_sport_item[i]);
 							sign = 0;	
 							for (var j=0;j<item_list.length;j++){
 								var homework_item = parseInt(item_list[j].split(':')[0]);
+								hint = item_list[j].split(':')[1];
 								if (grade_item == homework_item)
 									sign = 2;
 								for (var u=0;u<ret_count.length;u++){
 									var do_item = parseInt(ret_count[u].item);
 									if (grade_item == do_item && grade_item == homework_item){
 										var count = ret_count[u].score_list.split(',').length;
-										used_list.push({item_id : grade_item, count : count});	
+										used_list.push({item_id : grade_item, count : count, hint : hint + '次'});	
 										sign = 1;
 									}
 								}
 							}
 							if (sign == 0)
-								unused_list.push({item_id : grade_item, count : 0});
+								unused_list.push({item_id : grade_item, count : 0, hint : hint + '次'});
 							else if (sign == 2){
-								used_list.push({item_id : grade_item, count : 0});
+								used_list.push({item_id : grade_item, count : 0, hint : hint + '次'});
 							}
 						}
 						result.header.code = "200";
@@ -822,7 +851,7 @@ exports.training = function(req, res, next){
 						res.json(result);
 					} catch(err){
 						for (var i=0;i<grade_homework_sport_item.length;i++){
-							unused_list.push({item_id : parseInt(grade_homework_sport_item[i]), count : 0});
+							unused_list.push({item_id : parseInt(grade_homework_sport_item[i]), count : 0, hint : '1次'});
 						}
 						result.header.code = "200";
 						result.header.msg  = "成功";
@@ -854,49 +883,27 @@ exports.record_training_item = function(req, res, next){
 	var date  = new Date();
 	var values = [item, ds, student_id];
 	sql.query(req, res, sql_mapping.search_record, values, next, function(err, ret_search){	
-		values = [item, grade, sex];
-		sql.query(req, res, sql_mapping.set_level, values, next, function(err, ret){
-			var level = 0;	
-			try {
-				if (item == '0'){
-					for (var i=0;i<ret.length;i++){
-						if (parseFloat(ret[i].record) >= parseFloat(score))
-							level = parseInt(ret[i].level);
-						else
-							break;
-					}
-				} else {
-					for (var i=0;i<ret.length;i++){
-						if (parseFloat(ret[i].record) <= parseFloat(score))
-							level = parseInt(ret[i].level);
-						else
-							break;
-					}
-				}
-			} catch(err) {
-				console.log(err);
-			}
-			if (ret_search[0] == undefined) {
-				values      = [id, student_id, item, score, level, date.getTime() + ':' + score + ':' + level, '', ds];
-				sql_content = sql_mapping.record_training_item;
-			} else {
-				values      = [score, level, ',' + date.getTime() + ':' + score + ':' + level, item, student_id, ds];
-				sql_content = sql_mapping.update_training_item;
-			}
-			sql.query(req, res, sql_content, values, next, function(err, ret){
-				if (err){
-					result.header.code = '500';
-					result.header.msg  = '记录失败';
-					result.data			= {};
-					res.json(result);
-					return;
-				} 
-				result.header.code = '200';
-				result.header.msg  = '成功';
-				result.data         = {result : '0',
-									   msg	  : '记录成功'};
+		var level = tool.get_score_level(item, grade, sex, score).level;
+		if (ret_search[0] == undefined) {
+			values      = [id, student_id, item, score, level, date.getTime() + ':' + score + ':' + level, '', ds];
+			sql_content = sql_mapping.record_training_item;
+		} else {
+			values      = [score, level, ',' + date.getTime() + ':' + score + ':' + level, item, student_id, ds];
+			sql_content = sql_mapping.update_training_item;
+		}
+		sql.query(req, res, sql_content, values, next, function(err, ret){
+			if (err){
+				result.header.code = '500';
+				result.header.msg  = '记录失败';
+				result.data			= {};
 				res.json(result);
-			});
+				return;
+			} 
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data         = {result : '0',
+								   msg	  : '记录成功'};
+			res.json(result);
 		});
 	});
 };
@@ -1096,6 +1103,9 @@ exports.get_oil_table = function(req, res, next){
 	var values = [item_id, sex, grade];
 	var oil_list = [];
 	var scale = [];
+	var delta = 1;
+	if (item_id == '0')
+		var delta = 0.1;
 	if (item_id == '2' || item_id == '7'){
 		if (item_id == '2')
 			scale = [60,90,120,150,180,210,240];
@@ -1106,7 +1116,7 @@ exports.get_oil_table = function(req, res, next){
 		result.data         = {scale : scale, color:'#33c8cf', delta : 0.1};
 		res.json(result);
 	} else {
-		if (item_id == '0'){
+		if (item_id == '0' || item_id == '9' || item_id == '13' || item_id == '12'){
 			sql.query(req, res, sql_mapping.get_oil_table, values, next, function(err, _ret){
 				var ret = [];
 				if (_ret.length > 0){
@@ -1126,48 +1136,31 @@ exports.get_oil_table = function(req, res, next){
 					oil_list.push({level:'不及格',	record:0, color:'#ff7e78', angle:10});
 					result.header.code = '200';
 					result.header.msg  = '成功';
-					result.data        = {oil_list : oil_list, delta:0.1};
+					result.data        = {oil_list : oil_list, delta:delta};
 					res.json(result);
 					return;
 				}
 				var total = ret[0].record - ret[4].record;
-				for(var i=0;i<ret.length;i++){
-					switch(ret[i].level){
-						case '0' : 
-							oil_list.push({level  : '', 
-										   record : ret[4].record, 
-										   color  : '', 
-										   angle  : 0});
-							break;
-						case '1' :
-							oil_list.push({level  : '优秀', 
-										   record : ret[3].record, 
-										   color  : '#55b7f6', 
-										   angle  : (ret[3].record - ret[4].record)*100 / total});
-							break;
-						case '2' :
-							oil_list.push({level  : '良好',	
-										   record : ret[2].record, 
-										   color  : '#6de58e', 
-										   angle  : (ret[2].record - ret[3].record)*100 / total});
-							break;
-						case '3' :
-							oil_list.push({level  : '及格', 
-										   record : ret[1].record, 
-										   color  : '#fccc5e',
-										   angle  : (ret[1].record - ret[2].record)*100 / total});
-							break;
-						case '4' :
-							oil_list.push({level  : '不及格', 
-										   record : ret[0].record, 
-										   color  : '#ff7e78', 
-										   angle  : (ret[0].record - ret[1].record)*100 / total});
-							break;
-					}
-				}
+				oil_list.push({level  : '', record : ret[0].record, color  : '', angle  : 0});
+				oil_list.push({level  : '优秀', 
+							   record : ret[1].record, 
+							   color  : '#55b7f6',
+							   angle  : (ret[0].record - ret[1].record)*100 / total});
+				oil_list.push({level  : '良好',	
+							   record : ret[2].record, 
+							   color  : '#6de58e', 
+							   angle  : (ret[1].record - ret[2].record)*100 / total});
+				oil_list.push({level  : '及格', 
+							   record : ret[3].record, 
+							   color  : '#fccc5e',
+							   angle  : (ret[2].record - ret[3].record)*100 / total});
+				oil_list.push({level  : '不及格', 
+							   record : ret[4].record, 
+							   color  : '#ff7e78', 
+							   angle  : (ret[3].record - ret[4].record)*100 / total});
 				result.header.code  = '200';
 				result.header.msg   = '成功';
-				result.data         = {oil_list : oil_list, delta:0.1};
+				result.data         = {oil_list : oil_list, delta: delta};
 				res.json(result);
 			});
 		} else {
@@ -1198,37 +1191,11 @@ exports.get_oil_table = function(req, res, next){
 					return;
 				}
 				var total = ret[4].record - ret[0].record;
-				for(var i=0;i<ret.length;i++){
-					switch(ret[i].level){
-						case '0' : 
-							oil_list.push({level:'', record:ret[i].record, color:'', angle: 0});
-							break;
-						case '1' :
-							oil_list.push({level  : '不及格', 
-										   record : ret[i].record, 
-										   color  : '#ff7e78', 
-										   angle  : (ret[1].record - ret[0].record)*100 / total});
-							break;
-						case '2' :
-							oil_list.push({level  : '及格', 
-										   record : ret[i].record, 
-										   color  : '#fccc5e', 
-										   angle  : (ret[2].record - ret[1].record)*100 / total});
-							break;
-						case '3' :
-							oil_list.push({level  : '良好', 
-										   record : ret[i].record, 
-										   color  : '#6de58e', 
-										   angle  : (ret[3].record - ret[2].record)*100 / total});
-							break;
-						case '4' :
-							oil_list.push({level  : '优秀', 
-										   record : ret[i].record, 
-										   color  : '#55b7f6', 
-										   angle  : (ret[4].record - ret[3].record)*100 / total});
-							break;
-					}
-				}
+				oil_list.push({level:'', record:ret[0].record, color:'', angle: 0});
+				oil_list.push({level  : '不及格', record : ret[1].record, color  : '#ff7e78', angle  : (ret[1].record - ret[0].record)*100 / total});
+				oil_list.push({level  : '及格', record : ret[2].record, color  : '#fccc5e', angle  : (ret[2].record - ret[1].record)*100 / total});
+				oil_list.push({level  : '良好', record : ret[3].record, color  : '#6de58e', angle  : (ret[3].record - ret[2].record)*100 / total});
+				oil_list.push({level  : '优秀', record : ret[4].record, color  : '#55b7f6', angle  : (ret[4].record - ret[3].record)*100 / total});
 				result.header.code = '200';
 				result.header.msg  = '成功';
 				result.data         = {oil_list : oil_list, delta : delta};

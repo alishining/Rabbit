@@ -752,15 +752,16 @@ exports.search_student = function(req, res, next){
 
 exports.get_daily_training_rate = function(req, res, next){
 	var days	 = req.body.days;
-	var class_id = req.body.class_id;
-	if (class_id == undefined || days == undefined){
+	var class_id = '%' + req.body.class_id + '%';
+	var school_id = req.body.school_id;
+	if (class_id == undefined || days == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var values = [class_id, Number(days)];
+	var values = [class_id, school_id, Number(days)];
 	sql.query(req, res, sql_mapping.get_daily_training_rate, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
@@ -801,33 +802,34 @@ exports.score_input = function(req, res, next){
 			var record_list = student_list[j];
 			if (record_list.length != 0){
 				var add_values = [];
-				grade = parseInt(record_list[0])%10;
-				class_id = record_list[1]+'';
+				var grade = parseInt(record_list[0])%10;
+				var class_id = record_list[1]+'';
 				if (class_id.length != 4)
 					continue;
 				cls = record_list[2];
-				student_id = record_list[3];
-				nationality = record_list[4];
-				name = record_list[5];
-				sex = record_list[6];
+				var student_id = record_list[3];
+				var nationality = record_list[4];
+				var name = record_list[5];
+				var sex = record_list[6];
 				var date = new Date(1000*(parseInt(record_list[7])*86400 - 2209161600)); 
 				var yy = date.getFullYear(); 
 				var mm = date.getMonth()+1;
 				var dd = date.getDate();
 				if (mm < 10) mm = '0'+mm;
 				if (dd < 10) dd = '0'+dd;
-				birth = yy+'-'+mm+'-'+dd;
-				address = record_list[8];
-				height = record_list[9];
-				weight = record_list[10];
-				lung = record_list[11];
-				run50 = record_list[12];
-				sit_reach = record_list[13];
-				jump = record_list[14];
-				situp = record_list[15];
-				run8_50 = record_list[16];
+				var birth = yy+'-'+mm+'-'+dd;
+				var address = record_list[8];
+				var height = record_list[9];
+				var weight = record_list[10];
+				var lung = record_list[11];
+				var run50 = record_list[12];
+				var sit_reach = record_list[13];
+				var	jump = record_list[14];
+				var situp = record_list[15];
+				var run8_50 = record_list[16];
+				var check_code = record_list[17];
 				del_values.push(student_id);
-				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',student_id);
+				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',check_code);
 				add_str.push((add_values));
 				item_list = [];
 				var score = tools.get_score_level('2', grade, sex, height).score;
