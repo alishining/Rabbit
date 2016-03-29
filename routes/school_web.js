@@ -1068,4 +1068,29 @@ exports.reset_school_user_password = function(req, res, next){
 		result.data        = {};
 		res.json(result);
 	});
+};
+
+exports.get_remind_day = function(req, res, next){
+	var school = req.body.school;
+	if (school == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school];
+	sql.query(req, res, sql_mapping.get_remind_day, values, next, function(err, ret){
+		if (err){
+			result.header.code = "500";
+			result.header.msg  = "获取剩余天数失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+		result.header.code = "200";
+		result.header.msg  = "成功";
+		result.data        = {day : ret[0].protocol_end};
+		res.json(result);
+	});
 }

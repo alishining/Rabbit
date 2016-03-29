@@ -98,6 +98,7 @@ var sql = {
 	get_all_score_level : 'select * from score_level order by item_id,grade,sex,level',
 	reset_school_user_password : 'update school_user set password=123456 where account=?',
 	load_sport_suggestion : 'select * from sport_suggestion',
+	get_remind_day : 'select * from school where school=?',
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',

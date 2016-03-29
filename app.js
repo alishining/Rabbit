@@ -130,6 +130,7 @@ app.post('/score_output', school_web_route.score_output);
 app.post('/mod_password', school_web_route.mod_password);
 app.post('/get_all_student', school_web_route.get_all_student);
 app.post('/reset_school_user_password', school_web_route.reset_school_user_password);
+app.post('/get_remind_day', school_web_route.get_remind_day);
 //------------------------------------------------------------------
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);
