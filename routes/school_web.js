@@ -193,7 +193,8 @@ exports.student_sport_report = function(req, res, next){
 };
 
 exports.sport_item_report_rate = function(req, res, next){
-	var year =  req.body.year;
+	var year = req.body.year;
+	var term = req.body.term;
 	var class_id = req.body.class_id + '%';
 	var grade = class_id[1];
 	var school_id = req.body.school_id;
@@ -209,7 +210,7 @@ exports.sport_item_report_rate = function(req, res, next){
 		try {
 			var sport_item_list = ret[0].item_list.split(',');
 			sport_item_list.push('-1');
-			values = [sport_item_list, year, class_id, school_id];
+			values = [sport_item_list, year, class_id, school_id, term];
 			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
 				result.header.code = "200";
 				result.header.msg  = "成功";
@@ -248,10 +249,11 @@ exports.grade_sport_item_rank = function(req, res, next){
 
 exports.class_level_chart = function(req, res, next){
 	var year = req.body.year;
+	var term = req.body.term;
 	var class_id = req.body.class_id;
 	var item_id = req.body.item_id;
 	var school_id = req.body.school_id;
-	var values = [year, class_id, item_id, school_id];
+	var values = [year, term, class_id, item_id, school_id];
 	if (year == undefined || class_id == undefined || item_id == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";

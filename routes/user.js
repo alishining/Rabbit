@@ -741,11 +741,27 @@ exports.get_calendar = function(req, res, _next){
 	}
 	var values = [student_id];
 	sql.query(req, res, sql_mapping.get_student_info, values, next, function(err, ret){
-		var school_id = ret[0].school_id;
-		var class_id = ret[0].class_id;
+		try{
+			var school_id = ret[0].school_id;
+			var class_id = ret[0].class_id;
+		}catch(err){
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data		   = {date : year+'年'+month+'月', calendar:calendar, next:next, last:last};
+			res.json(result);
+			return;
+		}
 		values = [school_id, class_id];
 		sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
-			var item_list = ret[0].item_list.split(',');
+			try{
+				var item_list = ret[0].item_list.split(',');
+			} catch(err){
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data = {date : year+'年'+month+'月', calendar:calendar, next:next, last:last};
+				res.json(result);
+				return;
+			}
 			var homework_list = [];
 			for (var i=0;i<item_list.length;i++){
 				homework_list.push(item_list[i].split(':')[0]);
@@ -770,7 +786,7 @@ exports.get_calendar = function(req, res, _next){
 				});
 			} catch(err) {
 				result.header.code = '500';
-				result.header.msg  = '返回日历失败';
+				result.header.msg  = '返回运动日志失败';
 				result.data = {};
 				res.json(result);
 			}
@@ -1250,7 +1266,7 @@ exports.get_report = function(req, res, _next){
 				res.json(result);
 			} else {
 				result.header.code = '500';
-				result.header.msg  = '页数越界';
+				result.header.msg  = '暂无成绩单';
 				result.data         = {};
 				res.json(result);
 			}
