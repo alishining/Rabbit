@@ -151,14 +151,8 @@ exports.student_sport_report = function(req, res, next){
 			try {
 				var report_list = [];
 				var id_set = new Set();
-				var height = '';
-				var weight = '';
-				var flag = 0;
 				for (var i=0;i<ret.length;i++){
 					if (!id_set.has(ret[i].student_id)){
-						flag = 0;
-						height = ''; 
-						weight = '';	
 						id_set.add(ret[i].student_id);
 						report_list.push({student_id   : ret[i].student_id,
 										  student_name : ret[i].student_name,
@@ -183,6 +177,7 @@ exports.student_sport_report = function(req, res, next){
 				result.data        = {report_list : report_list};
 				res.json(result);
 			} catch(err) {
+				console.log(err);
 				result.header.code = "500";
 				result.header.msg  = "获取失败";
 				result.data        = {};
@@ -343,6 +338,7 @@ exports.health_record = function(req, res, next){
 			var id_set = new Set();
 			var sight_flag = 0;
 			for (var i=0;i<ret.length;i++){
+				var sight_flag = 0;
 				var grade = ret[i].class_id[1];
 				var item_id = ret[i].item_id;
 				if ((grade == '1' || grade == '2') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14'))
@@ -432,8 +428,12 @@ exports.health_record = function(req, res, next){
 						one_student[0].suggestion.push({content : ret[i].item + content});
 				}
 			}
-			if (one_student.length != 0)
+			if (one_student.length != 0){
+				one_student[0].total_score = total_score;
+				if (sight_flag == 0)
+					one_student[0].enginery.push({item : constant.sight, record : ',', score : '', level : '', unit : '', area : ''});
 				all_student.push(one_student);
+			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
 			result.data        = {all_student : all_student};
@@ -581,7 +581,7 @@ exports.add_student = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', student_id];
+	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, ''];
 	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
@@ -829,9 +829,8 @@ exports.score_input = function(req, res, next){
 				var	jump = record_list[14];
 				var situp = record_list[15];
 				var run8_50 = record_list[16];
-				var check_code = record_list[17];
 				del_values.push(student_id);
-				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'',check_code);
+				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'');
 				add_str.push((add_values));
 				item_list = [];
 				var score = tools.get_score_level('2', grade, sex, height).score;
@@ -869,6 +868,12 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'5',constant.situp,'',situp,'个',score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
+				try{
+					var tmp = run8_50.split("'");
+					run8_50 = parseInt(tmp[0])*60+parseInt(tmp[1]);
+				}catch(err){
+					run8_50 = '';
+				}
 				score = tools.get_score_level('9', grade, sex, run8_50).score;
 				level = tools.get_score_level('9', grade, sex, run8_50).level;
 				item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,'s',score,level,year,term);
@@ -1081,16 +1086,17 @@ exports.get_remind_day = function(req, res, next){
 	}
 	var values = [school];
 	sql.query(req, res, sql_mapping.get_remind_day, values, next, function(err, ret){
-		if (err){
+		try{
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {day : ret[0].protocol_end};
+			res.json(result);
+		} catch(err){
 			result.header.code = "500";
 			result.header.msg  = "获取剩余天数失败";
 			result.data        = {};
 			res.json(result);
 			return;
 		}
-		result.header.code = "200";
-		result.header.msg  = "成功";
-		result.data        = {day : ret[0].protocol_end};
-		res.json(result);
 	});
 }

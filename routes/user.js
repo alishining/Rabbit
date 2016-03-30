@@ -163,9 +163,8 @@ exports.bind_student = function(req, res, next){
 	var type = req.body.type;
 	var student_id = req.body.bind_student_id;
 	var student_name = req.body.student_name;
-	var check_code = req.body.check_code;
 	var phone = req.body.uid;
-	if (type == undefined || student_id == undefined || check_code == undefined || phone ==undefined){
+	if (type == undefined || student_id == undefined || phone ==undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -175,7 +174,7 @@ exports.bind_student = function(req, res, next){
 	var values = [student_id];
 	sql.query(req, res, sql_mapping.check_student, values, next, function(err, ret){
 		try {
-			if (ret[0].check_code == check_code && student_name == ret[0].student_name) {
+			if (student_name == ret[0].student_name) {
 				values = [student_id, phone];
 				sql.query(req, res, sql_mapping.bind_student, values, next, function(err, ret){
 					if (err){

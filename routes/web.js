@@ -122,7 +122,7 @@ exports.add_school = function(req, res, next){
 		return;
 	}
 	var date = new Date();
-	var values = [school+date.getTime(),'',province,city,district,school,'','',0,0,'',is_cooperate,'0'];
+	var values = [school,'',province,city,district,school,'','',0,0,'',is_cooperate,'0'];
 	try {
 		sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
 			values = [school+date.getTime(), '123456', '', '', ret.insertId, school, '', '1', '0', ''];
@@ -511,7 +511,6 @@ exports.add_sport_item = function(req, res, next){
 	var health_item = req.body.health_item;
 	var training_direction = req.body.training_direction;
 	var training_guide = req.body.training_guide;
-	console.log(req.body);
 	if (item_id == undefined || name == undefined || icon == undefined || nb_icon == undefined || unit == undefined || type == undefined || health_item == undefined || training_direction == undefined || training_guide == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -519,7 +518,6 @@ exports.add_sport_item = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	console.log(values);
 	var values = [item_id,name,icon,nb_icon,unit,type,health_item,training_direction,training_guide];
 	sql.query(req, res, sql_mapping.add_sport_item, values, next, function(err, ret){
 		try {

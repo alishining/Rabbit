@@ -1,7 +1,4 @@
 
+var lunar_day = require('../tools/lunar_day');
 
-
-
-
-if ("3" in ["-1","2"])
-	console.log('1111');
+console.log(lunar_day.get_term());

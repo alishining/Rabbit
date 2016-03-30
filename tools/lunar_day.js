@@ -44,6 +44,18 @@ LunarDate = {
 			 return {year : this.Year, month : this.Month, day : this.Day};
 		 }
 }
-exports.lunar_day = function(year, month, day){
-	return LunarDate.e2c(year,month,day);
-}
+exports.get_term = function(){
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth() + 1; 
+	var day = date.getDate(); 
+	var tmp = LunarDate.e2c(year,month,day);
+	var school_year = year;
+	var term = 1;
+	if (month < 8){
+		if (tmp.year == year)
+			term = 2;
+		year = year - 1;
+	}
+	return {year : year, term : term};
+};
