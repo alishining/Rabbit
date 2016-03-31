@@ -121,31 +121,34 @@ exports.add_school = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var date = new Date();
-	var values = [school,'',province,city,district,school,'','',0,0,'',is_cooperate,'0'];
-	try {
-		sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
-			values = [school+date.getTime(), '123456', '', '', ret.insertId, school, '', '1', '0', ''];
-			sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
-				try {
-					result.header.code = "200";
-					result.header.msg  = "成功"; 
-					result.data = {result : '0',  msg : '添加成功'};
-					res.json(result);
-				} catch(err) {
-					result.header.code = "500";
-					result.header.msg  = "添加失败";
-					result.data        = {};
-					res.json(result);
-				}
+	var values = [school];
+	sql.query(req, res, sql_mapping.get_school_num, values, next, function(err, ret){
+		var school_account = school+ret[0].count;
+		values = [school,'',province,city,district,school_account,'','',0,0,'',is_cooperate,'0'];
+		try {
+			sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
+				values = [school_account, '123456', '', '', ret.insertId, school, '', '1', '0', ''];
+				sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
+					try {
+						result.header.code = "200";
+						result.header.msg  = "成功"; 
+						result.data = {result : '0',  msg : '添加成功'};
+						res.json(result);
+					} catch(err) {
+						result.header.code = "500";
+						result.header.msg  = "添加失败";
+						result.data        = {};
+						res.json(result);
+					}
+				})
 			})
-		})
-	} catch(err) {
-		result.header.code = "500";
-		result.header.msg  = "添加失败";
-		result.data        = {};
-		res.json(result);
-	}
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "添加失败";
+			result.data        = {};
+			res.json(result);
+		}
+	})
 };
 
 exports.del_school = function(req, res, next){

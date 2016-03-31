@@ -42,6 +42,9 @@ exports.load_score_level = function(req, res, next) {
 };
 
 exports.get_score_level = function(item_id, grade, sex, record){
+	if (item_id == '2' || item_id == '7' || record == ''){
+		return {record : record, score : '', level : -1, is_dev : '0'};
+	}
 	var key = item_id + grade + sex;
 	var list = global.scoreMap.get(key);
 	if (item_id == '14'){

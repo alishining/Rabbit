@@ -56,6 +56,7 @@ var sql = {
 	del_contract : 'update school set is_cooperate=0 where id=?',
 	mod_contract : 'update school set status=?, is_tryout=?, protocol_start=?, protocol_end=?, remind_day=? where id=?',
 	get_contract : 'select * from school where province like ? and city like ? and district like ? and school like ? and is_cooperate=1 and is_delete=0',
+	get_school_num : 'select count(*) as count from school where school=?',
 	add_health_item : 'insert into health_item(health_item) values(?)',
 	del_health_item : 'delete from health_item where id=?',
 	get_health_item : 'select * from health_item',
