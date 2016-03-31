@@ -10,6 +10,20 @@ var result = {
 		   }
 }
 
+exports.load_unit_map = function(){
+	var values = [];
+	pool.getConnection(function(err, connection) {
+		connection.query(sql_mapping.get_sport_item_resource, values, function(err, ret){
+			for (var i=0;i<ret.length;i++){
+				var item_id = ret[i].item_id;
+				var unit = ret[i].unit;
+				global.unitMap.set(item_id, unit);
+			}
+			connection.release();
+		});
+	})
+};
+
 exports.load_score_level = function(req, res, next) {
 	var values = [];
 	pool.getConnection(function(err, connection) {

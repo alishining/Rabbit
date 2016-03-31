@@ -36,6 +36,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+global.unitMap = new Map();
+tools.load_unit_map();
 
 global.scoreMap = new Map();
 tools.load_score_level(undefined, undefined, undefined);

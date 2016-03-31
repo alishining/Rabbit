@@ -34,7 +34,7 @@ var sql = {
 	get_oneday_detail : 'select item, score, level, score_list, hint from training_record where ds=? and student_id=?',
 	update_student_img : 'update student_info set img=? where student_id=?',
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
-	get_sport_item_resource : 'select item_id,icon,nb_icon,name,training_guide from training group by item_id',
+	get_sport_item_resource : 'select item_id,icon,unit,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record,score from score_level where item_id=? and sex=? and grade=? order by record',
 	get_report : 'SELECT item_id,record,level,year,term FROM report where student_id=? and item_id != \'-1\' order by year desc,term desc',
 	set_level : 'select * from score_level where item_id=? and grade=? and sex=? order by level',
