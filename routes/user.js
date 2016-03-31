@@ -1236,45 +1236,51 @@ exports.get_report = function(req, res, _next){
 	var year = '';
 	var term = '';
 	var next = 1;
-	sql.query(req, res, sql_mapping.get_report, values, _next, function(err, ret){
-		try{
-			for (var i=0;i<ret.length;i++){
-				if (ret[i].year != year || ret[i].term != term){
-					if (report.length!=0){
-						report_list.push({title : year+'年第'+term+'学期', report : report});
+	sql.query(req, res, sql_mapping.get_student_info, values, _next, function(err, ret){
+		var grade = parseInt(ret[0].grade);
+		sql.query(req, res, sql_mapping.get_report, values, _next, function(err, ret){
+			try{
+				for (var i=0;i<ret.length;i++){
+					var item = parseInt(ret[i].item_id);
+					if (ret[i].year != year || ret[i].term != term){
+						if (report.length!=0){
+							report_list.push({title : year+'年第'+term+'学期', report : report});
+						}
+						report = [];	
+						year = ret[i].year;
+						term = ret[i].term;
+						if (((grade == 1 || grade == 2) && (item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
+							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
+					} else {
+						if (((grade == 1 || grade == 2) && (item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
+							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
 					}
-					report = [];	
-					year = ret[i].year;
-					term = ret[i].term;
-					report.push({item_id : ret[i].item_id, record : ret[i].record, level : ret[i].level});
-				} else {
-					report.push({item_id : ret[i].item_id, record : ret[i].record, level : ret[i].level});
 				}
-			}
-			if (report.length!=0){
-				report_list.push({title : year+'年第'+term+'学期', report : report});
-			}
-			if (page <= report_list.length){	
-				if (parseInt(page) == report_list.length)
-					next = 0;
-				else
-					next = 1;
-				result.header.code = '200';
-				result.header.msg  = '成功';
-				result.data         = {report : report_list[page - 1], next : next};
-				res.json(result);
-			} else {
+				if (report.length!=0){
+					report_list.push({title : year+'年第'+term+'学期', report : report});
+				}
+				if (page <= report_list.length){	
+					if (parseInt(page) == report_list.length)
+						next = 0;
+					else
+						next = 1;
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data         = {report : report_list[page - 1], next : next};
+					res.json(result);
+				} else {
+					result.header.code = '500';
+					result.header.msg  = '暂无成绩单';
+					result.data         = {};
+					res.json(result);
+				}
+			} catch(err){
 				result.header.code = '500';
-				result.header.msg  = '暂无成绩单';
+				result.header.msg  = '获取失败';
 				result.data         = {};
 				res.json(result);
+				console.log(err);
 			}
-		} catch(err){
-			result.header.code = '500';
-			result.header.msg  = '获取失败';
-			result.data         = {};
-			res.json(result);
-			console.log(err);
-		}
+		});
 	});
 }

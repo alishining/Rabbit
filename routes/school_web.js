@@ -156,6 +156,7 @@ exports.student_sport_report = function(req, res, next){
 						id_set.add(ret[i].student_id);
 						report_list.push({student_id   : ret[i].student_id,
 										  student_name : ret[i].student_name,
+										  student_number : ret[i].student_number,
 										  sex          : ret[i].sex,
 										  item_list    : [{item   : ret[i].item, 
 														   record : ret[i].record, 
@@ -935,6 +936,13 @@ exports.score_input = function(req, res, next){
 		}
 		values = [add_str];
 		sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+			if (err){
+				result.header.code = "500";
+				result.header.msg  = "失败";
+				result.data = {result : '-1', msg : '导入失败，请查看是否有重复学籍号'};
+				res.json(result);
+				return;
+			}
 			values = [school_id];
 			sql.query(req, res, sql_mapping.get_class_list, values, next, function(err, ret){
 				try{

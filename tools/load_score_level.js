@@ -42,9 +42,11 @@ exports.load_score_level = function(req, res, next) {
 };
 
 exports.get_score_level = function(item_id, grade, sex, record){
-	if (item_id == '2' || item_id == '7' || record == ''){
+	if (record == ''){
 		return {record : record, score : '', level : -1, is_dev : '0'};
 	}
+	if (item_id == '2' || item_id == '7')
+		return {record : record, score : '/', level : -2, is_dev : '0'};
 	var key = item_id + grade + sex;
 	var list = global.scoreMap.get(key);
 	if (item_id == '14'){
@@ -53,14 +55,14 @@ exports.get_score_level = function(item_id, grade, sex, record){
 		var right = parseFloat(sight[1]);
 		if (left < 5){
 			if (right < 5)
-				return {record : record, score : '0', level : '0', is_dev : '0'};
+				return {record : record, score : '0', level : 0, is_dev : '0'};
 			else
-				return {record : record, score : '60', level : '1', is_dev : '0'};
+				return {record : record, score : '60', level : 1, is_dev : '0'};
 		} else {
 			if (right < 5)
-				return {record : record, score : '60', level : '2', is_dev : '0'};
+				return {record : record, score : '60', level : 2, is_dev : '0'};
 			else
-				return {record : record, score : '100', level : '3', is_dev : '0'};
+				return {record : record, score : '100', level : 3, is_dev : '0'};
 		}
 	}
 	if (list != undefined){
@@ -70,17 +72,17 @@ exports.get_score_level = function(item_id, grade, sex, record){
 					return list[i];
 				}
 			}
-			return {record : record, score : '0', level : '0', is_dev : '0'};
+			return {record : record, score : '0', level : 0, is_dev : '0'};
 		} else {
 			for (var i=list.length-1;i>=0;i--){
 				if (parseFloat(list[i].record) <= parseFloat(record)){
 					return list[i];
 				}
 			}
-			return {record : record, score : '0', level : '0', is_dev : '0'};
+			return {record : record, score : '0', level : 0, is_dev : '0'};
 		}
 	} else {
-		return {record : record, score : '0', level : '0', is_dev : '0'};
+		return {record : record, score : '0', level : 0, is_dev : '0'};
 	}
 };
 

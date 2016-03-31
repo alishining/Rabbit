@@ -178,7 +178,8 @@ exports.submit_report_forms = function(req, res, next){
 	var values = [school_id, class_id, item_id];
 	sql.query(req, res, sql_mapping.get_current_form, values, next, function(err, ret){
 		for (var i=0;i<ret.length;i++){
-			score_map.set(ret[i].student_id, {record : ret[i].record, score : ret[i].score, level : ret[i].level});
+			if (ret[i].record != '')
+				score_map.set(ret[i].student_id, {record : ret[i].record, score : ret[i].score, level : ret[i].level});
 		}
 		var student_score_list = JSON.parse(student_score);
 		var del_values = [];
@@ -188,73 +189,72 @@ exports.submit_report_forms = function(req, res, next){
 		var rate = student_score_list.length;
 		var has_rate = 0;
 		for(var i=0;i<rate;i++){
-			del_values.push(student_score_list[i].student_id);
+			var student_id = student_score_list[i].student_id;
+			var student_number = student_score_list[i].student_number;
+			var student_name = student_score_list[i].student_name;
+			var sex = student_score_list[i].sex;
+			var grade = class_id[1];
+			var record = student_score_list[i].record;
+			var score = tools.get_score_level(item_id, grade, sex, record).score;
+			var level = tools.get_score_level(item_id, grade, sex, record).level;
+			del_values.push(student_id);
 			item_values = [];
 			item_values.push(tid);
-			item_values.push(student_score_list[i].student_id);
-			item_values.push(student_score_list[i].student_number);
-			item_values.push(student_score_list[i].student_name);
-			var sex = student_score_list[i].sex;
+			item_values.push(student_id);
+			item_values.push(student_number);
+			item_values.push(student_name);
 			item_values.push(sex);
-			if (student_score_list[i].score != '')
-				has_rate++;
-			var record = student_score_list[i].record;
 			item_values.push(record);
-			item_values.push(tools.get_score_level(item_id, class_id[1], sex, record).score);
-			item_values.push(tools.get_score_level(item_id, class_id[1], sex, record).level);
+			if (record != '') has_rate++;
+			item_values.push(score);
+			item_values.push(level);
 			add_values.push(item_values);
 			item_values = [];
-			item_values.push(student_score_list[i].student_id);
-			item_values.push(student_score_list[i].student_number);
-			item_values.push(student_score_list[i].student_name);
-			item_values.push(student_score_list[i].sex);
+			item_values.push(student_id);
+			item_values.push(student_number);
+			item_values.push(student_name);
+			item_values.push(sex);
 			item_values.push(school_id);
 			item_values.push(class_id);
 			item_values.push(item_id);
-	
-			var flag = 0;
-			try{
-				var map_record = parseFloat(score_map.get(student_score_list[i].student_id).record);
-				var map_score = parseInt(score_map.get(student_score_list[i].student_id).score);
-				var map_level = parseInt(score_map.get(student_score_list[i].student_id).level); 
-				var record = student_score_list[i].record;
-				var st_record = parseFloat(record); 
-				var st_score = parseInt(tools.get_score_level(item_id, class_id[1], sex, record).score);
-				var st_level = parseInt(tools.get_score_level(item_id, class_id[1], sex, record).level);
-				if (st_record == undefined || st_level == undefined || st_score == undefined){
-					flag = -1;
-				}
-			} catch(err){
-				console.log('exp',err);
-				flag = -1;
+			if (record == '' && score_map.get(student_id) != undefined){
+				item_values.push(score_map.get(student_id).record);
+				item_values.push(score_map.get(student_id).score);
+				item_values.push(score_map.get(student_id).level);
+				add_current.push(item_values);
+				continue;
 			}
-			if (check_better == '1' && ret.length != 0 && flag == 0){
+			if (score_map.get(student_id) != undefined && record != '' && check_better == '1' && item_id != '14'){
+				var map_record = parseFloat(score_map.get(student_id).record);
+				var st_record = parseFloat(record);
+				var map_score = score_map.get(student_id).score;
+				var map_level = score_map.get(student_id).level; 
+				var st_record = parseFloat(record); 
 				if (item_id == '0' || item_id == '9' || item_id == '12' ||  item_id == '13'){
-					if (parseFloat(map_record) > parseFloat(st_record)){
-						item_values.push(st_record);
-						item_values.push(st_score);
-						item_values.push(st_level);
+					if (map_record > st_record){
+						item_values.push(record);
+						item_values.push(score);
+						item_values.push(level);
 					} else {
-						item_values.push(map_record);
+						item_values.push(score_map.get(student_id).record);
 						item_values.push(map_score);
 						item_values.push(map_level);
 					}
 				} else {
-					if (parseFloat(map_record) > parseFloat(st_record)){
-						item_values.push(map_record);
+					if (map_record > st_record){
+						item_values.push(score_map.get(student_id).record);
 						item_values.push(map_score);
 						item_values.push(map_level);
 					} else {
 						item_values.push(st_record);
-						item_values.push(st_score);
-						item_values.push(st_level);
+						item_values.push(score);
+						item_values.push(level);
 					}
 				}
 			} else {
-				var record = student_score_list[i].record;
 				item_values.push(record);
-				item_values.push(tools.get_score_level(item_id, class_id[1], sex, record).score);
-				item_values.push(tools.get_score_level(item_id, class_id[1], sex, record).level);
+				item_values.push(score);
+				item_values.push(level);
 			}
 			add_current.push(item_values);
 		}
@@ -724,7 +724,13 @@ exports.submit_to_school = function(req, res, next){
 		sql.query(req, res, sql_mapping.get_form, values, next, function(err, ret){
 			var student_list = [];
 			var score_list = [];
+			var sport_list = [];
+			var tmp = '';
 			for (var i=0;i<ret.length;i++){
+				if (tmp != ret[i].item_id){
+					tmp = ret[i].item_id;
+					sport_list.push(ret[i].item_id);
+				}
 				var one_record = [];
 				one_record.push(tid);
 				one_record.push(ret[i].student_id);
@@ -788,8 +794,8 @@ exports.submit_to_school = function(req, res, next){
 			values = [student_list];
 			if (score_list.length != 0){
 				sql.query(req, res, sql_mapping.add_history_form, values, next, function(err, ret){
-					values = [year, term, school_id, class_id + '%'];
-					sql.query(req, res, sql_mapping.del_report, values, next, function(err, ret){
+					values = [year, term, school_id, class_id + '%', sport_list];
+					sql.query(req, res, sql_mapping.del_form_report, values, next, function(err, ret){
 						values = [score_list];
 						sql.query(req, res, sql_mapping.add_report, values, next, function(err, ret){
 							if(err){

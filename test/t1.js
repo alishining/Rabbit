@@ -1,4 +1,12 @@
 
-var lunar_day = require('../tools/lunar_day');
 
-console.log(lunar_day.get_term());
+
+
+
+
+var h = new Map();
+
+
+h.set('h', 120);
+
+console.log(h.get('w'));
