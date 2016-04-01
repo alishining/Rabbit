@@ -1249,10 +1249,10 @@ exports.get_report = function(req, res, _next){
 						report = [];	
 						year = ret[i].year;
 						term = ret[i].term;
-						if (((grade == 1 || grade == 2) && (item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
+						if (((grade == 1 || grade == 2) && (item == -1 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == -1 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == -1 || item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
 							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
 					} else {
-						if (((grade == 1 || grade == 2) && (item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
+						if (((grade == 1 || grade == 2) && (item == -1 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == -1 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == -1 || item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
 							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
 					}
 				}

@@ -339,7 +339,6 @@ exports.health_record = function(req, res, next){
 			var id_set = new Set();
 			var sight_flag = 0;
 			for (var i=0;i<ret.length;i++){
-				var sight_flag = 0;
 				var grade = ret[i].class_id[1];
 				var item_id = ret[i].item_id;
 				if ((grade == '1' || grade == '2') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14'))
@@ -356,6 +355,7 @@ exports.health_record = function(req, res, next){
 						}
 						all_student.push(one_student);
 					}
+					sight_flag = 0;
 					id_set.add(ret[i].student_id);
 					total_score = 0;
 					one_student = [];
@@ -844,7 +844,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'7',constant.weight,'',weight,global.unitMap.get('7'),score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				if (lung == ''){
+				if (lung == undefined){
 					score = '';
 					level = '';
 				} else {
@@ -854,7 +854,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'6',constant.lung,'',lung,global.unitMap.get('6'),score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				if (run50 != ''){
+				if (run50 != undefined){
 					score = tools.get_score_level('0', grade, sex, run50).score;
 					level = tools.get_score_level('0', grade, sex, run50).level;
 				} else {
@@ -864,7 +864,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'0',constant.run50,'',run50,global.unitMap.get('0'),score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				if (sit_reach == ''){
+				if (sit_reach == undefined){
 					score = '';
 					level = '';
 				} else {
@@ -874,7 +874,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'4',constant.sit_reach,'',sit_reach,global.unitMap.get('4'),score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				if (jump == ''){
+				if (jump == undefined){
 					score = '';
 					level = '';
 				} else {
@@ -884,7 +884,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'8',constant.jump,'',jump,global.unitMap.get('8'),score,level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				if (situp == ''){
+				if (situp == undefined){
 					score = '';
 					level = '';
 				} else {
