@@ -38,13 +38,13 @@ exports.pad_login = function(req, res, next){
 			} else {
 				result.header.code = "200";
 				result.header.msg  = "成功";
-				result.data = {result : '-1', msg : '登录失败'};
+				result.data = {result : '-1', msg : '密码错误'};
 				res.json(result);
 			}
 		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "用户不存在";
-			result.data = {};
+			result.header.code = "200";
+			result.header.msg  = "失败";
+			result.data = {result : '-1', msg : '用户不存在'};
 			res.json(result);
 		}
 	})

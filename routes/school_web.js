@@ -1053,9 +1053,33 @@ exports.score_output = function(req, res, next){
 					student_info.push(ret[i].sex);
 					student_info.push(ret[i].birth);
 					student_info.push(ret[i].address);
-					student_info.push(ret[i].record);
+					if (ret[i].item_id == '0' || ret[i].item_id == '1' || ret[i].item_id == '2' || ret[i].item_id == '3' || ret[i].item_id == '4' || ret[i].item_id == '5' || ret[i].item_id == '6' || ret[i].item_id == '7' || ret[i].item_id == '8' || ret[i].item_id == '9'){
+						if (ret[i].item_id == '9'){
+							if (isNaN(parseInt(ret[i].record))){
+								student_info.push('');
+							} else {
+								var min = parseInt(ret[i].record) / 60;
+								var second = parseInt(ret[i].record) % 60;
+								student_info.push(min+"'"+second+"''");
+							}
+						} else {
+							student_info.push(ret[i].record);
+						}
+					}
 				} else {
-					student_info.push(ret[i].record);
+					if (ret[i].item_id == '0' || ret[i].item_id == '1' || ret[i].item_id == '2' || ret[i].item_id == '3' || ret[i].item_id == '4' || ret[i].item_id == '5' || ret[i].item_id == '6' || ret[i].item_id == '7' || ret[i].item_id == '8' || ret[i].item_id == '9'){
+						if (ret[i].item_id == '9'){
+							if (isNaN(parseInt(ret[i].record))){
+								student_info.push('');
+							} else {
+								var min = parseInt(parseInt(ret[i].record) / 60);
+								var second = parseInt(ret[i].record) % 60;
+								student_info.push(min+"'"+second+'"');
+							}
+						} else {
+							student_info.push(ret[i].record);
+						}	
+					}
 				}		
 			}		
 			if (student_info.length !=0)
