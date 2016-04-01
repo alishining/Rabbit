@@ -125,8 +125,57 @@ exports.get_user_class = function(req, res, next){
 			result.data        = {};
 			res.json(result);
 		}
-	})
+	});
 };
+
+exports.get_default_class = function(req, res,next){
+	var account = req.body.account;
+	var is_root = req.body.is_root;
+	var year = req.body.year;
+	var term = '%' + req.body.term + '%';
+	if (account == undefined || is_root == undefined || year == undefined || term == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data		   = {};
+		res.json(result);
+		return;
+	}
+	if (parseInt(is_root) == 0){
+		var values = [account];
+		sql.query(req, res, sql_mapping.get_user_class, values, next, function(err, ret){
+			try {
+				var class_list = ret[0].class_list.split(',');
+				result.header.code = "200";
+				result.header.msg  = "成功"; 
+				result.data = {user_class : class_list};
+				res.json(result);
+			} catch(err) {
+				result.header.code = "500";
+				result.header.msg  = "获取失败";
+				result.data        = {};
+				res.json(result);
+			}
+		})
+	} else {
+		var values = [year, term];
+		sql.query(req, res, sql_mapping.get_default_class, values, next, function(err, ret){
+			try {
+				var class_list = [];
+				for (var i=0;i<ret.length;i++)
+					class_list.push(ret[i].class_id);
+				result.header.code = "200";
+				result.header.msg  = "成功"; 
+				result.data = {user_class : class_list};
+				res.json(result);
+			} catch(err) {
+				result.header.code = "500";
+				result.header.msg  = "获取失败";
+				result.data        = {};
+				res.json(result);
+			}
+		});
+	}
+}
 
 exports.student_sport_report = function(req, res, next){
 	var sex		 = '%' + req.body.sex + '%';
@@ -582,7 +631,7 @@ exports.add_student = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, ''];
+	var values = [student_id, '', student_name, sex, nationality, birth, address, school_id, school, class_id, grade, cls, 0, '', '0'];
 	sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
@@ -831,7 +880,7 @@ exports.score_input = function(req, res, next){
 				var situp = record_list[15];
 				var run8_50 = record_list[16];
 				del_values.push(student_id);
-				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'');
+				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'','0');
 				add_str.push((add_values));
 				item_list = [];
 				var score = '';
@@ -928,39 +977,41 @@ exports.score_input = function(req, res, next){
 			}
 		}
 	}
-	//var values = [del_values];
 	var values = [school_id];
-	sql.query(req, res, sql_mapping.mov_student, values, next, function(err, ret){
-		if (err){
-			console.log(err);
-		}
-		values = [add_str];
-		sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+	sql.query(req, res, sql_mapping.mod_del_flag, values, next, function(err, ret){
+		values = [del_values];
+		sql.query(req, res, sql_mapping.mov_student, values, next, function(err, ret){
 			if (err){
-				result.header.code = "500";
-				result.header.msg  = "失败";
-				result.data = {result : '-1', msg : '导入失败，请查看是否有重复学籍号'};
-				res.json(result);
-				return;
+				console.log(err);
 			}
-			values = [school_id];
-			sql.query(req, res, sql_mapping.get_class_list, values, next, function(err, ret){
-				try{
-					var class_list = '';
-					for (var i=0;i<ret.length;i++){
-						if (ret[i].class_id.length == 4)
-							class_list = class_list + ret[i].class_id + ',';
-					}
-					class_list = class_list.substr(0, class_list.length-1);
-					values = [class_list, account];
-					sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
-						if (err){
-							console.log(err);
-						}
-					});
-				} catch(err) {
-					console.log(err);
+			values = [add_str];
+			sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
+				if (err){
+					result.header.code = "500";
+					result.header.msg  = "失败";
+					result.data = {result : '-1', msg : '导入失败，请查看是否有重复学籍号'};
+					res.json(result);
+					return;
 				}
+				values = [school_id];
+				sql.query(req, res, sql_mapping.get_class_list, values, next, function(err, ret){
+					try{
+						var class_list = '';
+						for (var i=0;i<ret.length;i++){
+							if (ret[i].class_id.length == 4)
+								class_list = class_list + ret[i].class_id + ',';
+						}
+						class_list = class_list.substr(0, class_list.length-1);
+						values = [class_list, account];
+						sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
+							if (err){
+								console.log(err);
+							}
+						});
+					} catch(err) {
+						console.log(err);
+					}
+				});
 			});
 		});
 	});
