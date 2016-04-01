@@ -283,7 +283,7 @@ exports.submit_report_forms = function(req, res, next){
 								sql.query(req, res, sql_mapping.add_form_list, values, next, function(err, ret){
 									result.header.code = "200";
 									result.header.msg  = "提交成功";
-									result.data = {result : '0', msg : '提交成功'};
+									result.data = {result : '0', msg : '提交成功', tid : tid};
 									res.json(result);
 								});
 							});		
@@ -304,7 +304,7 @@ exports.submit_report_forms = function(req, res, next){
 									sql.query(req, res, sql_mapping.add_form_list, values, next, function(err, ret){
 										result.header.code = "200";
 										result.header.msg  = "提交成功";
-										result.data = {result : '0', msg : '提交成功'};
+										result.data = {result : '0', msg : '提交成功', tid : tid};
 										res.json(result);
 									});
 								});
@@ -419,7 +419,7 @@ exports.save_test_report = function(req, res, next){
 				sql.query(req, res, sql_mapping.add_student_test, values, next, function(err, ret){
 					result.header.code = "200";
 					result.header.msg  = "成功";
-					result.data = {result : '0', msg : '保存成功'};
+					result.data = {result : '0', msg : '保存成功', tid : tid};
 					res.json(result);
 				});
 			});
@@ -432,7 +432,7 @@ exports.save_test_report = function(req, res, next){
 					sql.query(req, res, sql_mapping.update_test_report, values, next, function(err, ret){
 						result.header.code = "200";
 						result.header.msg  = "成功";
-						result.data = {result : '0', msg : '保存成功'};
+						result.data = {result : '0', msg : '保存成功', tid : tid};
 						res.json(result);
 					});
 				});
