@@ -133,6 +133,7 @@ exports.get_default_class = function(req, res,next){
 	var is_root = req.body.is_root;
 	var year = req.body.year;
 	var term = '%' + req.body.term + '%';
+	var school_id = req.body.school_id;
 	if (account == undefined || is_root == undefined || year == undefined || term == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -157,7 +158,7 @@ exports.get_default_class = function(req, res,next){
 			}
 		})
 	} else {
-		var values = [year, term];
+		var values = [year, term, school_id];
 		sql.query(req, res, sql_mapping.get_default_class, values, next, function(err, ret){
 			try {
 				var class_list = [];
