@@ -241,10 +241,14 @@ exports.student_sport_report = function(req, res, next){
 exports.sport_item_report_rate = function(req, res, next){
 	var year = req.body.year;
 	var term = req.body.term;
-	var class_id = req.body.class_id + '%';
-	var grade = class_id[1];
+	var class_id = '%' + req.body.class_id + '%';
+	if (req.body.class_id != ''){
+		var grade = class_id[1];
+	} else {
+		var grade = '6';
+	}
 	var school_id = req.body.school_id;
-	if (year == undefined || class_id == undefined || school_id == undefined){
+	if (year == undefined || class_id == undefined || school_id == undefined || term == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
