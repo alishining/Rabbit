@@ -134,6 +134,7 @@ app.post('/get_all_student', school_web_route.get_all_student);
 app.post('/reset_school_user_password', school_web_route.reset_school_user_password);
 app.post('/get_remind_day', school_web_route.get_remind_day);
 app.post('/get_default_class', school_web_route.get_default_class);
+app.post('/get_download_list', school_web_route.get_download_list);
 //------------------------------------------------------------------
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);

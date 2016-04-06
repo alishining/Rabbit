@@ -1039,6 +1039,7 @@ exports.score_input = function(req, res, next){
 };
 
 exports.score_output = function(req, res, next){
+	var account = req.body.account;
 	var school_id = req.body.school_id;
 	var year = req.body.year;
 	var term = req.body.term;
@@ -1145,17 +1146,21 @@ exports.score_output = function(req, res, next){
 			fs.writeFileSync('student.xlsx', file, 'binary');
 
 			var date  = new Date();
-			var key = 'student'+ school_id + '-' + date.getTime() + '.xlsx';
+			var opt_time = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+			var key = account + '-' + date.getTime() + '.xlsx';
 			var extra = new qiniu.io.PutExtra();
 			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
 			var uptoken = putPolicy.token();
 			qiniu.io.putFile(uptoken, key, path.resolve()+'/student.xlsx', extra, function(err, ret) {
 				if (!err) {
 					var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
-					result.header.code = '200';
-					result.header.msg  = '成功';
-					result.data        = {url : file_name};
-					res.json(result);
+					values = [key, year+'年第'+term+'学期', opt_time, account, file_name];
+					sql.query(req, res, sql_mapping.add_download_log, values, next, function(err, ret){
+						result.header.code = '200';
+						result.header.msg  = '成功';
+						result.data        = {url : file_name};
+						res.json(result);
+					});
 				} else {
 					result.header.code = '500';
 					result.header.msg  = '下载失败';
@@ -1213,6 +1218,32 @@ exports.get_remind_day = function(req, res, next){
 			result.header.code = "200";
 			result.header.msg  = "成功";
 			result.data        = {day : ret[0].protocol_end};
+			res.json(result);
+		} catch(err){
+			result.header.code = "500";
+			result.header.msg  = "获取剩余天数失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+	});
+};
+
+exports.get_download_list = function(req, res, next){
+	var account = req.body.account;
+	if (account == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [account];
+	sql.query(req, res, sql_mapping.get_download_list, values, next, function(err, ret){
+		try{
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {download_list : ret};
 			res.json(result);
 		} catch(err){
 			result.header.code = "500";
