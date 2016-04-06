@@ -1035,7 +1035,12 @@ exports.score_input = function(req, res, next){
 	});
 	var date  = new Date();
 	var opt_time = date.toLocaleString();
-	var key = file_name + '-' + date.getTime() + '.xlsx';
+	try{
+		var tmp_file_name = file_name.split('.')[0];
+	} catch(err){
+		var tmp_file_name = file_name;
+	}
+	var key = tmp_file_name + '-' + date.getTime() + '.xlsx';
 	var extra = new qiniu.io.PutExtra();
 	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
 	var uptoken = putPolicy.token();
@@ -1166,7 +1171,7 @@ exports.score_output = function(req, res, next){
 			fs.writeFileSync('student.xlsx', file, 'binary');
 
 			var date  = new Date();
-			var opt_time = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+			var opt_time = date.toLocaleString();
 			var key = account + '-' + date.getTime() + '.xlsx';
 			var extra = new qiniu.io.PutExtra();
 			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
