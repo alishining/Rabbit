@@ -123,7 +123,10 @@ exports.add_school = function(req, res, next){
 	}
 	var values = [school];
 	sql.query(req, res, sql_mapping.get_school_num, values, next, function(err, ret){
-		var school_account = school+ret[0].count;
+		var num = ret[0].count; 
+		if (num == 0)
+			num = '';
+		var school_account = school+num;
 		values = [school,'',province,city,district,school_account,'','',0,0,'',is_cooperate,'0'];
 		try {
 			sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
