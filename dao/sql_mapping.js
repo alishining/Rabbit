@@ -36,7 +36,7 @@ var sql = {
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	get_sport_item_resource : 'select item_id,icon,unit,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record,score from score_level where item_id=? and sex=? and grade=? order by record',
-	get_report : 'SELECT item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc',
+	get_report : 'SELECT item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc,item_id asc',
 	set_level : 'select * from score_level where item_id=? and grade=? and sex=? order by level',
 	//------------------------------------------------------------------
 	get_province : 'select distinct province from admin_code',

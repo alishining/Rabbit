@@ -209,6 +209,7 @@ exports.student_sport_report = function(req, res, next){
 										  student_number : ret[i].student_number,
 										  sex          : ret[i].sex,
 										  item_list    : [{item   : ret[i].item, 
+														   item_id : ret[i].item_id,
 														   record : ret[i].record, 
 														   score  : ret[i].score, 
 														   level  : ret[i].level}]});
@@ -216,6 +217,7 @@ exports.student_sport_report = function(req, res, next){
 						for (var j=0;j<report_list.length;j++){
 							if (report_list[j].student_id == ret[i].student_id){
 								report_list[j].item_list.push({ item   : ret[i].item,
+																item_id : ret[i].item_id,
 																record : ret[i].record,
 																score  : ret[i].score,
 																level  : ret[i].level});
