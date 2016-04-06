@@ -104,7 +104,9 @@ var sql = {
 	load_sport_suggestion : 'select * from sport_suggestion',
 	get_remind_day : 'select * from school where school=?',
 	add_download_log : 'insert into download_list(file_name, year, opt_time, account, file_path) values (?,?,?,?,?)',
+	add_upload_log : 'insert into upload_list(year, upload_time, account, file_name, file_path) values (?,?,?,?,?)',
 	get_download_list : 'select * from download_list where account=?',
+	get_upload_list : 'select * from upload_list where account=?',
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',

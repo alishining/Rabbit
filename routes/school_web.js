@@ -840,8 +840,9 @@ exports.score_input = function(req, res, next){
 	var account = req.body.account;
 	var school = req.body.school;
 	var school_id = req.body.school_id;
+	var file_name = req.body.file_name;
 	var tmp_filename = req.files.file_upload.path;
-	if (account == undefined || year == undefined || term == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
+	if (account == undefined || year == undefined || term == undefined || file_name == undefined || tmp_filename == undefined || school_id == undefined || school == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -1032,10 +1033,29 @@ exports.score_input = function(req, res, next){
 			}
 		});
 	});
-	result.header.code = "200";
-	result.header.msg  = "成功";
-	result.data = {result : '0', msg : '上传完毕'};
-	res.json(result);
+	var date  = new Date();
+	var opt_time = date.toLocaleString();
+	var key = file_name + '-' + date.getTime() + '.xlsx';
+	var extra = new qiniu.io.PutExtra();
+	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
+	var uptoken = putPolicy.token();
+	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) {
+		if (!err) {
+			var file_path = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+			values = [year+'年第'+term+'学期', opt_time, account, file_name+'('+add_str.length+')', file_path];
+			sql.query(req, res, sql_mapping.add_upload_log, values, next, function(err, ret){
+				result.header.code = '200';
+				result.header.msg  = '成功';
+				result.data        = {result : '0', msg : '上传完毕'};
+				res.json(result);
+			});
+		} else {
+			result.header.code = '500';
+			result.header.msg  = '上传失败';
+			result.data		   = {};
+			res.json(result);
+		}
+	});
 };
 
 exports.score_output = function(req, res, next){
@@ -1244,6 +1264,32 @@ exports.get_download_list = function(req, res, next){
 			result.header.code = "200";
 			result.header.msg  = "成功";
 			result.data        = {download_list : ret};
+			res.json(result);
+		} catch(err){
+			result.header.code = "500";
+			result.header.msg  = "获取剩余天数失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+	});
+}
+
+exports.get_upload_list = function(req, res, next){
+	var account = req.body.account;
+	if (account == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [account];
+	sql.query(req, res, sql_mapping.get_upload_list, values, next, function(err, ret){
+		try{
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {upload_list : ret};
 			res.json(result);
 		} catch(err){
 			result.header.code = "500";
