@@ -774,7 +774,7 @@ exports.get_all_student = function(req, res, next){
 exports.search_student = function(req, res, next){
 	var school_id = req.body.school_id;
 	var input = '%' + req.body.input + '%';
-	var cls = '%' + req.body.cls + '%';
+	var cls = req.body.cls;
 	var grade = '%' + req.body.grade + '%';
 	var page = req.body.page;
 	if (input == undefined || school_id == undefined){
