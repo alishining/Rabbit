@@ -820,7 +820,7 @@ exports.get_daily_training_rate = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [class_id, school_id, Number(days)];
+	var values = [class_id, school_id, class_id, school_id, Number(days)];
 	sql.query(req, res, sql_mapping.get_daily_training_rate, values, next, function(err, ret){
 		if (err){
 			result.header.code = "500";
@@ -863,6 +863,8 @@ exports.score_input = function(req, res, next){
 			if (record_list.length != 0){
 				var add_values = [];
 				var grade = parseInt(record_list[0])%10;
+				if (isNaN(grade))
+					continue;
 				var class_id = record_list[1]+'';
 				if (class_id.length != 4)
 					continue;
@@ -871,13 +873,17 @@ exports.score_input = function(req, res, next){
 				var nationality = record_list[4];
 				var name = record_list[5];
 				var sex = record_list[6];
-				var date = new Date(1000*(parseInt(record_list[7])*86400 - 2209161600)); 
-				var yy = date.getFullYear(); 
-				var mm = date.getMonth()+1;
-				var dd = date.getDate();
-				if (mm < 10) mm = '0'+mm;
-				if (dd < 10) dd = '0'+dd;
-				var birth = yy+'-'+mm+'-'+dd;
+				if (isNaN(parseInt(record_list[7]))){
+					var birth = '';
+				} else {
+					var date = new Date(1000*(parseInt(record_list[7])*86400 - 2209161600)); 
+					var yy = date.getFullYear(); 
+					var mm = date.getMonth()+1;
+					var dd = date.getDate();
+					if (mm < 10) mm = '0'+mm;
+					if (dd < 10) dd = '0'+dd;
+					var birth = yy+'-'+mm+'-'+dd;
+				}
 				var address = record_list[8];
 				var height = record_list[9];
 				var weight = record_list[10];
@@ -888,6 +894,8 @@ exports.score_input = function(req, res, next){
 				var situp = record_list[15];
 				var run8_50 = record_list[16];
 				del_values.push(student_id);
+				if (isNaN(parseInt(class_id)))
+					continue;
 				add_values.push(student_id,0,name,sex,nationality,birth,address,school_id,school,class_id,parseInt(class_id)%1000 / 100,parseInt(class_id)%100,0,'','0');
 				add_str.push((add_values));
 				item_list = [];
@@ -902,6 +910,7 @@ exports.score_input = function(req, res, next){
 				score_list.push((item_list));
 				item_list = [];
 				if (lung == undefined){
+					lung = '';
 					score = '';
 					level = '';
 				} else {
@@ -912,6 +921,7 @@ exports.score_input = function(req, res, next){
 				score_list.push((item_list));
 				item_list = [];
 				if (run50 != undefined){
+					run50 = '';
 					score = tools.get_score_level('0', grade, sex, run50).score;
 					level = tools.get_score_level('0', grade, sex, run50).level;
 				} else {
@@ -922,6 +932,7 @@ exports.score_input = function(req, res, next){
 				score_list.push((item_list));
 				item_list = [];
 				if (sit_reach == undefined){
+					sit_reach = '';
 					score = '';
 					level = '';
 				} else {
@@ -932,6 +943,7 @@ exports.score_input = function(req, res, next){
 				score_list.push((item_list));
 				item_list = [];
 				if (jump == undefined){
+					jump = '';
 					score = '';
 					level = '';
 				} else {
@@ -942,6 +954,7 @@ exports.score_input = function(req, res, next){
 				score_list.push((item_list));
 				item_list = [];
 				if (situp == undefined){
+					situp = '';
 					score = '';
 					level = '';
 				} else {
@@ -954,6 +967,8 @@ exports.score_input = function(req, res, next){
 				try{
 					var tmp = run8_50.split("'");
 					run8_50 = parseInt(tmp[0])*60+parseInt(tmp[1]);
+					if (isNaN(run8_50))
+						run8_50 = '';
 				}catch(err){
 					run8_50 = '';
 				}
