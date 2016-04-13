@@ -7,7 +7,7 @@ var constant = {
 	'run50'  : '50米跑',
 	'sit_reach' : '坐位体前屈',
 	'jump'	 :	  '一分钟跳绳',
-	'situp'  : '仰卧起坐',
+	'situp'  : '一分钟仰卧起坐',
 	'run8_50': '50*8往返跑',
 	'balance': '平衡',
 	'updown' : '俯卧撑',

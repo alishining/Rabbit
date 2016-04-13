@@ -36,7 +36,7 @@ var sql = {
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	get_sport_item_resource : 'select item_id,icon,unit,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record,score from score_level where item_id=? and sex=? and grade=? order by record',
-	get_report : 'SELECT item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc,item_id asc',
+	get_report : 'SELECT distinct item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc,item_id asc',
 	set_level : 'select * from score_level where item_id=? and grade=? and sex=? order by level',
 	//------------------------------------------------------------------
 	get_province : 'select distinct province from admin_code',
@@ -75,7 +75,7 @@ var sql = {
 	mod_password : 'update school_user set password=? where account=?',
 	get_user_class : 'select class_list from school_user where account=?',
 	get_default_class : 'select class_id from report WHERE year=? and term like ? and school_id = ? group by class_id',
-	student_sport_report : 'select a.student_number, a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id and b.item_id in (?) and a.sex like ? and b.class_id=? and b.year=? and b.term=? and a.school_id=? where a.school_id = b.school_id and a.del = \'0\' and b.student_id is not null order by student_id,item_id',
+	student_sport_report : 'select a.student_number, a.student_id, a.student_name, a.sex, b.item_id, b.item, b.record, b.score, b.level from student_info a left outer join report b on a.student_id = b.student_id and b.item_id in (?) and a.sex like ? and b.class_id=? and b.year=? and b.term=? and a.school_id=? where a.school_id = b.school_id and a.del = \'0\' and b.student_id is not null order by student_number,item_id',
 	sport_item_report_rate : 'select b.item_id, b.item, sum(b.level=\'3\') as three, sum(b.level=\'3\')/count(*)*100 as three_rate, sum(b.level=\'2\') as two, sum(b.level=\'2\')/count(*)*100 as two_rate, sum(b.level=\'1\') as one, sum(b.level=\'1\')/count(*)*100 as one_rate, sum(b.level=\'0\') as zero,sum(b.level=\'0\')/count(*)*100 as zero_rate, count(*) as total from student_info a left outer join report b on a.student_id = b.student_id and b.item_id in (?) and b.year=? and b.class_id like (?) and a.school_id=? and b.term=? where a.school_id = b.school_id and a.del = \'0\' and b.student_id is not null group by item',
 	grade_sport_item_rank : 'select b.class_id,sum(b.score)/count(*) as avg,max(cast(b.score as DECIMAL)) as max from student_info a left outer join report b on a.student_id = b.student_id and b.year=? and b.item_id=? and b.class_id like (?) and a.school_id=? where a.school_id = b.school_id and a.del = \'0\' and b.student_id is not null group by b.class_id order by sum(b.score)/count(*) desc',
 	class_level_chart : 'select b.level, a.sex, a.student_name from student_info a left outer join report b on a.student_id = b.student_id and b.year=? and b.term=? and b.class_id=? and b.item_id=? and a.school_id=? where a.school_id = b.school_id and a.del = \'0\' and b.student_id is not null',
@@ -95,7 +95,7 @@ var sql = {
 	add_report : 'insert into report(student_id,sex,school_id,class_id,item_id,item,health_item,record,unit,score,level,year,term) values ?',
 	del_report : 'delete from report where year=? and term=? and school_id = ? and class_id like ?',
 	del_form_report : 'delete from report where year=? and term=? and school_id = ? and class_id like ? and item_id in (?)',
-	score_output : 'select grade, class_id, class, a.student_id, nationality, student_name, sex, birth, address, item_id, record from (select grade, class_id, class, student_id, nationality, student_name, sex, birth, address from student_info where school_id=? and class_id like ?) a left outer join (select student_id, item_id, record from report where year=? and term=?) b on a.student_id = b.student_id where b.student_id is not null order by student_id, item_id',
+	score_output : 'select grade, class_id, class, a.student_id, nationality, student_name, sex, birth, address, item_id, record from (select student_number, grade, class_id, class, student_id, nationality, student_name, sex, birth, address from student_info where school_id=?) a left outer join (select student_id, item_id, record from report where school_id=? and year=? and term=?) b on a.student_id = b.student_id where b.student_id is not null order by a.class_id, student_number, item_id',
 	get_all_student : 'select * from student_info where school_id=? and del = \'0\' order by student_id',
 	get_class_list : 'select class_id from student_info where school_id=? group by class_id',
 	update_class_list : 'update school_user set class_list=? where account=?',
@@ -141,7 +141,8 @@ var sql = {
 	get_form_title_from_tid : 'select * from form_list where id = ?',
 	//-------------------------------------------------------------------
 	load_score_level : 'select * from score_level order by item_id, grade, sex, record',
-	get_grade_sport_item : 'select item_list from sport_item where grade in (?) and type=0'
+	get_grade_sport_item : 'select item_list from sport_item where grade in (?) and type=0',
+	update_all_school_grade : 'update student_info set grade=grade+1, class_id=class_id + 100'
 };
 
 module.exports = sql;
