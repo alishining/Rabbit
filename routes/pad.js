@@ -266,7 +266,7 @@ exports.submit_report_forms = function(req, res, next){
 			sql.query(req, res, sql_mapping.add_current_form, values, next, function(err, ret){
 				try{
 					if (sign == 0){
-						values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '1'];
+						values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '1', year, term];
 						sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
 							tid = ret.insertId;
 							for (var i=0;i<add_values.length;i++){
@@ -331,7 +331,9 @@ exports.get_test_report = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [uid];
+	var year = lunar_day.get_term().year;
+	var term = lunar_day.get_term().term;
+	var values = [uid, year, term];
 	sql.query(req, res, sql_mapping.get_test_report, values, next, function(err, ret){
 		result.header.code = "200";
 		result.header.msg  = "成功";
@@ -409,7 +411,9 @@ exports.save_test_report = function(req, res, next){
 	}
 	try{
 		if (sign == 0){
-			values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '1'];
+			var year = lunar_day.get_term().year;
+			var term = lunar_day.get_term().term;
+			values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '1', year, term];
 			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
 				tid = ret.insertId;
 				for (var i=0;i<add_values.length;i++){

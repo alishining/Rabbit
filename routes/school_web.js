@@ -1228,7 +1228,7 @@ exports.score_output = function(req, res, next){
 
 			var date  = new Date();
 			var opt_time = date.toLocaleString();
-			var key = account + '-' + date.getTime() + '.xlsx';
+			var key = account + '-' + date.getFullYear() + (date.getMonth()+1) + date.getDate() + '.xlsx';
 			var extra = new qiniu.io.PutExtra();
 			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
 			var uptoken = putPolicy.token();
