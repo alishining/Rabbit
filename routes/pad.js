@@ -758,39 +758,44 @@ exports.submit_to_school = function(req, res, next){
 				var level = ret[i].level;
 				switch(parseInt(item_id)){
 					case 2 : 
-						item_list.push(id,sex,school_id,class_id,'2', constant.height,'',record,'cm',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'2', constant.height,'',record,global.unitMap.get('2'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 7 :
-						item_list.push(id,sex,school_id,class_id,'7', constant.weight,'',record,'kg',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'7', constant.weight,'',record,global.unitMap.get('7'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 6 :
-						item_list.push(id,sex,school_id,class_id,'6', constant.lung,'',record,'ml',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'6', constant.lung,'',record,global.unitMap.get('6'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 0 :
-						item_list.push(id,sex,school_id,class_id,'0', constant.run50,'',record,'s',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'0', constant.run50,'',record,global.unitMap.get('0'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 4 :
-						item_list.push(id,sex,school_id,class_id,'4', constant.sit_reach,'',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'4', constant.sit_reach,'',record,global.unitMap.get('4'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 8 :
-						item_list.push(id,sex,school_id,class_id,'8', constant.jump,'',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'8', constant.jump,'',record,global.unitMap.get('8'),score,level,year,term);
+						score_list.push((item_list));
+						item_list = [];
+						var jump_add_score = tools.get_jump_addition(record, grade, sex).score;
+						var jump_add_record = tools.get_jump_addition(record, grade, sex).record;
+						item_list.push(id,sex,school_id,class_id,'15', constant.jump_add,'',jump_add_record,global.unitMap.get('15'),jump_add_score,'',year,term);
 						score_list.push((item_list));
 						break;
 					case 5 :
-						item_list.push(id,sex,school_id,class_id,'5', constant.situp,'',record,'个',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'5', constant.situp,'',record,global.unitMap.get('5'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 9 : 
-						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,'s',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,global.unitMap.get('9'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 					case 14 : 
-						item_list.push(id,sex,school_id,class_id,'14', constant.sight,'',record,'度',score,level,year,term);
+						item_list.push(id,sex,school_id,class_id,'14', constant.sight,'',record,global.unitMap.get('14'),score,level,year,term);
 						score_list.push((item_list));
 						break;
 				}

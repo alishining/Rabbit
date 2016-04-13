@@ -265,6 +265,8 @@ exports.sport_item_report_rate = function(req, res, next){
 		try {
 			var sport_item_list = ret[0].item_list.split(',');
 			sport_item_list.push('-1');
+			sport_item_list.push('14');
+			sport_item_list.push('16');
 			values = [sport_item_list, year, class_id, school_id, term];
 			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
 				result.header.code = "200";
@@ -397,6 +399,7 @@ exports.health_record = function(req, res, next){
 			var total_score = 0;
 			var id_set = new Set();
 			var sight_flag = 0;
+			var jump_add_flag = 0;
 			for (var i=0;i<ret.length;i++){
 				var grade = ret[i].class_id[1];
 				var item_id = ret[i].item_id;
@@ -409,12 +412,18 @@ exports.health_record = function(req, res, next){
 				if (!id_set.has(ret[i].student_id)){
 					if (one_student.length != 0){
 						one_student[0].total_score = total_score;
+						one_student[0].total_level = tools.get_score_level('16', grade, 0, total_score).level;
+						one_student[0].total_area  = tools.get_area_level(total_score);
 						if (sight_flag == 0){
 							one_student[0].enginery.push({item : constant.sight, record : ',', score : '', level : '', unit : '', area : ''});
+						}
+						if (jump_add_flag == 0){
+							one_student[0].addition.push({item : constant.jump_add, record : 0, score : 0, level : '/', unit : '', area : '/'});
 						}
 						all_student.push(one_student);
 					}
 					sight_flag = 0;
+					jump_add_flag = 0;
 					id_set.add(ret[i].student_id);
 					total_score = 0;
 					one_student = [];
@@ -429,48 +438,13 @@ exports.health_record = function(req, res, next){
 									  form		   : [],
 									  enginery	   : [],
 									  stamina	   : [],
+									  addition     : [],
 									  suggestion   : [],
-									  total_score  : 0});
+									  total_score  : 0,
+									  total_level  : 0,
+									  total_area   : 0});
 				}
-				switch(item_id){
-					case '-1':
-						total_score += 0.15 * parseInt(ret[i].score);
-						break;
-					case '0':
-						total_score += 0.2 * parseInt(ret[i].score);
-						break;
-					case '4':
-						if (grade == '1' || grade == '2'){
-							total_score += 0.3* parseInt(ret[i].score);
-						} else if (grade == '3' || grade == '4'){
-							total_score += 0.2* parseInt(ret[i].score);
-						} else if (grade == '5' || grade == '6'){
-							total_score += 0.1* parseInt(ret[i].score);
-						}
-						break;
-					case '5':
-						if (grade == '3' || grade == '4'){
-							total_score += 0.1* parseInt(ret[i].score);
-						} else if (grade == '5' || grade == '6'){
-							total_score += 0.2* parseInt(ret[i].score);
-						}
-						break;
-					case '6':
-						total_score += 0.15 * parseInt(ret[i].score);
-						break;
-					case '8':
-						if (grade == '1' || grade == '2' || grade == '3' || grade == '4'){
-							total_score += 0.2* parseInt(ret[i].score);
-						} else if (grade == '5' || grade == '6'){
-							total_score += 0.1* parseInt(ret[i].score);
-						}
-						break;
-					case '9':
-						if (grade == '5' || grade == '6'){
-							total_score += 0.1* parseInt(ret[i].score);
-						}
-						break;
-				}
+				total_score += tools.get_total_score(item_id, grade, ret[i].score);
 				var content = global.suggestionMap.get(item_id + ret[i].level + tools.get_area_level(ret[i].score));
 				if (item_id == '2' || item_id == '7' || item_id == '-1'){
 					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
@@ -482,6 +456,9 @@ exports.health_record = function(req, res, next){
 					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						one_student[0].suggestion.push({content : ret[i].item + content});
+				} else if (item_id == '15'){
+					jump_add_flag = 1;
+					one_student[0].addition.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : '/', unit : ret[i].unit, area : '/'});
 				} else {
 					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
@@ -490,8 +467,12 @@ exports.health_record = function(req, res, next){
 			}
 			if (one_student.length != 0){
 				one_student[0].total_score = total_score;
+				one_student[0].total_level = tools.get_score_level('16', grade, 0, total_score).level;
+				one_student[0].total_area  = tools.get_area_level(total_score);
 				if (sight_flag == 0)
 					one_student[0].enginery.push({item : constant.sight, record : ',', score : '', level : '', unit : '', area : ''});
+				if (jump_add_flag == 0)
+					one_student[0].addition.push({item : constant.jump_add, record : 0, score : 0, level : '/', unit : '', area : '/'});
 				all_student.push(one_student);
 			}
 			result.header.code = "200";
@@ -499,6 +480,7 @@ exports.health_record = function(req, res, next){
 			result.data        = {all_student : all_student};
 			res.json(result);
 		} catch(err) {
+			console.log(err);
 			result.header.code = "500";
 			result.header.msg  = "获取失败";
 			result.data        = {};
@@ -1035,7 +1017,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'16',constant.total,'',total,'',total, level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,school_id,class_id,'14',constant.sight,'','','','','',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'14',constant.sight,'','','','','0',year,term);
 				score_list.push((item_list));
 			}
 		}

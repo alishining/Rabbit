@@ -81,10 +81,10 @@ exports.get_score_level = function(item_id, grade, sex, record){
 			if (right < 5)
 				return {record : record, score : '0', level : 0, is_dev : '0'};
 			else
-				return {record : record, score : '60', level : 1, is_dev : '0'};
+				return {record : record, score : '60', level : 0, is_dev : '0'};
 		} else {
 			if (right < 5)
-				return {record : record, score : '60', level : 2, is_dev : '0'};
+				return {record : record, score : '60', level : 0, is_dev : '0'};
 			else
 				return {record : record, score : '100', level : 3, is_dev : '0'};
 		}
