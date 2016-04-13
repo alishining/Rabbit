@@ -12,7 +12,9 @@ var constant = {
 	'balance': '平衡',
 	'updown' : '俯卧撑',
 	'bmi'	 : 'BMI',
-	'sight'  : '视力'
+	'sight'  : '视力',
+	'total'  : '总分',
+	'jump_add' : '跳绳加分项'
 };
 
 module.exports = constant;

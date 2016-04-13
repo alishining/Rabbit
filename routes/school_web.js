@@ -196,6 +196,9 @@ exports.student_sport_report = function(req, res, next){
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
 		var sport_item_list = ret[0].item_list.split(',');
 		sport_item_list.push('-1');
+		sport_item_list.push('14');
+		sport_item_list.push('15');
+		sport_item_list.push('16');
 		values = [sport_item_list, sex, class_id, year,term, school_id];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
@@ -868,6 +871,7 @@ exports.score_input = function(req, res, next){
 	for (var i=0;i<list.length;i++){
 		var student_list = list[i].data;
 		for (var j=1;j<student_list.length;j++){
+			var total = 0;
 			var record_list = student_list[j];
 			if (record_list.length != 0){
 				var add_values = [];
@@ -908,6 +912,8 @@ exports.score_input = function(req, res, next){
 				var	jump = record_list[14];
 				var situp = record_list[15];
 				var run8_50 = record_list[16];
+				var jump_add_score = tools.get_jump_addition(jump, grade, sex).score;
+				var jump_add_record = tools.get_jump_addition(jump, grade, sex).record;
 				del_values.push(student_id);
 				if (isNaN(parseInt(class_id)))
 					continue;
@@ -930,6 +936,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('6', grade, sex, lung).score;
+					total += tools.get_total_score(6, grade, score);
 					level = tools.get_score_level('6', grade, sex, lung).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'6',constant.lung,'',lung,global.unitMap.get('6'),score,level,year,term);
@@ -941,6 +948,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('0', grade, sex, run50).score;
+					total += tools.get_total_score(0, grade, score);
 					level = tools.get_score_level('0', grade, sex, run50).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'0',constant.run50,'',run50,global.unitMap.get('0'),score,level,year,term);
@@ -952,6 +960,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('4', grade, sex, sit_reach).score;
+					total += tools.get_total_score(4, grade, score);
 					level = tools.get_score_level('4', grade, sex, sit_reach).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'4',constant.sit_reach,'',sit_reach,global.unitMap.get('4'),score,level,year,term);
@@ -963,6 +972,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('8', grade, sex, jump).score;
+					total += tools.get_total_score(8, grade, score);
 					level = tools.get_score_level('8', grade, sex, jump).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'8',constant.jump,'',jump,global.unitMap.get('8'),score,level,year,term);
@@ -974,6 +984,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('5', grade, sex, situp).score;
+					total += tools.get_total_score(5, grade, score);
 					level = tools.get_score_level('5', grade, sex, situp).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'5',constant.situp,'',situp,global.unitMap.get('5'),score,level,year,term);
@@ -992,6 +1003,7 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_score_level('9', grade, sex, run8_50).score;
+					total += tools.get_total_score(9, grade, score);
 					level = tools.get_score_level('9', grade, sex, run8_50).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,global.unitMap.get('9'),score,level,year,term);
@@ -1008,9 +1020,22 @@ exports.score_input = function(req, res, next){
 					level = '';
 				} else {
 					score = tools.get_bmi_level(grade, sex, bmi).score;
+					total += tools.get_total_score(-1, grade, score);
 					level = tools.get_bmi_level(grade, sex, bmi).level;
 				}
 				item_list.push(student_id,sex,school_id,class_id,'-1',constant.bmi,'',bmi,'',score,level,year,term);
+				score_list.push((item_list));
+				item_list = [];
+				total += jump_add_score;
+				item_list.push(student_id,sex,school_id,class_id,'15',constant.jump_add,'',jump_add_record,global.unitMap.get('8'),jump_add_score,'',year,term);
+				score_list.push((item_list));
+				item_list = [];
+				total = total.toFixed(1);
+				level = tools.get_score_level('16', grade, sex, total).level;
+				item_list.push(student_id,sex,school_id,class_id,'16',constant.total,'',total,'',total, level,year,term);
+				score_list.push((item_list));
+				item_list = [];
+				item_list.push(student_id,sex,school_id,class_id,'14',constant.sight,'','','','','',year,term);
 				score_list.push((item_list));
 			}
 		}
@@ -1149,7 +1174,7 @@ exports.score_output = function(req, res, next){
 						item_map.clear();
 					}
 					student_id = ret[i].student_id;
-					student_info.push(ret[i].grade);
+					student_info.push('1'+ret[i].grade);
 					student_info.push(ret[i].class_id);
 					student_info.push(ret[i].class);
 					student_info.push(ret[i].student_id);

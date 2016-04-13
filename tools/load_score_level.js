@@ -56,6 +56,16 @@ exports.load_score_level = function(req, res, next) {
 };
 
 exports.get_score_level = function(item_id, grade, sex, record){
+	if (item_id == '16'){
+		if (record < 60)
+			return {level : 0};
+		else if (record < 80)
+			return {level : 1};
+		else if (record < 90)
+			return {level : 2};
+		else
+			return {level : 3};
+	}
 	if (record == ''){
 		return {record : record, score : '', level : -1, is_dev : '0'};
 	}
@@ -271,4 +281,125 @@ exports.get_area_level = function(score){
 		else
 			return 5;
 	}
+};
+
+exports.get_jump_addition = function(score, grade, sex){
+	var score = parseInt(score);
+	var grade = parseInt(grade);
+	var sex = parseInt(sex);
+	if (isNaN(score) || isNaN(grade) || isNaN(sex))
+		return {score : 0};
+	switch(grade){
+		case 1: if (sex == 1)
+					record = 109;
+				else
+					record = 117;	
+				break;
+		case 2: if (sex == 1)
+					record = 117;
+				else
+					record = 127;
+				break;
+		case 3: if (sex == 1)
+					record = 126;
+				else
+					record = 139;
+				break;
+		case 4: if (sex == 1)
+					record = 137; 
+				else
+					record = 149;
+				break;
+		case 5: if (sex == 1)
+					record = 148;
+				else
+					record = 158;
+				break;
+		case 6: if (sex == 1)
+					record = 157;
+				else
+					record = 166;
+				break;
+	}	
+	if (score - record >= 40)
+		return {score : 20, record : score - record};
+	if (score - record >= 38)
+		return {score : 19, record : score - record}
+	if (score - record >= 36)
+		return {score : 18, record : score - record}	
+	if (score - record >= 34)
+		return {score : 17, record : score - record}
+	if (score - record >= 32)
+		return {score : 16, record : score - record}
+	if (score - record >= 30)
+		return {score : 15, record : score - record}
+	if (score - record >= 28)
+		return {score : 14, record : score - record}
+	if (score - record >= 26)
+		return {score : 13, record : score - record}
+	if (score - record >= 24)
+		return {score : 12, record : score - record}
+	if (score - record >= 22)
+		return {score : 11, record : score - record}
+	if (score - record >= 20)
+		return {score : 10, record : score - record}
+	if (score - record >= 18)
+		return {score : 9, record : score - record}
+	if (score - record >= 16)
+		return {score : 8, record : score - record}
+	if (score - record >= 14)
+		return {score : 7, record : score - record}
+	if (score - record >= 12)
+		return {score : 6, record : score - record}
+	if (score - record >= 10)
+		return {score : 5, record : score - record}
+	if (score - record >= 8)
+		return {score : 4, record : score - record}
+	if (score - record >= 6)
+		return {score : 3, record : score - record}
+	if (score - record >= 4)
+		return {score : 2, record : score - record}
+	if (score - record >= 2)
+		return {score : 1, record : score - record}
+	return {score : 0}
+};
+
+exports.get_total_score = function(item_id, grade, score){
+	var item_id = parseInt(item_id);
+	var grade = parseInt(grade);
+	var score = parseInt(score);
+	if (isNaN(item_id) || isNaN(grade) || isNaN(score))
+		return 0
+	switch(item_id){
+		case -1:
+			return 0.15 * parseInt(score)
+		case 0:
+			return 0.2 * parseInt(score)
+		case 4:
+			if (grade == 1 || grade == 2){
+				return 0.3 * parseInt(score)
+			} else if (grade == 3 || grade == 4){
+				return 0.2 * parseInt(score)
+			} else if (grade == 5 || grade == 6){
+				return 0.1 * parseInt(score)
+			}
+		case 5:
+			if (grade == 3 || grade == 4){
+				return 0.1 * parseInt(score)
+			} else if (grade == 5 || grade == 6){
+				return 0.2 * parseInt(score)
+			}
+		case 6:
+			return 0.15 * parseInt(score)
+		case 8:
+			if (grade == 1 || grade == 2 || grade == 3 || grade == 4){
+				return 0.2 * parseInt(score)
+			} else if (grade == 5 || grade == 6){
+				return 0.1 * parseInt(score)
+			}
+		case 9:
+			if (grade == 5 || grade == 6)
+				return 0.1 * parseInt(score)
+	}
+	return 0
 }

@@ -42,7 +42,7 @@ rule.minute = 40;
 var j = schedule.scheduleJob(rule, function(){
 	var date = new Date();
 	var month = date.getMonth() + 1;
-	var day = getDate();
+	var day = date.getDate();
 	if (month == 8 && day == 1){
 		pool.getConnection(function(err, connection) {
 			connection.query(sql_mapping.update_all_school_grade, values, function(err, ret){
