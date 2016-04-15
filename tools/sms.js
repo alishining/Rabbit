@@ -1,12 +1,18 @@
 var http = require('http');
 
-exports.sms = function(num, phone) {
+exports.sms = function(num, phone, type) {
+	var model = '';
+	if (type == 1){
+		model = 'JSM40886-0002'
+	} else if (type == 2){
+		model = 'JSM40886-0003'
+	}
 	var options =
 	{
 		hostname : '112.74.76.186',
 		port : 8030,
 		method : 'GET',
-		path : '/service/httpService/httpInterface.do?method=sendMsg&username=JSM40419&password=1mqp6qtf&veryCode=qy94z5c1glxh&mobile=' + phone + '&content=@1@=' +  num + '&msgtype=2&tempid=JSM40419-0009',
+		path : '/service/httpService/httpInterface.do?method=sendMsg&username=JSM40886&password=gm7glvnt&veryCode=xgcgjlael00d&mobile=' + phone + '&content=@1@=' +  num + '&msgtype=2&tempid=' + model,
 		handers: {
 		}
 	};

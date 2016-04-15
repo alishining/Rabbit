@@ -8,6 +8,7 @@ var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
 var tool = require('../tools/sms');
+var time_tools = require('../tools/tools');
 var tools = require('../tools/load_score_level');
 var sql_mapping = require('../dao/sql_mapping');
 var constant = require('../tools/constant');
@@ -518,7 +519,7 @@ exports.add_teacher = function(req, res, next){
 	var values = [teacher_phone];
 	sql.query(req, res, sql_mapping.check_school_user, values, next, function(err, ret){
 		if (ret && ret[0] == undefined){
-			if (!tool.sms(num, teacher_phone)){
+			if (!tool.sms(num, teacher_phone, 2)){
 				result.header.code = "500";
 				result.header.msg  = "短信发送失败";
 				result.data        = {};
@@ -1073,7 +1074,7 @@ exports.score_input = function(req, res, next){
 		});
 	});
 	var date  = new Date();
-	var opt_time = date.toLocaleString();
+	var opt_time = time_tools.get_current_time();
 	try{
 		var tmp_file_name = file_name.split('.')[0];
 	} catch(err){
@@ -1209,7 +1210,7 @@ exports.score_output = function(req, res, next){
 			fs.writeFileSync('student.xlsx', file, 'binary');
 
 			var date  = new Date();
-			var opt_time = date.toLocaleString();
+			var opt_time = time_tools.get_current_time();
 			var key = account + '-' + date.getFullYear() + (date.getMonth()+1) + date.getDate() + '.xlsx';
 			var extra = new qiniu.io.PutExtra();
 			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');

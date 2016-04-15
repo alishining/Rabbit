@@ -29,7 +29,7 @@ exports.sms = function(req, res, next){
 				num = '0' + num;
 		}
 	}
-	if (tools.sms(num, phone)){
+	if (tools.sms(num, phone, 1)){
 		result.header.code = "200";
 		result.header.msg  = "成功";
 		result.data        = {result : '0', msg : '发送成功', num : num};
