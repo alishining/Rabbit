@@ -32,24 +32,29 @@ exports.school_login = function(req, res, next){
 		res.json(result);
 		return;
 	}
+	var nick = user_name;
 	var values = [user_name];
 	sql.query(req, res, sql_mapping.school_login, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
 			result.header.msg  = "成功";
+			if (ret[0].teacher_name != undefined && ret[0].teacher_name != '')
+				nick = ret[0].teacher_name;
 			if (ret[0].password == password){
 				result.data = {
 					result    : '0',
 					uid       : user_name,
+					nick	  : nick,
 					school    : ret[0].school,
 					school_id : ret[0].school_id,
 					is_root   : ret[0].is_root,
 					msg		  : '登录成功'};
 			} else {
-				result.data = {result : '-1', uid : user_name, msg : '登录失败'};
+				result.data = {result : '-1', uid : user_name, nick : nick, msg : '密码错误'};
 			}
 			res.json(result);
 		} catch(err) {
+			console.log(err);
 			result.header.code = "500";
 			result.header.msg  = "登录失败";
 			result.data        = {};
