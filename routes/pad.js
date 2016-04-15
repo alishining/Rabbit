@@ -280,7 +280,12 @@ exports.submit_report_forms = function(req, res, next){
 		}
 		var year = lunar_day.get_term().year;
 		var term = lunar_day.get_term().term;
-		values = [class_id, school_id, item_id];
+		if (item_id == '8'){
+			var item_list = [item_id, '15']; 
+		} else {
+			var item_list = [item_id]; 
+		}
+		values = [class_id, school_id, item_list];
 		sql.query(req, res, sql_mapping.del_current_form, values, next, function(err, ret){
 			values = [add_current];
 			sql.query(req, res, sql_mapping.add_current_form, values, next, function(err, ret){
@@ -802,11 +807,6 @@ exports.submit_to_school = function(req, res, next){
 					case 8 :
 						item_list.push(id,sex,school_id,class_id,'8', constant.jump,'',record,global.unitMap.get('8'),score,level,year,term);
 						score_list.push((item_list));
-						item_list = [];
-						var jump_add_score = tools.get_jump_addition(record, grade, sex).score;
-						var jump_add_record = tools.get_jump_addition(record, grade, sex).record;
-						item_list.push(id,sex,school_id,class_id,'15', constant.jump_add,'',jump_add_record,global.unitMap.get('15'),jump_add_score,'',year,term);
-						score_list.push((item_list));
 						break;
 					case 5 :
 						item_list.push(id,sex,school_id,class_id,'5', constant.situp,'',record,global.unitMap.get('5'),score,level,year,term);
@@ -820,6 +820,9 @@ exports.submit_to_school = function(req, res, next){
 						item_list.push(id,sex,school_id,class_id,'14', constant.sight,'',record,global.unitMap.get('14'),score,level,year,term);
 						score_list.push((item_list));
 						break;
+					case 15 : 
+						item_list.push(id,sex,school_id,class_id,'15', constant.jump_add,'',record,global.unitMap.get('15'),score,'',year,term);
+						score_list.push((item_list));
 				}
 			}
 			values = [student_list];

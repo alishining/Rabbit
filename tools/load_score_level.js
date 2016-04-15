@@ -400,6 +400,8 @@ exports.get_total_score = function(item_id, grade, score){
 		case 9:
 			if (grade == 5 || grade == 6)
 				return 0.1 * parseInt(score)
+		case 15 : 
+			return score;
 	}
 	return 0
 }

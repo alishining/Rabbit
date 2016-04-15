@@ -131,7 +131,7 @@ var sql = {
 	get_history_form : 'select * from form WHERE school_id=? and class_id=? and tid = ?',
 	get_form_list : 'select id,class_id,title,time,teacher from form_list where school_id=? and class_id=? and major=\'0\'',
 	get_current_form : 'SELECT * FROM current_form WHERE school_id =? and class_id=? and item_id=?',
-	del_current_form : 'delete from current_form where class_id = ? and school_id = ? and item_id = ?',
+	del_current_form : 'delete from current_form where class_id = ? and school_id = ? and item_id in (?)',
 	add_current_form : 'insert into current_form(student_id, num, name, sex, school_id, class_id, item_id, record, score, level) values ?',
 	add_form_list : 'insert into form_list(school_id, class_id, title, teacher, time, major) values(?,?,?,?,?,?)',
 	add_history_form : 'insert into form(tid, student_id, num, name, sex, school_id, class_id, item_id, record, score, level) values ?',
