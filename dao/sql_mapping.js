@@ -143,7 +143,8 @@ var sql = {
 	load_score_level : 'select * from score_level order by item_id, grade, sex, record',
 	get_grade_sport_item : 'select item_list from sport_item where grade in (?) and type=0',
 	update_all_school_grade : 'update student_info set grade=grade+1, class_id=class_id + 100',
-	jump_addition : 'select record from score_level where item_id=\'8\' and sex=? and grade=? and score=\'100\''
+	jump_addition : 'select record from score_level where item_id=\'8\' and sex=? and grade=? and score=\'100\'',
+	update_total_score : 'update report set record=?, score=? where year=? and term=? and class_id=? and school_id=? and student_id = ? and item_id=16'
 };
 
 module.exports = sql;

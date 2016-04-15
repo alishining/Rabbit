@@ -205,6 +205,7 @@ exports.student_sport_report = function(req, res, next){
 		sport_item_list.push('14');
 		sport_item_list.push('15');
 		sport_item_list.push('16');
+		var total = 0;
 		values = [sport_item_list, sex, class_id, year,term, school_id];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
@@ -212,7 +213,9 @@ exports.student_sport_report = function(req, res, next){
 				var id_set = new Set();
 				for (var i=0;i<ret.length;i++){
 					if (!id_set.has(ret[i].student_id)){
+						total = 0;
 						id_set.add(ret[i].student_id);
+						total += tools.get_total_score(ret[i].item_id, grade, ret[i].score);
 						report_list.push({student_id   : ret[i].student_id,
 										  student_name : ret[i].student_name,
 										  student_number : ret[i].student_number,
@@ -223,12 +226,23 @@ exports.student_sport_report = function(req, res, next){
 														   score  : ret[i].score, 
 														   level  : ret[i].level}]});
 					} else {
+						total += tools.get_total_score(ret[i].item_id, grade, ret[i].score);
+						var score = ret[i].score;
+						var record = ret[i].record;
+						if (ret[i].item_id == 16){
+							score = total.toFixed(1);
+							record = score;
+							values = [score,score,year,term,class_id,school_id,ret[i].student_id];
+							sql.query(req, res, sql_mapping.update_total_score, values, next, function(err, ret){
+								//
+							})
+						}
 						for (var j=0;j<report_list.length;j++){
 							if (report_list[j].student_id == ret[i].student_id){
 								report_list[j].item_list.push({ item   : ret[i].item,
 																item_id : ret[i].item_id,
-																record : ret[i].record,
-																score  : ret[i].score,
+																record : record,
+																score  : score,
 																level  : ret[i].level});
 							}
 						}	
@@ -270,9 +284,9 @@ exports.sport_item_report_rate = function(req, res, next){
 	sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret){
 		try {
 			var sport_item_list = ret[0].item_list.split(',');
-			sport_item_list.push('-1');
-			sport_item_list.push('14');
-			sport_item_list.push('16');
+			sport_item_list.push(-1);
+			sport_item_list.push(14);
+			sport_item_list.push(16);
 			values = [sport_item_list, year, class_id, school_id, term];
 			sql.query(req, res, sql_mapping.sport_item_report_rate, values, next, function(err, ret){
 				result.header.code = "200";
@@ -409,7 +423,7 @@ exports.health_record = function(req, res, next){
 			for (var i=0;i<ret.length;i++){
 				var grade = ret[i].class_id[1];
 				var item_id = ret[i].item_id;
-				if ((grade == '1' || grade == '2') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14' || item_id == '15'))
+				if ((grade == 1 || grade == 2) && !(item_id == -1 || item_id == 2 || item_id == 7 || item_id == 6 || item_id == 0 || item_id == 4 || item_id == 8 || item_id == 14 || item_id == 15))
 					continue;
 				if ((grade == '3' || grade == '4') && !(item_id == '-1' || item_id == '2' || item_id == '7' || item_id == '6' || item_id == '0' || item_id == '4' || item_id == '8' || item_id == '14' || item_id == '5' || item_id == '15'))
 					continue;
