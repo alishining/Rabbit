@@ -71,7 +71,10 @@ exports.pad_init = function(req, res, next){
 		var sport_item = [];
 		for (var i=0;i<class_id_list.length;i++){
 			if (class_id_list[i][0] == '1'){
-				var cls = class_id_list[i][2] + class_id_list[i][3];
+				if (class_id_list[i][2] != '0')
+					var cls = class_id_list[i][2] + class_id_list[i][3];
+				else
+					var cls = class_id_list[i][3];
 				switch(class_id_list[i][1]){
 					case '1' : 
 						class_list.push({class_id : class_id_list[i], name : '一年级' + cls + '班', 
@@ -236,17 +239,20 @@ exports.submit_report_forms = function(req, res, next){
 						item_values.push(score);
 						item_values.push(level);
 					} else {
-						item_values.push(score_map.get(student_id).record);
+						record = score_map.get(student_id).record;
+						item_values.push(record);
 						item_values.push(map_score);
 						item_values.push(map_level);
 					}
 				} else {
 					if (map_record > st_record){
-						item_values.push(score_map.get(student_id).record);
+						record = score_map.get(student_id).record;
+						item_values.push(record);
 						item_values.push(map_score);
 						item_values.push(map_level);
 					} else {
-						item_values.push(st_record);
+						record = st_record;
+						item_values.push(record);
 						item_values.push(score);
 						item_values.push(level);
 					}
@@ -257,6 +263,20 @@ exports.submit_report_forms = function(req, res, next){
 				item_values.push(level);
 			}
 			add_current.push(item_values);
+			if (item_id == '8'){
+				item_values = [];
+				item_values.push(student_id);
+				item_values.push(student_number);
+				item_values.push(student_name);
+				item_values.push(sex);
+				item_values.push(school_id);
+				item_values.push(class_id);
+				item_values.push('15');
+				item_values.push(tools.get_jump_addition(record, grade, sex).record);
+				item_values.push(tools.get_jump_addition(record, grade, sex).score);
+				item_values.push('-2');
+				add_current.push(item_values);
+			}
 		}
 		var year = lunar_day.get_term().year;
 		var term = lunar_day.get_term().term;
@@ -733,6 +753,8 @@ exports.submit_to_school = function(req, res, next){
 			for (var i=0;i<ret.length;i++){
 				if (tmp != ret[i].item_id){
 					tmp = ret[i].item_id;
+					if (ret[i].item_id == '8')
+						sport_list.push('15');
 					sport_list.push(ret[i].item_id);
 				}
 				var one_record = [];

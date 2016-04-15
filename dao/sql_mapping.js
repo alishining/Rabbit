@@ -36,7 +36,7 @@ var sql = {
 	update_genearch_img : 'update genearch_info set img=? where phone=?',
 	get_sport_item_resource : 'select item_id,icon,unit,nb_icon,name,training_guide from training group by item_id',
 	get_oil_table :'select level,record,score from score_level where item_id=? and sex=? and grade=? order by record',
-	get_report : 'SELECT distinct item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc,item_id asc',
+	get_report : 'SELECT distinct score,item_id,record,level,year,term FROM report where student_id=? order by year desc,term desc,item_id asc',
 	set_level : 'select * from score_level where item_id=? and grade=? and sex=? order by level',
 	//------------------------------------------------------------------
 	get_province : 'select distinct province from admin_code',
@@ -127,7 +127,7 @@ var sql = {
 	del_homework : 'delete from homework where school_id = ? and class_id in (?)',
 	mov_homework : 'delete from homework where school_id = ? and class_id = ?',
 	get_detail_homework : 'select student_name, student_number, sex, score_list from student_info a left outer join training_record b on a.student_id = b.student_id and b.item=? and ds=? where a.school_id=? and a.class_id=? and a.del=\'0\'',
-	get_form : 'select * from current_form WHERE school_id=? and class_id=? order by item_id',
+	get_form : 'select * from current_form WHERE school_id=? and class_id=? order by item_id, num',
 	get_history_form : 'select * from form WHERE school_id=? and class_id=? and tid = ?',
 	get_form_list : 'select id,class_id,title,time,teacher from form_list where school_id=? and class_id=? and major=\'0\'',
 	get_current_form : 'SELECT * FROM current_form WHERE school_id =? and class_id=? and item_id=?',
