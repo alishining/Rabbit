@@ -1211,7 +1211,7 @@ exports.score_output = function(req, res, next){
 
 			var date  = new Date();
 			var opt_time = time_tools.get_current_time();
-			var key = account + '-' + date.getFullYear() + (date.getMonth()+1) + date.getDate() + '.xlsx';
+			var key = account + '-' + date.getFullYear() + (date.getMonth()+1) + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + '.xlsx';
 			var extra = new qiniu.io.PutExtra();
 			var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu');
 			var uptoken = putPolicy.token();
@@ -1226,6 +1226,7 @@ exports.score_output = function(req, res, next){
 						res.json(result);
 					});
 				} else {
+					console.log(err);
 					result.header.code = '500';
 					result.header.msg  = '下载失败';
 					result.data		   = {};
