@@ -1163,14 +1163,14 @@ exports.score_output = function(req, res, next){
 			for (var i=0;i<ret.length;i++){
 				if (ret[i].student_id != student_id){
 					if (item_map.size != 0){
-						student_info.push(item_map.get('2'));
-						student_info.push(item_map.get('7'));
-						student_info.push(item_map.get('6'));
-						student_info.push(item_map.get('0'));
-						student_info.push(item_map.get('4'));
-						student_info.push(item_map.get('8'));
-						student_info.push(item_map.get('5'));
-						student_info.push(item_map.get('9'));
+						student_info.push(item_map.get(2));
+						student_info.push(item_map.get(7));
+						student_info.push(item_map.get(6));
+						student_info.push(item_map.get(0));
+						student_info.push(item_map.get(4));
+						student_info.push(item_map.get(8));
+						student_info.push(item_map.get(5));
+						student_info.push(item_map.get(9));
 						report_list.push(student_info);
 						student_info = [];
 						item_map.clear();
@@ -1185,28 +1185,28 @@ exports.score_output = function(req, res, next){
 					student_info.push(ret[i].sex);
 					student_info.push(ret[i].birth);
 					student_info.push(ret[i].address);
-					if (ret[i].item_id == '0' || ret[i].item_id == '1' || ret[i].item_id == '2' || ret[i].item_id == '3' || ret[i].item_id == '4' || ret[i].item_id == '5' || ret[i].item_id == '6' || ret[i].item_id == '7' || ret[i].item_id == '8' || ret[i].item_id == '9'){
-						if (ret[i].item_id == '9'){
+					if (ret[i].item_id == 0 || ret[i].item_id == 1 || ret[i].item_id == 2 || ret[i].item_id == 3 || ret[i].item_id == 4 || ret[i].item_id == 5 || ret[i].item_id == 6 || ret[i].item_id == 7 || ret[i].item_id == 8 || ret[i].item_id == 9){
+						if (ret[i].item_id == 9){
 							if (isNaN(parseInt(ret[i].record))){
-								item_map.set('9', '');
+								item_map.set(9, '');
 							} else {
 								var min = parseInt(ret[i].record) / 60;
 								var second = parseInt(ret[i].record) % 60;
-								item_map.set('9', min+"'"+second+'"');
+								item_map.set(9, min+"'"+second+'"');
 							}
 						} else {
 							item_map.set(ret[i].item_id, ret[i].record);
 						}
 					}
 				} else {
-					if (ret[i].item_id == '0' || ret[i].item_id == '1' || ret[i].item_id == '2' || ret[i].item_id == '3' || ret[i].item_id == '4' || ret[i].item_id == '5' || ret[i].item_id == '6' || ret[i].item_id == '7' || ret[i].item_id == '8' || ret[i].item_id == '9'){
-						if (ret[i].item_id == '9'){
+					if (ret[i].item_id == 0 || ret[i].item_id == 1 || ret[i].item_id == 2 || ret[i].item_id == 3 || ret[i].item_id == 4 || ret[i].item_id == 5 || ret[i].item_id == 6 || ret[i].item_id == 7 || ret[i].item_id == 8 || ret[i].item_id == 9){
+						if (ret[i].item_id == 9){
 							if (isNaN(parseInt(ret[i].record))){
-								item_map.set('9', '');
+								item_map.set(9, '');
 							} else {
 								var min = parseInt(parseInt(ret[i].record) / 60);
 								var second = parseInt(ret[i].record) % 60;
-								item_map.set('9', min+"'"+second+'"');
+								item_map.set(9, min+"'"+second+'"');
 							}
 						} else {
 							item_map.set(ret[i].item_id, ret[i].record);
@@ -1215,14 +1215,14 @@ exports.score_output = function(req, res, next){
 				}		
 			}		
 			if (student_info.length !=0){
-				student_info.push(item_map.get('2'));
-				student_info.push(item_map.get('7'));
-				student_info.push(item_map.get('6'));
-				student_info.push(item_map.get('0'));
-				student_info.push(item_map.get('4'));
-				student_info.push(item_map.get('8'));
-				student_info.push(item_map.get('5'));
-				student_info.push(item_map.get('9'));
+				student_info.push(item_map.get(2));
+				student_info.push(item_map.get(7));
+				student_info.push(item_map.get(6));
+				student_info.push(item_map.get(0));
+				student_info.push(item_map.get(4));
+				student_info.push(item_map.get(8));
+				student_info.push(item_map.get(5));
+				student_info.push(item_map.get(9));
 				report_list.push(student_info);
 			}
 			var file = xlsx.build([{name : "worksheets", "data" : report_list}]);
@@ -1363,4 +1363,5 @@ exports.get_upload_list = function(req, res, next){
 			return;
 		}
 	});
-}
+};
+
