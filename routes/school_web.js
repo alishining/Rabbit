@@ -1365,3 +1365,66 @@ exports.get_upload_list = function(req, res, next){
 	});
 };
 
+exports.get_download_detail = function(req, res, next){
+	var school_id = req.body.school_id;
+	var year = req.body.year;
+	var term = req.body.term;
+	if (school_id == undefined || year == undefined || term == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [school_id, school_id, year, term];
+	sql.query(req, res, sql_mapping.get_download_detail, values, next, function(err, ret){
+		try{
+			var download_detail = [];
+			download_detail.push({empty_list : [], rate : '', class_name : '一年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '二年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '三年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '四年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '五年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '六年级'});
+			var total = 0;
+			var tmp = '';
+			for(var i=0;i<ret.length;i++){
+				if (ret[i].class_id[1] != tmp){
+					tmp = ret[i].class_id[1];
+					total = 1;
+
+				} else {
+					total = total + 1;
+					if (parseInt(ret[i].count) == 0){
+						if (ret[i].class_id[2] != '0')
+							var cls_name = ret[i].class_id[2] + ret[i].class_id[3];
+						else
+							var cls_name = ret[i].class_id[3];
+						try {
+							download_detail[parseInt(ret[i].class_id[1])-1].empty_list.push(cls_name+'班');
+							var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
+							download_detail[parseInt(ret[i].class_id[1])-1].rate = list_len + '/' + total; 
+						} catch(err){
+							console.log(err);
+						}
+					} else {
+						var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
+						download_detail[parseInt(ret[i].class_id[1])-1].rate = list_len + '/' + total;
+					}
+						
+				}
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {download_detail : download_detail};
+			res.json(result);
+		} catch(err){
+			console.log(err);
+			result.header.code = "500";
+			result.header.msg  = "获取失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+	});
+}

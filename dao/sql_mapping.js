@@ -144,7 +144,8 @@ var sql = {
 	get_grade_sport_item : 'select item_list from sport_item where grade in (?) and type=0',
 	update_all_school_grade : 'update student_info set grade=grade+1, class_id=class_id + 100',
 	jump_addition : 'select record from score_level where item_id=\'8\' and sex=? and grade=? and score=\'100\'',
-	update_total_score : 'update report set record=?, score=? where year=? and term=? and class_id=? and school_id=? and student_id = ? and item_id=16'
+	update_total_score : 'update report set record=?, score=? where year=? and term=? and class_id=? and school_id=? and student_id = ? and item_id=16',
+	get_download_detail : 'select a.class_id, case when b.count is null then 0 else b.count end as count from (select class_id  from student_info where del=0  and school_id=? group by class_id)a left outer join (select class_id, count(*) as count from report WHERE school_id=?  and year=? and term=? GROUP BY class_id) b on a.class_id = b.class_id order by class_id'
 };
 
 module.exports = sql;
