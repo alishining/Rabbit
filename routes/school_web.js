@@ -779,7 +779,7 @@ exports.get_all_student = function(req, res, next){
 exports.search_student = function(req, res, next){
 	var school_id = req.body.school_id;
 	var input = '%' + req.body.input + '%';
-	var cls = req.body.cls;
+	var cls = '%' + req.body.cls + '%';
 	var grade = '%' + req.body.grade + '%';
 	var page = req.body.page;
 	if (input == undefined || school_id == undefined){
@@ -1403,13 +1403,13 @@ exports.get_download_detail = function(req, res, next){
 						try {
 							download_detail[parseInt(ret[i].class_id[1])-1].empty_list.push(cls_name+'班');
 							var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
-							download_detail[parseInt(ret[i].class_id[1])-1].rate = list_len + '/' + total; 
+							download_detail[parseInt(ret[i].class_id[1])-1].rate = (total - list_len) + '/' + total; 
 						} catch(err){
 							console.log(err);
 						}
 					} else {
 						var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
-						download_detail[parseInt(ret[i].class_id[1])-1].rate = list_len + '/' + total;
+						download_detail[parseInt(ret[i].class_id[1])-1].rate = (total - list_len) + '/' + total;
 					}
 						
 				}
