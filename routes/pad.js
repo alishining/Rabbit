@@ -438,7 +438,7 @@ exports.save_test_report = function(req, res, next){
 		if (sign == 0){
 			var year = lunar_day.get_term().year;
 			var term = lunar_day.get_term().term;
-			values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '1', year, term];
+			values = [uid, title, school_id, item_id, class_id, has_rate, time, time, '0', year, term];
 			sql.query(req, res, sql_mapping.add_test_report, values, next, function(err, ret){
 				tid = ret.insertId;
 				for (var i=0;i<add_values.length;i++){

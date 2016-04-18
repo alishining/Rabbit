@@ -206,6 +206,8 @@ exports.student_sport_report = function(req, res, next){
 		sport_item_list.push('15');
 		sport_item_list.push('16');
 		var total = 0;
+		var height = 1;
+		var weight = 1;
 		values = [sport_item_list, sex, class_id, year,term, school_id];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
@@ -234,6 +236,21 @@ exports.student_sport_report = function(req, res, next){
 							record = score;
 							values = [score,score,year,term,class_id,school_id,ret[i].student_id];
 							sql.query(req, res, sql_mapping.update_total_score, values, next, function(err, ret){
+								//
+							})
+						}
+						if (ret[i].item_id == 2){
+							height = parseFloat(record)/100;
+
+						}
+						if (ret[i].item_id == 7){
+							weight = parseFloat(record);
+							var bmi = Math.round(weight/(height*height)*10)*0.1; 
+							bmi = bmi.toFixed(1);
+							var score = tools.get_bmi_level(grade, ret[i].sex, bmi).score;
+							var level = tools.get_bmi_level(grade, ret[i].sex, bmi).level;
+							values = [bmi,score,level,year,term,class_id,school_id,ret[i].student_id];
+							sql.query(req, res, sql_mapping.update_bmi, values, next, function(err, ret){
 								//
 							})
 						}
