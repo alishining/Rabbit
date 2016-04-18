@@ -388,7 +388,7 @@ exports.del_test_report = function(req, res, next){
 			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {result : '0', msg : '删除失败'};
+			result.data = {result : '0', msg : '删除成功'};
 			res.json(result);
 		});
 	});
