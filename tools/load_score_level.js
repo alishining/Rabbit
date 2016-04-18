@@ -74,6 +74,8 @@ exports.get_score_level = function(item_id, grade, sex, record){
 	var key = item_id + grade + sex;
 	var list = global.scoreMap.get(key);
 	if (item_id == '14'){
+		if (record == ',' || record == '' || record == undefined)
+			return {record : record, score : '0', level : -1, is_dev : '0'};
 		var sight = record.split(',');
 		var left = parseFloat(sight[0]);
 		var right = parseFloat(sight[1]);

@@ -1037,7 +1037,7 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'16',constant.total,'',total,'',total, level,year,term);
 				score_list.push((item_list));
 				item_list = [];
-				item_list.push(student_id,sex,school_id,class_id,'14',constant.sight,'','','','','0',year,term);
+				item_list.push(student_id,sex,school_id,class_id,'14',constant.sight,'','','','',tools.get_score_level('14', grade, sex, '').level,year,term);
 				score_list.push((item_list));
 			}
 		}
