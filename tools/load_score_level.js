@@ -66,7 +66,7 @@ exports.get_score_level = function(item_id, grade, sex, record){
 		else
 			return {level : 3};
 	}
-	if (record == ''){
+	if (isNaN(parseFloat(record))){
 		return {record : record, score : '', level : -1, is_dev : '0'};
 	}
 	if (item_id == '2' || item_id == '7')
