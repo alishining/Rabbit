@@ -426,7 +426,7 @@ exports.save_test_report = function(req, res, next){
 		item_values.push(student_score_list[i].student_name);
 		var sex = student_score_list[i].sex;
 		item_values.push(sex);
-		if (student_score_list[i].score != '')
+		if (student_score_list[i].record != '')
 			has_rate++;
 		var record = student_score_list[i].record;
 		item_values.push(record);
