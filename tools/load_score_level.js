@@ -290,7 +290,7 @@ exports.get_jump_addition = function(score, grade, sex){
 	var grade = parseInt(grade);
 	var sex = parseInt(sex);
 	if (isNaN(score) || isNaN(grade) || isNaN(sex))
-		return {score : 0, record : 0};
+		return {score : '', record : ''};
 	switch(grade){
 		case 1: if (sex == 1)
 					record = 109;
