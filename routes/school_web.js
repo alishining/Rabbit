@@ -1059,12 +1059,32 @@ exports.score_input = function(req, res, next){
 			}
 		}
 	}
+	if (add_str.length == 0){
+		result.header.code = "500";
+		result.header.msg  = "失败";
+		result.data = {result : '-1', msg : '解析文件失败'};
+		res.json(result);
+		return;
+	}
 	var values = [school_id];
 	sql.query(req, res, sql_mapping.mod_del_flag, values, next, function(err, ret){
+		if (err){
+			console.log(err);
+			result.header.code = "500";
+			result.header.msg  = "失败";
+			result.data = {result : '-1', msg : '导入失败'};
+			res.json(result);
+			return;
+		}
 		values = [del_values];
 		sql.query(req, res, sql_mapping.mov_student, values, next, function(err, ret){
 			if (err){
 				console.log(err);
+				result.header.code = "500";
+				result.header.msg  = "失败";
+				result.data = {result : '-1', msg : '导入删除失败'};
+				res.json(result);
+				return;	
 			}
 			values = [add_str];
 			sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
