@@ -1151,6 +1151,7 @@ exports.score_input = function(req, res, next){
 				res.json(result);
 			});
 		} else {
+			console.log(err);
 			result.header.code = '500';
 			result.header.msg  = '上传失败';
 			result.data		   = {};

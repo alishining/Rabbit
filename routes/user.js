@@ -1237,6 +1237,13 @@ exports.get_report = function(req, res, _next){
 	var term = '';
 	var next = 1;
 	sql.query(req, res, sql_mapping.get_student_info, values, _next, function(err, ret){
+		if (ret.length == 0){
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data         = {result : '-1', msg : '学生信息不存在'};
+			res.json(result);
+			return;
+		}
 		var grade = parseInt(ret[0].grade);
 		sql.query(req, res, sql_mapping.get_report, values, _next, function(err, ret){
 			try{
