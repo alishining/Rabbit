@@ -202,13 +202,41 @@ exports.student_sport_report = function(req, res, next){
 				var report_list = [];
 				var id_set = new Set();
 				for (var i=0;i<ret.length;i++){
+					var sort = 0;
+					switch(ret[i].item){
+						case '2'  : sort = 1; 
+									break;
+						case '7'  : sort = 2;
+									break;
+						case '-1' : sort = 3;
+									break;
+						case '14' : sort = 4;
+									break;
+						case '6'  : sort = 5;
+									break;
+						case '0'  : sort = 6;
+									break;
+						case '4'  : sort = 7;
+									break;
+						case '8'  : sort = 8;
+									break;
+						case '5'  : sort = 9;
+									break;
+						case '9'  : sort = 10;
+									break;
+						case '15' : sort = 11;
+									break;
+						case '16' : sort = 12;
+									break;
+					}
 					if (!id_set.has(ret[i].student_id)){
 						id_set.add(ret[i].student_id);
 						report_list.push({student_id   : ret[i].student_id,
 										  student_name : ret[i].student_name,
 										  student_number : ret[i].student_number,
 										  sex          : ret[i].sex,
-										  item_list    : [{item   : ret[i].item, 
+										  item_list    : [{sort   : sort, 
+														   item   : ret[i].item, 
 														   item_id : ret[i].item_id,
 														   record : ret[i].record, 
 														   score  : ret[i].score, 
@@ -216,7 +244,8 @@ exports.student_sport_report = function(req, res, next){
 					} else {
 						for (var j=0;j<report_list.length;j++){
 							if (report_list[j].student_id == ret[i].student_id){
-								report_list[j].item_list.push({ item   : ret[i].item,
+								report_list[j].item_list.push({ sort   : sort,
+																item   : ret[i].item,
 																item_id : ret[i].item_id,
 																record : ret[i].record,
 																score  : ret[i].score,
