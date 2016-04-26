@@ -29,7 +29,7 @@ exports.sms = function(req, res, next){
 				num = '0' + num;
 		}
 	}
-	if (tools.sms(num, phone)){
+	if (tools.sms(num, phone, 1)){
 		result.header.code = "200";
 		result.header.msg  = "成功";
 		result.data        = {result : '0', msg : '发送成功', num : num};
@@ -1237,6 +1237,13 @@ exports.get_report = function(req, res, _next){
 	var term = '';
 	var next = 1;
 	sql.query(req, res, sql_mapping.get_student_info, values, _next, function(err, ret){
+		if (ret.length == 0){
+			result.header.code = '200';
+			result.header.msg  = '成功';
+			result.data         = {result : '-1', msg : '学生信息不存在'};
+			res.json(result);
+			return;
+		}
 		var grade = parseInt(ret[0].grade);
 		sql.query(req, res, sql_mapping.get_report, values, _next, function(err, ret){
 			try{
@@ -1250,10 +1257,10 @@ exports.get_report = function(req, res, _next){
 						year = ret[i].year;
 						term = ret[i].term;
 						if (((grade == 1 || grade == 2) && (item == -1 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == -1 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == -1 || item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
-							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
+							report.push({item_id : item, score : ret[i].score, record : ret[i].record, level : ret[i].level});
 					} else {
 						if (((grade == 1 || grade == 2) && (item == -1 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 3 || grade == 4) && (item == -1 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)) || ((grade == 5 || grade == 6) && (item == -1 || item == 9 || item == 5 || item == 0 || item == 2 || item == 7 || item == 6 || item == 4 || item == 8)))
-							report.push({item_id : item, record : ret[i].record, level : ret[i].level});
+							report.push({item_id : item, score : ret[i].score, record : ret[i].record, level : ret[i].level});
 					}
 				}
 				if (report.length!=0){

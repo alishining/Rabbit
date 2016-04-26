@@ -12,8 +12,9 @@ var web_route = require('./routes/web');
 var school_web_route = require('./routes/school_web');
 var pad_route = require('./routes/pad');
 var tools = require('./tools/load_score_level');
-
 var app = express();
+var schedule = require("node-schedule");
+var pool = require('./dao/sql_pool').mysql_pool();
 
 app.set('port', 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -35,6 +36,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var rule = new schedule.RecurrenceRule();
+rule.minute = 40;
+var j = schedule.scheduleJob(rule, function(){
+	var date = new Date();
+	var month = date.getMonth() + 1;
+	var day = date.getDate();
+	if (month == 8 && day == 1){
+		pool.getConnection(function(err, connection) {
+			connection.query(sql_mapping.update_all_school_grade, values, function(err, ret){
+				connection.release();
+			});
+		})
+	}
+});
 
 global.unitMap = new Map();
 tools.load_unit_map();
@@ -136,6 +152,7 @@ app.post('/get_remind_day', school_web_route.get_remind_day);
 app.post('/get_default_class', school_web_route.get_default_class);
 app.post('/get_download_list', school_web_route.get_download_list);
 app.post('/get_upload_list', school_web_route.get_upload_list);
+app.post('/get_download_detail', school_web_route.get_download_detail);
 //------------------------------------------------------------------
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);
