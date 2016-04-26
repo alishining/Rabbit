@@ -56,7 +56,7 @@ exports.school_login = function(req, res, next){
 		} catch(err) {
 			console.log(err);
 			result.header.code = "500";
-			result.header.msg  = "登录失败";
+			result.header.msg  = "用户名不存在";
 			result.data        = {};
 			res.json(result);
 		}
