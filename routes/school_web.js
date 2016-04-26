@@ -216,29 +216,29 @@ exports.student_sport_report = function(req, res, next){
 				for (var i=0;i<ret.length;i++){
 					var sort = 0;
 					switch(ret[i].item){
-						case '2'  : sort = 1; 
+						case 2  : sort = 1; 
 									break;
-						case '7'  : sort = 2;
+						case 7  : sort = 2;
 									break;
-						case '-1' : sort = 3;
+						case -1 : sort = 3;
 									break;
-						case '14' : sort = 4;
+						case 14 : sort = 4;
 									break;
-						case '6'  : sort = 5;
+						case 6  : sort = 5;
 									break;
-						case '0'  : sort = 6;
+						case 0  : sort = 6;
 									break;
-						case '4'  : sort = 7;
+						case 4  : sort = 7;
 									break;
-						case '8'  : sort = 8;
+						case 8  : sort = 8;
 									break;
-						case '5'  : sort = 9;
+						case 5  : sort = 9;
 									break;
-						case '9'  : sort = 10;
+						case 9  : sort = 10;
 									break;
-						case '15' : sort = 11;
+						case 15 : sort = 11;
 									break;
-						case '16' : sort = 12;
+						case 16 : sort = 12;
 									break;
 					}
 					if (!id_set.has(ret[i].student_id)){
