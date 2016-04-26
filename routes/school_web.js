@@ -215,7 +215,7 @@ exports.student_sport_report = function(req, res, next){
 				var id_set = new Set();
 				for (var i=0;i<ret.length;i++){
 					var sort = 0;
-					switch(ret[i].item){
+					switch(ret[i].item_id){
 						case 2  : sort = 1; 
 									break;
 						case 7  : sort = 2;
