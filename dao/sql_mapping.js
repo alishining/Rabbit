@@ -146,7 +146,7 @@ var sql = {
 	jump_addition : 'select record from score_level where item_id=\'8\' and sex=? and grade=? and score=\'100\'',
 	update_total_score : 'update report set record=?, score=? where year=? and term=? and class_id=? and school_id=? and student_id = ? and item_id=16',
 	update_bmi : 'update report set record=?, score=?, level=? where year=? and term=? and class_id=? and school_id=? and student_id = ? and item_id=-1',
-	get_download_detail : 'select a.class_id, case when b.count is null then 0 else b.count end as count from (select class_id  from student_info where del=0  and school_id=? group by class_id)a left outer join (select class_id, count(*) as count from report WHERE school_id=?  and year=? and term=? GROUP BY class_id) b on a.class_id = b.class_id order by class_id'
+	get_download_detail : 'select a.class_id, case when b.count is null then 0 else b.count end as count from (select class_id  from student_info where del=0  and school_id=? group by class_id)a left outer join (select class_id, count(*) as count from report WHERE school_id=?  and year=? and term=? and (record!=\'\' and record!=0)GROUP BY class_id) b on a.class_id = b.class_id order by class_id'
 };
 
 module.exports = sql;

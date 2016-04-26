@@ -1078,7 +1078,6 @@ exports.score_input = function(req, res, next){
 				item_list.push(student_id,sex,school_id,class_id,'15',constant.jump_add,'',jump_add_record,global.unitMap.get('8'),jump_add_score,'',year,term);
 				score_list.push((item_list));
 				item_list = [];
-				total = total.toFixed(1);
 				level = tools.get_score_level('16', grade, sex, total).level;
 				item_list.push(student_id,sex,school_id,class_id,'16',constant.total,'',total,'',total, level,year,term);
 				score_list.push((item_list));
@@ -1459,7 +1458,22 @@ exports.get_download_detail = function(req, res, next){
 				if (ret[i].class_id[1] != tmp){
 					tmp = ret[i].class_id[1];
 					total = 1;
-
+					if (parseInt(ret[i].count) == 0){
+						if (ret[i].class_id[2] != '0')
+							var cls_name = ret[i].class_id[2] + ret[i].class_id[3];
+						else
+							var cls_name = ret[i].class_id[3];
+						try {
+							download_detail[parseInt(ret[i].class_id[1])-1].empty_list.push(cls_name+'班');
+							var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
+							download_detail[parseInt(ret[i].class_id[1])-1].rate = (total - list_len) + '/' + total; 
+						} catch(err){
+							console.log(err);
+						}
+					} else {
+						var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
+						download_detail[parseInt(ret[i].class_id[1])-1].rate = (total - list_len) + '/' + total;
+					}
 				} else {
 					total = total + 1;
 					if (parseInt(ret[i].count) == 0){
@@ -1478,7 +1492,6 @@ exports.get_download_detail = function(req, res, next){
 						var list_len = download_detail[parseInt(ret[i].class_id[1])-1].empty_list.length;
 						download_detail[parseInt(ret[i].class_id[1])-1].rate = (total - list_len) + '/' + total;
 					}
-						
 				}
 			}
 			result.header.code = "200";
