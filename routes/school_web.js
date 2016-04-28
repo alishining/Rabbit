@@ -280,7 +280,7 @@ exports.student_sport_report = function(req, res, next){
 							var score = tools.get_bmi_level(grade, ret[i].sex, bmi).score;
 							var level = tools.get_bmi_level(grade, ret[i].sex, bmi).level;
 							values = [bmi,score,level,year,term,class_id,school_id,ret[i].student_id];
-							if (score != ret[i].score){
+							if (bmi != ret[i].record){
 								sql.query(req, res, sql_mapping.update_bmi, values, next, function(err, ret){
 									//
 								})
