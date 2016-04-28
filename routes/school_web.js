@@ -208,6 +208,7 @@ exports.student_sport_report = function(req, res, next){
 		var total = 0;
 		var height = 1;
 		var weight = 1;
+		var tmp_bmi = 0;
 		values = [sport_item_list, sex, class_id, year,term, school_id];
 		sql.query(req, res, sql_mapping.student_sport_report, values, next, function(err, ret){
 			try {
@@ -242,6 +243,8 @@ exports.student_sport_report = function(req, res, next){
 									break;
 					}
 					if (!id_set.has(ret[i].student_id)){
+						if (ret[i].item_id == -1)
+							tmp_bmi = ret[i].record;
 						total = 0;
 						id_set.add(ret[i].student_id);
 						total += tools.get_total_score(ret[i].item_id, grade, ret[i].score);
@@ -256,6 +259,8 @@ exports.student_sport_report = function(req, res, next){
 														   score  : ret[i].score, 
 														   level  : ret[i].level}]});
 					} else {
+						if (ret[i].item_id == -1)
+							tmp_bmi = ret[i].record;
 						total += tools.get_total_score(ret[i].item_id, grade, ret[i].score);
 						var score = ret[i].score;
 						var record = ret[i].record;
@@ -280,7 +285,7 @@ exports.student_sport_report = function(req, res, next){
 							var score = tools.get_bmi_level(grade, ret[i].sex, bmi).score;
 							var level = tools.get_bmi_level(grade, ret[i].sex, bmi).level;
 							values = [bmi,score,level,year,term,class_id,school_id,ret[i].student_id];
-							if (bmi != ret[i].record){
+							if (bmi != tmp_bmi){
 								sql.query(req, res, sql_mapping.update_bmi, values, next, function(err, ret){
 									//
 								})
