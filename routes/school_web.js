@@ -537,7 +537,9 @@ exports.health_record = function(req, res, next){
 				} else {
 					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
-						one_student[0].suggestion.push({content : ret[i].item + content});
+						if (!((grade == 5 || grade == 6) && (item_id == '8'))){
+							one_student[0].suggestion.push({content : ret[i].item + content});
+						}
 				}
 			}
 			if (one_student.length != 0){

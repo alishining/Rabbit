@@ -174,13 +174,20 @@ exports.bind_student = function(req, res, next){
 	var values = [student_id];
 	sql.query(req, res, sql_mapping.check_student, values, next, function(err, ret){
 		try {
+			if (ret.length == 0){
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {result : '-1', msg    : '学生学号不存在'};
+				res.json(result);
+				return;
+			}
 			if (student_name == ret[0].student_name) {
 				values = [student_id, phone];
 				sql.query(req, res, sql_mapping.bind_student, values, next, function(err, ret){
 					if (err){
 						result.header.code = "200";
 						result.header.msg  = "成功"; 
-						result.data        = {result : '-1', msg    : '帐号重复添加'};
+						result.data        = {result : '-1', msg    : '该学生已被绑定'};
 						res.json(result);
 						return;
 					}
@@ -193,7 +200,7 @@ exports.bind_student = function(req, res, next){
 									result.header.code = "200";
 									result.header.msg  = "成功"; 
 									result.data		   = {result : '-1',
-														  msg	 : '帐号重复添加'};
+														  msg	 : '该学生已被绑定'};
 									res.json(result);
 									return;
 								}
@@ -216,7 +223,7 @@ exports.bind_student = function(req, res, next){
 				result.header.code = "200";
 				result.header.msg  = "成功";
 				result.data		   = {result : '-1',
-									  msg    : '学生已绑定或验证码错误或孩子名称错误'};	
+									  msg    : '学生姓名与学号不匹配'};	
 				res.json(result);
 			}
 		} catch(err) {
