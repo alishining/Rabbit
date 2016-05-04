@@ -524,13 +524,13 @@ exports.health_record = function(req, res, next){
 				if (item_id == '2' || item_id == '7' || item_id == '-1'){
 					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
-						one_student[0].suggestion.push({content : ret[i].item + content});
+						one_student[0].suggestion.push({content : content});
 				} else if (item_id == '6' || item_id == '14'){
 					if (item_id == '14')
 						sight_flag = 1;
 					one_student[0].enginery.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
-						one_student[0].suggestion.push({content : ret[i].item + content});
+						one_student[0].suggestion.push({content : content});
 				} else if (item_id == '15'){
 					jump_add_flag = 1;
 					one_student[0].addition.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : '/', unit : ret[i].unit, area : '/'});
@@ -538,7 +538,7 @@ exports.health_record = function(req, res, next){
 					one_student[0].stamina.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
 						if (!((grade == 5 || grade == 6) && (item_id == '8'))){
-							one_student[0].suggestion.push({content : ret[i].item + content});
+							one_student[0].suggestion.push({content : content});
 						}
 				}
 			}
