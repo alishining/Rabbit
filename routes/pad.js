@@ -208,7 +208,13 @@ exports.submit_report_forms = function(req, res, next){
 			item_values.push(student_name);
 			item_values.push(sex);
 			item_values.push(record);
-			if (record != '') has_rate++;
+			if (item_id == '14'){
+				if (student_score_list[i].record != ',')
+					has_rate++;
+			} else {
+				if (student_score_list[i].record != '')
+					has_rate++;
+			}	
 			item_values.push(score);
 			item_values.push(level);
 			add_values.push(item_values);
@@ -426,8 +432,13 @@ exports.save_test_report = function(req, res, next){
 		item_values.push(student_score_list[i].student_name);
 		var sex = student_score_list[i].sex;
 		item_values.push(sex);
-		if (student_score_list[i].record != '')
-			has_rate++;
+		if (item_id == '14'){
+			if (student_score_list[i].record != ',')
+				has_rate++;
+		} else {
+			if (student_score_list[i].record != '')
+				has_rate++;
+		}
 		var record = student_score_list[i].record;
 		item_values.push(record);
 		item_values.push(tools.get_score_level(item_id, class_id[1], sex, record).score);
