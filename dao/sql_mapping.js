@@ -70,6 +70,7 @@ var sql = {
 	get_score_level : 'select * from score_level where item_id=?',
 	//-------------------------------------------------------------------
 	school_login     : 'select teacher_name, school_id, school, password, is_root from school_user where account=?',
+	school_area		 : 'select * from school where id = ?',
 	add_school_user  : 'insert into school_user(account, password, teacher_name, teacher_phone, school_id, school, class_list, is_root, is_delete,img) values(?,?,?,?,?,?,?,?,?,?)',
 	reset_default_password   : 'update school_user set password=123456 where school_id=? and is_root=1',
 	mod_password : 'update school_user set password=? where account=?',
