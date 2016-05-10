@@ -35,8 +35,16 @@ exports.school_login = function(req, res, next){
 	var nick = user_name;
 	var values = [user_name];
 	sql.query(req, res, sql_mapping.school_login, values, next, function(err, ret){
-		var school_id = ret[0].school_id;
-		if (school_id == undefined){
+		try {
+			var school_id = ret[0].school_id;
+			if (school_id == undefined){
+				result.header.code = "500";
+				result.header.msg  = "学校获取失败";
+				result.data        = {};
+				res.json(result);
+				return;
+			}
+		} catch(err){
 			result.header.code = "500";
 			result.header.msg  = "学校获取失败";
 			result.data        = {};
