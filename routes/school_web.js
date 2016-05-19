@@ -353,7 +353,7 @@ exports.sport_item_report_rate = function(req, res, next){
 	var term = req.body.term;
 	var class_id = '%' + req.body.class_id + '%';
 	if (req.body.class_id != ''){
-		var grade = class_id[1];
+		var grade = class_id[2];
 	} else {
 		var grade = '6';
 	}
