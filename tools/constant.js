@@ -14,7 +14,11 @@ var constant = {
 	'bmi'	 : 'BMI',
 	'sight'  : '视力',
 	'total'  : '总分',
-	'jump_add' : '跳绳加分项'
+	'jump_add' : '跳绳加分项',
+	'ldty' : '立定跳远',
+	'run800'  : '800米跑',
+	'run1000' : '1000米跑',
+	'ytxs' : '引体向上'
 };
 
 module.exports = constant;

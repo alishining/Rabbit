@@ -382,11 +382,11 @@ exports.get_total_score = function(item_id, grade, score){
 				return 0.3 * parseInt(score)
 			} else if (grade == 3 || grade == 4){
 				return 0.2 * parseInt(score)
-			} else if (grade == 5 || grade == 6){
+			} else if (grade == 5 || grade == 6 || grade == 7 || grade == 8 || grade == 9){
 				return 0.1 * parseInt(score)
 			}
 		case 5:
-			if (grade == 3 || grade == 4){
+			if (grade == 3 || grade == 4 || grade == 7 || grade == 8 || grade == 9){
 				return 0.1 * parseInt(score)
 			} else if (grade == 5 || grade == 6){
 				return 0.2 * parseInt(score)
@@ -404,6 +404,14 @@ exports.get_total_score = function(item_id, grade, score){
 				return 0.1 * parseInt(score)
 		case 15 : 
 			return score;
+		case 10 :
+			return 0.1 * parseInt(score)
+		case 11 :
+			return 0.1 * parseInt(score)
+		case 12 :
+			return 0.2 * parseInt(score)
+		case 13 :
+			return 0.2 * parseInt(score)
 	}
 	return 0
 }

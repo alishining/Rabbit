@@ -827,6 +827,23 @@ exports.submit_to_school = function(req, res, next){
 						item_list.push(id,sex,school_id,class_id,'9', constant.run8_50,'',record,global.unitMap.get('9'),score,level,year,term);
 						score_list.push((item_list));
 						break;
+					case 10 : 
+						item_list.push(id,sex,school_id,class_id,'10', constant.ldty,'',record,global.unitMap.get('10'),score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 11 : 
+						item_list.push(id,sex,school_id,class_id,'11', constant.ytxs,'',record,global.unitMap.get('11'),score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 12 : 
+						item_list.push(id,sex,school_id,class_id,'12', constant.run800,'',record,global.unitMap.get('12'),score,level,year,term);
+						score_list.push((item_list));
+						break;
+					case 13 : 
+						item_list.push(id,sex,school_id,class_id,'13', constant.run1000,'',record,global.unitMap.get('13'),score,level,year,term);
+						score_list.push((item_list));
+						break;
+
 					case 14 : 
 						item_list.push(id,sex,school_id,class_id,'14', constant.sight,'',record,global.unitMap.get('14'),score,level,year,term);
 						score_list.push((item_list));
