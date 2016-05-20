@@ -244,6 +244,8 @@ exports.get_bmi_level = function(grade, sex, bmi){
 						return {score : 100, level : 1};
 				}
 				break;
+			default:
+				return {score : 0, level : 0};
 		} 
 	} else {
 			return {score : 0, level : 0};
@@ -291,6 +293,8 @@ exports.get_jump_addition = function(score, grade, sex){
 	var sex = parseInt(sex);
 	if (isNaN(score) || isNaN(grade) || isNaN(sex))
 		return {score : '', record : ''};
+	if (grade > 6)
+		return {score : 0, record : 0}
 	switch(grade){
 		case 1: if (sex == 1)
 					record = 109;

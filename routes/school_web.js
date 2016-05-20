@@ -1014,8 +1014,13 @@ exports.score_input = function(req, res, next){
 					var ytxs = '';
 					var ldty = '';
 				}
-				var jump_add_score = tools.get_jump_addition(jump, grade, sex).score;
-				var jump_add_record = tools.get_jump_addition(jump, grade, sex).record;
+				if (grade < 7){
+					var jump_add_score = tools.get_jump_addition(jump, grade, sex).score;
+					var jump_add_record = tools.get_jump_addition(jump, grade, sex).record;
+				} else {
+					var jump_add_score = 0;
+					var jump_add_record = 0;
+				}
 				del_values.push(student_id);
 				if (isNaN(parseInt(class_id)))
 					continue;
@@ -1067,18 +1072,20 @@ exports.score_input = function(req, res, next){
 				}
 				item_list.push(student_id,sex,school_id,class_id,'4',constant.sit_reach,'',sit_reach,global.unitMap.get('4'),score,level,year,term);
 				score_list.push((item_list));
-				item_list = [];
-				if (jump == undefined){
-					jump = '';
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('8', grade, sex, jump).score;
-					total += tools.get_total_score(8, grade, score);
-					level = tools.get_score_level('8', grade, sex, jump).level;
+				if (grade < 7){
+					item_list = [];
+					if (jump == undefined){
+						jump = '';
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('8', grade, sex, jump).score;
+						total += tools.get_total_score(8, grade, score);
+						level = tools.get_score_level('8', grade, sex, jump).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'8',constant.jump,'',jump,global.unitMap.get('8'),score,level,year,term);
+					score_list.push((item_list));
 				}
-				item_list.push(student_id,sex,school_id,class_id,'8',constant.jump,'',jump,global.unitMap.get('8'),score,level,year,term);
-				score_list.push((item_list));
 				item_list = [];
 				if (situp == undefined){
 					situp = '';
@@ -1091,107 +1098,108 @@ exports.score_input = function(req, res, next){
 				}
 				item_list.push(student_id,sex,school_id,class_id,'5',constant.situp,'',situp,global.unitMap.get('5'),score,level,year,term);
 				score_list.push((item_list));
-				item_list = [];
-				try{
-					var tmp = run8_50.split("'");
-					run8_50 = parseInt(tmp[0])*60+parseInt(tmp[1]);
-					if (isNaN(run8_50))
+				if (grade < 7){
+					item_list = [];
+					try{
+						var tmp = run8_50.split("'");
+						run8_50 = parseInt(tmp[0])*60+parseInt(tmp[1]);
+						if (isNaN(run8_50))
+							run8_50 = '';
+					}catch(err){
 						run8_50 = '';
-				}catch(err){
-					run8_50 = '';
-				}
-				if (run8_50 == ''){
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('9', grade, sex, run8_50).score;
-					total += tools.get_total_score(9, grade, score);
-					level = tools.get_score_level('9', grade, sex, run8_50).level;
-				}
-				item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,global.unitMap.get('9'),score,level,year,term);
-				score_list.push((item_list));
-				
-				item_list = [];
-				try{
-					var tmp = run800.split("'");
-					run800 = parseInt(tmp[0])*60+parseInt(tmp[1]);
-					if (isNaN(run800))
+					}
+					if (run8_50 == ''){
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('9', grade, sex, run8_50).score;
+						total += tools.get_total_score(9, grade, score);
+						level = tools.get_score_level('9', grade, sex, run8_50).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'9',constant.run8_50,'',run8_50,global.unitMap.get('9'),score,level,year,term);
+					score_list.push((item_list));
+				}	
+				if (grade > 6){
+					item_list = [];
+					try{
+						var tmp = run800.split("'");
+						run800 = parseInt(tmp[0])*60+parseInt(tmp[1]);
+						if (isNaN(run800))
+							run800 = '';
+					}catch(err){
 						run800 = '';
-				}catch(err){
-					run800 = '';
-				}
-				if (run800 == ''){
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('12', grade, sex, run800).score;
-					total += tools.get_total_score(12, grade, score);
-					level = tools.get_score_level('12', grade, sex, run800).level;
-				}
-				item_list.push(student_id,sex,school_id,class_id,'12',constant.run800,'',run800,global.unitMap.get('12'),score,level,year,term);
-				score_list.push((item_list));
+					}
+					if (run800 == ''){
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('12', grade, sex, run800).score;
+						total += tools.get_total_score(12, grade, score);
+						level = tools.get_score_level('12', grade, sex, run800).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'12',constant.run800,'',run800,global.unitMap.get('12'),score,level,year,term);
+					score_list.push((item_list));
 
-				item_list = [];
-				try{
-					var tmp = run1000.split("'");
-					run1000 = parseInt(tmp[0])*60+parseInt(tmp[1]);
-					if (isNaN(run1000))
+					item_list = [];
+					try{
+						var tmp = run1000.split("'");
+						run1000 = parseInt(tmp[0])*60+parseInt(tmp[1]);
+						if (isNaN(run1000))
+							run1000 = '';
+					}catch(err){
 						run1000 = '';
-				}catch(err){
-					run1000 = '';
-				}
-				if (run1000 == ''){
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('13', grade, sex, run1000).score;
-					total += tools.get_total_score(13, grade, score);
-					level = tools.get_score_level('13', grade, sex, run1000).level;
-				}
-				item_list.push(student_id,sex,school_id,class_id,'13',constant.run1000,'',run1000,global.unitMap.get('13'),score,level,year,term);
-				score_list.push((item_list));
+					}
+					if (run1000 == ''){
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('13', grade, sex, run1000).score;
+						total += tools.get_total_score(13, grade, score);
+						level = tools.get_score_level('13', grade, sex, run1000).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'13',constant.run1000,'',run1000,global.unitMap.get('13'),score,level,year,term);
+					score_list.push((item_list));
 
-				item_list = [];
-				try{
-					var tmp = ldty.split("'");
-					ldty = parseInt(tmp[0])*60+parseInt(tmp[1]);
-					if (isNaN(ldty))
+					item_list = [];
+					try{
+						var tmp = ldty.split("'");
+						ldty = parseInt(tmp[0])*60+parseInt(tmp[1]);
+						if (isNaN(ldty))
+							ldty = '';
+					}catch(err){
 						ldty = '';
-				}catch(err){
-					ldty = '';
-				}
-				if (ldty == ''){
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('10', grade, sex, ldty).score;
-					total += tools.get_total_score(10, grade, score);
-					level = tools.get_score_level('10', grade, sex, ldty).level;
-				}
-				item_list.push(student_id,sex,school_id,class_id,'10',constant.ldty,'',ldty,global.unitMap.get('10'),score,level,year,term);
-				score_list.push((item_list));
+					}
+					if (ldty == ''){
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('10', grade, sex, ldty).score;
+						total += tools.get_total_score(10, grade, score);
+						level = tools.get_score_level('10', grade, sex, ldty).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'10',constant.ldty,'',ldty,global.unitMap.get('10'),score,level,year,term);
+					score_list.push((item_list));
 
-				item_list = [];
-				try{
-					var tmp = ytxs.split("'");
-					ytxs = parseInt(tmp[0])*60+parseInt(tmp[1]);
-					if (isNaN(ytxs))
+					item_list = [];
+					try{
+						var tmp = ytxs.split("'");
+						ytxs = parseInt(tmp[0])*60+parseInt(tmp[1]);
+						if (isNaN(ytxs))
+							ytxs = '';
+					}catch(err){
 						ytxs = '';
-				}catch(err){
-					ytxs = '';
+					}
+					if (ytxs == ''){
+						score = '';
+						level = '';
+					} else {
+						score = tools.get_score_level('11', grade, sex, ytxs).score;
+						total += tools.get_total_score(11, grade, score);
+						level = tools.get_score_level('11', grade, sex, ytxs).level;
+					}
+					item_list.push(student_id,sex,school_id,class_id,'11',constant.ytxs,'',ytxs,global.unitMap.get('11'),score,level,year,term);
+					score_list.push((item_list));
 				}
-				if (ytxs == ''){
-					score = '';
-					level = '';
-				} else {
-					score = tools.get_score_level('11', grade, sex, ytxs).score;
-					total += tools.get_total_score(11, grade, score);
-					level = tools.get_score_level('11', grade, sex, ytxs).level;
-				}
-				item_list.push(student_id,sex,school_id,class_id,'11',constant.ytxs,'',ytxs,global.unitMap.get('11'),score,level,year,term);
-				score_list.push((item_list));
-
-
 
 				item_list = [];
 				height = parseFloat(height) / 100;
