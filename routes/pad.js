@@ -102,15 +102,15 @@ exports.pad_init = function(req, res, next){
 						break;
 					case '7' :
 						class_list.push({class_id : class_id_list[i], name : '七年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]});
+										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]});
 						break;
 					case '8' :
 						class_list.push({class_id : class_id_list[i], name : '八年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]}); 
+										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]}); 
 						break;
 					case '9' :
 						class_list.push({class_id : class_id_list[i], name : '九年级' + cls + '班',
-										 sport_item : [0, 4, 5, 10, 11, 12, 13, 14]}); 
+										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]}); 
 						break;
 				}
 			} else {
@@ -283,11 +283,87 @@ exports.submit_report_forms = function(req, res, next){
 				item_values.push('-2');
 				add_current.push(item_values);
 			}
+			if (item_id == '5'){
+				item_values = [];
+				item_values.push(student_id);
+				item_values.push(student_number);
+				item_values.push(student_name);
+				item_values.push(sex);
+				item_values.push(school_id);
+				item_values.push(class_id);
+				item_values.push('20');
+				item_values.push(tools.get_addition(item_id, record, grade, sex).record);
+				item_values.push(tools.get_addition(item_id, record, grade, sex).score);
+				item_values.push('-2');
+				add_current.push(item_values);
+			}
+			if (item_id == '11'){
+				item_values = [];
+				item_values.push(student_id);
+				item_values.push(student_number);
+				item_values.push(student_name);
+				item_values.push(sex);
+				item_values.push(school_id);
+				item_values.push(class_id);
+				item_values.push('19');
+				item_values.push(tools.get_addition(item_id, record, grade, sex).record);
+				item_values.push(tools.get_addition(item_id, record, grade, sex).score);
+				item_values.push('-2');
+				add_current.push(item_values);
+			}
+			if (item_id == '12'){
+				item_values = [];
+				item_values.push(student_id);
+				item_values.push(student_number);
+				item_values.push(student_name);
+				item_values.push(sex);
+				item_values.push(school_id);
+				item_values.push(class_id);
+				item_values.push('17');
+				item_values.push(tools.get_addition(item_id, record, grade, sex).record);
+				item_values.push(tools.get_addition(item_id, record, grade, sex).score);
+				item_values.push('-2');
+				add_current.push(item_values);
+			}
+			if (item_id == '13'){
+				item_values = [];
+				item_values.push(student_id);
+				item_values.push(student_number);
+				item_values.push(student_name);
+				item_values.push(sex);
+				item_values.push(school_id);
+				item_values.push(class_id);
+				item_values.push('18');
+				item_values.push(tools.get_addition(item_id, record, grade, sex).record);
+				item_values.push(tools.get_addition(item_id, record, grade, sex).score);
+				item_values.push('-2');
+				add_current.push(item_values);
+			}
 		}
 		var year = lunar_day.get_term().year;
 		var term = lunar_day.get_term().term;
 		if (item_id == '8'){
 			var item_list = [item_id, '15']; 
+		} else {
+			var item_list = [item_id]; 
+		}
+		if (item_id == '12'){
+			var item_list = [item_id, '17']; 
+		} else {
+			var item_list = [item_id]; 
+		}
+		if (item_id == '13'){
+			var item_list = [item_id, '18']; 
+		} else {
+			var item_list = [item_id]; 
+		}
+		if (item_id == '11'){
+			var item_list = [item_id, '19']; 
+		} else {
+			var item_list = [item_id]; 
+		}
+		if (item_id == '5'){
+			var item_list = [item_id, '20']; 
 		} else {
 			var item_list = [item_id]; 
 		}
@@ -771,6 +847,14 @@ exports.submit_to_school = function(req, res, next){
 					tmp = ret[i].item_id;
 					if (ret[i].item_id == '8')
 						sport_list.push('15');
+					if (ret[i].item_id == '12')
+						sport_list.push('17');
+					if (ret[i].item_id == '13')
+						sport_list.push('18');
+					if (ret[i].item_id == '11')
+						sport_list.push('19');
+					if (ret[i].item_id == '5')
+						sport_list.push('20');
 					sport_list.push(ret[i].item_id);
 				}
 				var one_record = [];
@@ -851,6 +935,23 @@ exports.submit_to_school = function(req, res, next){
 					case 15 : 
 						item_list.push(id,sex,school_id,class_id,'15', constant.jump_add,'',record,global.unitMap.get('15'),score,'',year,term);
 						score_list.push((item_list));
+						break;
+					case 17 : 
+						item_list.push(id,sex,school_id,class_id,'17', constant.r800_add,'',record,global.unitMap.get('17'),score,'',year,term);
+						score_list.push((item_list));
+						break;
+					case 18 : 
+						item_list.push(id,sex,school_id,class_id,'18', constant.r1000_add,'',record,global.unitMap.get('18'),score,'',year,term);
+						score_list.push((item_list));
+						break;
+					case 19 : 
+						item_list.push(id,sex,school_id,class_id,'19', constant.ytxs_add,'',record,global.unitMap.get('19'),score,'',year,term);
+						score_list.push((item_list));
+						break;
+					case 20 : 
+						item_list.push(id,sex,school_id,class_id,'20', constant.ywqz_add,'',record,global.unitMap.get('20'),score,'',year,term);
+						score_list.push((item_list));
+						break;
 				}
 			}
 			values = [student_list];
@@ -987,6 +1088,6 @@ exports.get_grade_sport_item = function(req, res, next){
 exports.get_static_level = function(req, res, next){
 	result.header.code = '200';
 	result.header.msg  = '成功';
-	result.data = { items:[ { "id":6, "type":2, "girl":[ [1200,1000,600], [1400,1200,700], [1600,1400,800], [1800,1600,900], [2050,1850,1050], [2300,2100,1200] ], "boy":[ [1500,1300,700], [1800,1500,800], [2100,1700,900], [2400,1900,1100], [2700,2200,1300], [3000,2500,1500] ] }, { "id":0, "type":1, "boy":[ [10.4,10.6,12.6], [9.8,10.0,12.0], [9.3,9.5,11.5], [8.9,9.1,11.1], [8.6,8.8,10.8], [8.4,8.6,10.6] ], "girl":[ [11.2,11.8,13.8], [10.2,10.8,12.8], [9.4,10.0,12.0], [8.9,9.5,11.5], [8.5,9.1,11.1], [8.4,9.0,11.0] ] }, { "id":4, "type":2, "boy":[ [13.0,11.0,0.0], [13.2,10.6,-0.4], [13.4,10.2,-0.8], [13.6,9.8,-2.2], [13.8,9.4,-2.6], [14.0,9.0,-4.0] ], "girl":[ [16.0,13.4,2.4], [16.3,13.3,2.3], [16.6,13.2,2.2], [16.9,13.1,2.1], [17.2,13.0,2.0], [17.5,12.9,1.9] ] }, { "id":8, "type":2, "boy":[ [99,87,17], [107,95,25], [116,104,34], [127,115,45], [138,126,56], [147,135,65] ], "girl":[ [103,87,17], [113,97,27], [125,109,39], [135,119,49], [144,128,58], [152,136,66] ] }, { "id":5, "type":2, "boy":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19] ], "girl":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19] ] }, { "id":9, "type":1, "boy":[ [ ], [ ], [ ], [ ], [102,108,138], [96,102,132] ], "girl":[ [ ], [ ], [ ], [ ], [107,113,143], [103,109,139] ] } ] }; 
+	result.data = { "items":[ { "id":6, "type":2, "girl":[ [1200,1000,600], [1400,1200,700], [1600,1400,800], [1800,1600,900], [2050,1850,1050], [2300,2100,1200], [2550,2350,1350], [2800,2500,1500], [2950,2650,1650] ], "boy":[ [1500,1300,700], [1800,1500,800], [2100,1700,900], [2400,1900,1100], [2700,2200,1300], [3000,2500,1500], [3400,2900,1700], [3700,3200,2000], [4000,3500,2300] ] }, { "id":0, "type":1, "boy":[ [10.4,10.6,12.6], [9.8,10.0,12.0], [9.3,9.5,11.5], [8.9,9.1,11.1], [8.6,8.8,10.8], [8.4,8.6,10.6], [8.0,8.2,10.2], [7.7,7.9,9.9], [7.5,7.7,9.7] ], "girl":[ [11.2,11.8,13.8], [10.2,10.8,12.8], [9.4,10.0,12.0], [8.9,9.5,11.5], [8.5,9.1,11.1], [8.4,9.0,11.0], [8.3,8.9,10.9], [8.2,8.8,10.8], [8.1,8.7,10.7] ] }, { "id":4, "type":2, "boy":[ [13.0,11.0,0.0], [13.2,10.6,-0.4], [13.4,10.2,-0.8], [13.6,9.8,-2.2], [13.8,9.4,-2.6], [14.0,9.0,-4.0], [14.2,10.4,-2.6], [15.8,11.6,-1.4], [17.8,13.8,-0.2] ], "girl":[ [16.0,13.4,2.4], [16.3,13.3,2.3], [16.6,13.2,2.2], [16.9,13.1,2.1], [17.2,13.0,2.0], [17.5,12.9,1.9], [18.4,15.0,2.0], [19.3,15.9,2.9], [20.1,16.7,3.7] ] }, { "id":8, "type":2, "boy":[ [99,87,17], [107,95,25], [116,104,34], [127,115,45], [138,126,56], [147,135,65], [ ], [ ], [ ] ], "girl":[ [103,87,17], [113,97,27], [125,109,39], [135,119,49], [144,128,58], [152,136,66], [ ], [ ], [ ] ] }, { "id":10, "type":2, "boy":[ [ ], [ ], [ ], [ ], [ ], [ ], [211,195,155], [226,210,170], [240,225,185] ], "girl":[ [ ], [ ], [ ], [ ], [ ], [ ], [184,170,140], [188,174,144], [190,176,146] ] }, { "id":5, "type":2, "boy":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19], [ ], [ ], [ ] ], "girl":[ [ ], [ ], [42,36,16], [43,37,17], [44,38,18], [45,39,19], [46,40,20], [47,41,21], [48,42,22] ] }, { "id":11, "type":2, "boy":[ [ ], [ ], [ ], [ ], [ ], [ ], [11,9,4], [12,10,5], [13,11,6] ], "girl":[ [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ] ] }, { "id":9, "type":1, "boy":[ [ ], [ ], [ ], [ ], [102,108,138], [96,102,132], [ ], [ ], [ ] ], "girl":[ [ ], [ ], [ ], [ ], [107,113,143], [103,109,139], [ ], [ ], [ ] ] }, { "id":12, "type":1, "boy":[ [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ] ], "girl":[ [ ], [ ], [ ], [ ], [ ], [ ], [229,245,295], [224,240,290], [219,235,285] ] }, { "id":13, "type":1, "boy":[ [ ], [ ], [ ], [ ], [ ], [ ], [255,270,320], [240,255,305], [230,245,295] ], "girl":[ [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ], [ ] ] } ] };
 	res.json(result);
 }

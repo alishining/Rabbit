@@ -18,7 +18,11 @@ var constant = {
 	'ldty' : '立定跳远',
 	'run800'  : '800米跑',
 	'run1000' : '1000米跑',
-	'ytxs' : '引体向上'
+	'ytxs' : '引体向上',
+	'r800_add' : '800米加分项',
+	'r1000_add' : '1000米加分项',
+	'ytxs_add' : '引体向上加分项',
+	'ywqz_add' : '仰卧起坐加分项'
 };
 
 module.exports = constant;
