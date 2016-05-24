@@ -342,30 +342,20 @@ exports.submit_report_forms = function(req, res, next){
 		}
 		var year = lunar_day.get_term().year;
 		var term = lunar_day.get_term().term;
-		if (item_id == '8'){
-			var item_list = [item_id, '15']; 
-		} else {
-			var item_list = [item_id]; 
-		}
-		if (item_id == '12'){
-			var item_list = [item_id, '17']; 
-		} else {
-			var item_list = [item_id]; 
-		}
-		if (item_id == '13'){
-			var item_list = [item_id, '18']; 
-		} else {
-			var item_list = [item_id]; 
-		}
-		if (item_id == '11'){
-			var item_list = [item_id, '19']; 
-		} else {
-			var item_list = [item_id]; 
-		}
-		if (item_id == '5'){
-			var item_list = [item_id, '20']; 
-		} else {
-			var item_list = [item_id]; 
+		var item_list = [];
+		switch(item_id){
+			case '8'	:	item_list = [item_id, '15'];
+					break;
+			case '12':	item_list = [item_id, '17'];
+					break;
+			case '13':	item_list = [item_id, '18'];
+					break;
+			case '11':	item_list = [item_id, '19'];
+					break;
+			case '5' :	item_list = [item_id, '20'];
+					break;
+			default :	item_list = [item_id];
+						break;
 		}
 		values = [class_id, school_id, item_list];
 		sql.query(req, res, sql_mapping.del_current_form, values, next, function(err, ret){
