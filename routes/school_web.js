@@ -584,7 +584,11 @@ exports.health_record = function(req, res, next){
 									  total_area   : 0});
 				}
 				total_score += tools.get_total_score(item_id, grade, ret[i].score);
-				var content = global.suggestionMap.get(item_id + ret[i].level + tools.get_area_level(ret[i].score));
+				if (ret[i].level[0] == '-')
+					tmp_level = '0';
+				else
+					tmp_level = ret[i].level;
+				var content = global.suggestionMap.get(item_id + tmp_level + tools.get_area_level(ret[i].score));
 				if (item_id == '2' || item_id == '7' || item_id == '-1'){
 					one_student[0].form.push({item : ret[i].item, record : ret[i].record, score : ret[i].score, level : ret[i].level, unit : ret[i].unit, area : tools.get_area_level(ret[i].score)});
 					if (content != undefined)
@@ -1678,6 +1682,9 @@ exports.get_download_detail = function(req, res, next){
 			download_detail.push({empty_list : [], rate : '', class_name : '四年级'});
 			download_detail.push({empty_list : [], rate : '', class_name : '五年级'});
 			download_detail.push({empty_list : [], rate : '', class_name : '六年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '七年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '八年级'});
+			download_detail.push({empty_list : [], rate : '', class_name : '九年级'});
 			var total = 0;
 			var tmp = '';
 			for(var i=0;i<ret.length;i++){

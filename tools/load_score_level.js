@@ -373,83 +373,132 @@ exports.get_jump_addition = function(score, grade, sex){
 exports.get_addition = function(item_id, score, grade, sex){
 	var score = parseInt(score);
 	var grade = parseInt(grade);
+	var item_id = parseInt(item_id);
 	var sex = parseInt(sex);
-	if (isNaN(score) || isNaN(grade) || isNaN(sex))
+	if (isNaN(score) || isNaN(grade) || isNaN(sex) || isNaN(item_id))
 		return {score : '', record : ''};
-	if (grade > 6)
-		return {score : 0, record : 0}
-	switch(grade){
-		case 1: if (sex == 1)
-					record = 109;
-				else
-					record = 117;	
-				break;
-		case 2: if (sex == 1)
-					record = 117;
-				else
-					record = 127;
-				break;
-		case 3: if (sex == 1)
-					record = 126;
-				else
-					record = 139;
-				break;
-		case 4: if (sex == 1)
-					record = 137; 
-				else
-					record = 149;
-				break;
-		case 5: if (sex == 1)
-					record = 148;
-				else
-					record = 158;
-				break;
-		case 6: if (sex == 1)
-					record = 157;
-				else
-					record = 166;
-				break;
-	}	
-	if (score - record >= 40)
-		return {score : 20, record : score - record};
-	if (score - record >= 38)
-		return {score : 19, record : score - record}
-	if (score - record >= 36)
-		return {score : 18, record : score - record}	
-	if (score - record >= 34)
-		return {score : 17, record : score - record}
-	if (score - record >= 32)
-		return {score : 16, record : score - record}
-	if (score - record >= 30)
-		return {score : 15, record : score - record}
-	if (score - record >= 28)
-		return {score : 14, record : score - record}
-	if (score - record >= 26)
-		return {score : 13, record : score - record}
-	if (score - record >= 24)
-		return {score : 12, record : score - record}
-	if (score - record >= 22)
-		return {score : 11, record : score - record}
-	if (score - record >= 20)
-		return {score : 10, record : score - record}
-	if (score - record >= 18)
-		return {score : 9, record : score - record}
-	if (score - record >= 16)
-		return {score : 8, record : score - record}
-	if (score - record >= 14)
-		return {score : 7, record : score - record}
-	if (score - record >= 12)
-		return {score : 6, record : score - record}
-	if (score - record >= 10)
-		return {score : 5, record : score - record}
-	if (score - record >= 8)
-		return {score : 4, record : score - record}
-	if (score - record >= 6)
-		return {score : 3, record : score - record}
-	if (score - record >= 4)
-		return {score : 2, record : score - record}
-	if (score - record >= 2)
-		return {score : 1, record : score - record}
+	switch(item_id){
+		case 12 : 
+			switch(grade){
+				case 7: record = 215;
+						break;
+				case 8: record = 210;
+						break;
+				case 9: record = 205;
+						break;
+			}	
+			if (record - score >= 50)
+				return {score : 10, record : score - record}
+			if (record - score >= 45)
+				return {score : 9, record : score - record}
+			if (record - score >= 40)
+				return {score : 8, record : score - record}	
+			if (record - score >= 35)
+				return {score : 7, record : score - record}
+			if (record - score >= 30)
+				return {score : 6, record : score - record}
+			if (record - score >= 25)
+				return {score : 5, record : score - record}
+			if (record - score >= 20)
+				return {score : 4, record : score - record}
+			if (record - score >= 15)
+				return {score : 3, record : score - record}
+			if (record - score >= 10)
+				return {score : 2, record : score - record}
+			if (record - score >= 5)
+				return {score : 1, record : score - record}
+			return {score : 0, record : 0}
+		case 13 : 
+			switch(grade){
+				case 7: record = 235;
+						break;
+				case 8: record = 230;
+						break;
+				case 9: record = 220;
+						break;
+			}	
+			if (record - score >= 35)
+				return {score : 10, record : score - record}
+			if (record - score >= 32)
+				return {score : 9, record : score - record}
+			if (record - score >= 29)
+				return {score : 8, record : score - record}	
+			if (record - score >= 26)
+				return {score : 7, record : score - record}
+			if (record - score >= 23)
+				return {score : 6, record : score - record}
+			if (record - score >= 20)
+				return {score : 5, record : score - record}
+			if (record - score >= 16)
+				return {score : 4, record : score - record}
+			if (record - score >= 12)
+				return {score : 3, record : score - record}
+			if (record - score >= 8)
+				return {score : 2, record : score - record}
+			if (record - score >= 4)
+				return {score : 1, record : score - record}
+			return {score : 0, record : 0}
+		case 11 : 
+			switch(grade){
+				case 7: record = 13;
+						break;
+				case 8: record = 14;
+						break;
+				case 9: record = 15;
+						break;
+			}	
+			if (score - record >= 10)
+				return {score : 10, record : score - record};
+			if (score - record >= 9)
+				return {score : 9, record : score - record}
+			if (score - record >= 8)
+				return {score : 8, record : score - record}	
+			if (score - record >= 7)
+				return {score : 7, record : score - record}
+			if (score - record >= 6)
+				return {score : 6, record : score - record}
+			if (score - record >= 5)
+				return {score : 5, record : score - record}
+			if (score - record >= 4)
+				return {score : 4, record : score - record}
+			if (score - record >= 3)
+				return {score : 3, record : score - record}
+			if (score - record >= 2)
+				return {score : 2, record : score - record}
+			if (score - record >= 1)
+				return {score : 1, record : score - record}
+			return {score : 0, record : 0}
+		case 5 : 
+			switch(grade){
+				case 7: record = 50;
+						break;
+				case 8: record = 51;
+						break;
+				case 9: record = 52;
+						break;
+			}	
+			if (score - record >= 13)
+				return {score : 10, record : score - record};
+			if (score - record >= 12)
+				return {score : 9, record : score - record}
+			if (score - record >= 11)
+				return {score : 8, record : score - record}	
+			if (score - record >= 10)
+				return {score : 7, record : score - record}
+			if (score - record >= 9)
+				return {score : 6, record : score - record}
+			if (score - record >= 8)
+				return {score : 5, record : score - record}
+			if (score - record >= 7)
+				return {score : 4, record : score - record}
+			if (score - record >= 6)
+				return {score : 3, record : score - record}
+			if (score - record >= 4)
+				return {score : 2, record : score - record}
+			if (score - record >= 2)
+				return {score : 1, record : score - record}
+			return {score : 0, record : 0}
+	}
 	return {score : 0, record : 0}
 };
 
