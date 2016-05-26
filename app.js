@@ -124,6 +124,7 @@ app.post('/add_score_level', web_route.add_score_level);
 app.post('/del_score_level', web_route.del_score_level);
 app.post('/mod_score_level', web_route.mod_score_level);
 app.post('/get_score_level', web_route.get_score_level);
+
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);
@@ -153,6 +154,10 @@ app.post('/get_default_class', school_web_route.get_default_class);
 app.post('/get_download_list', school_web_route.get_download_list);
 app.post('/get_upload_list', school_web_route.get_upload_list);
 app.post('/get_download_detail', school_web_route.get_download_detail);
+
+app.post('/add_free_test', school_web_route.add_free_test);
+app.post('/del_free_test', school_web_route.del_free_test);
+app.post('/get_free_test', school_web_route.get_free_test);
 //------------------------------------------------------------------
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);

@@ -893,15 +893,16 @@ exports.get_student = function(req, res, next){
 exports.get_all_student = function(req, res, next){
 	var school_id = req.body.school_id;
 	var page = req.body.page;
-	if (school_id == undefined || page == undefined){
+	var num = req.body.num;
+	if (school_id == undefined || page == undefined || num == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
 		res.json(result);
 		return;
 	}
-	var start = page * 20 - 20;
-	var end = start + 20;
+	var start = page * num - num;
+	var end = start + num;
 	var values = [school_id];
 	var student_list = [];
 	sql.query(req, res, sql_mapping.get_all_student, values, next, function(err, ret){
@@ -1740,4 +1741,100 @@ exports.get_download_detail = function(req, res, next){
 			return;
 		}
 	});
-}
+};
+
+exports.add_free_test = function(req, res, next){
+	var student_id = req.body.student_id;
+	var reason = req.body.reason;
+	if (student_id == undefined || reason == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id];
+	sql.query(req, res, sql_mapping.add_free_test, values, next, function(err, ret){
+		values = [student_id, reason];
+		sql.query(req, res, sql_mapping.add_free_test_reason, values, next, function(err, ret){
+			try{
+				result.header.code = "200";
+				result.header.msg  = "成功";
+				result.data        = {result : 0, msg : "添加成功"};
+				res.json(result);
+			} catch(err){
+				result.header.code = "500";
+				result.header.msg  = "添加失败";
+				result.data        = {};
+				res.json(result);
+				return;
+			}
+		});
+	});
+};
+
+exports.del_free_test = function(req, res, next){
+	var student_id = req.body.student_id;
+	if (student_id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [student_id];
+	sql.query(req, res, sql_mapping.del_free_test, values, next, function(err, ret){
+		try{
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {result : 0, msg : "删除成功"};
+			res.json(result);
+		} catch(err){
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+	});
+};
+
+exports.get_free_test = function(req, res, next){
+	var school_id = req.body.school_id;
+	var grade = req.body.grade;
+	var cls = req.body.cls;
+	var page = req.body.page;
+	var num = req.body.num;
+	if (school_id == undefined || grade == undefined || cls == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var start = page * num - num;
+	var end = start + num;
+	var student_list = [];
+	var values = [school_id, '%'+ grade +'%', '%'+ cls +'%'];
+	sql.query(req, res, sql_mapping.get_free_test, values, next, function(err, ret){
+		try{
+			for (var i=start;i<end;i++){
+				if (ret[i] != undefined){
+					student_list.push(ret[i]);
+				}	
+			}
+			result.header.code = "200";
+			result.header.msg  = "成功";
+			result.data        = {free_test_list : student_list};
+			res.json(result);
+		} catch(err){
+			result.header.code = "500";
+			result.header.msg  = "获取失败";
+			result.data        = {};
+			res.json(result);
+			return;
+		}
+	});
+};
+
+

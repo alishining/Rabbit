@@ -108,6 +108,10 @@ var sql = {
 	add_upload_log : 'insert into upload_list(year, upload_time, account, file_name, file_path) values (?,?,?,?,?)',
 	get_download_list : 'select * from download_list where account=? order by opt_time desc limit 10',
 	get_upload_list : 'select * from upload_list where account=? order by upload_time desc limit 10',
+	add_free_test : 'update student_info set del=2 where student_id=?',
+	del_free_test : 'update student_info set del=0 where student_id=?',
+	get_free_test : 'select * from student_info a left outer join free_test b on a.student_id = b.student_id where del=2 and a.school_id=? and grade like ? and class like ?',
+	add_free_test_reason : 'insert into free_test(student_id, free_reason) values (?,?)',
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
