@@ -115,7 +115,7 @@ var sql = {
 	//-------------------------------------------------------------------
 	pad_login : 'select * from school_user where account=? and is_delete=\'0\'',
 	get_account_class_list : 'select class_list from school_user where account=?',
-	get_class_student : 'select a.class_id as class_id, a.student_id as id, a.student_number as num, a.student_name as name, a.sex as sex, case when b.avg IS NULL then \'\' else b.avg  end as avg, a.del from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', sum(cast(score as DECIMAL(9,2)))/count(*)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where a.class_id in (?) and school_id=? and a.del=\'0\' order by num',
+	get_class_student : 'select a.class_id as class_id, a.student_id as id, a.student_number as num, a.student_name as name, a.sex as sex, case when b.avg IS NULL then \'\' else b.avg  end as avg, a.del from student_info a left outer join (select student_id, GROUP_CONCAT(avg) as avg from (select student_id, CONCAT(item, \':\', sum(cast(score as DECIMAL(9,2)))/count(*)) as avg from training_record where ds like ? group by student_id, item) a group by student_id) b on a.student_id = b.student_id where a.class_id in (?) and school_id=? order by num',
 	pad_teacher_info : 'select teacher_name, img from school_user where account=? and is_delete=\'0\'',
 	add_test_report : 'insert into test_list(account, title, school_id, item_id, class_id, rate, create_time, update_time, is_submit,year,term) values (?,?,?,?,?,?,?,?,?,?,?)',
 	add_student_test : 'insert into student_test(tid, student_id, student_number, student_name, sex, record, score, level) values ?',
