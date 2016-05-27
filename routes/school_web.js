@@ -1809,7 +1809,7 @@ exports.get_free_test = function(req, res, next){
 	var page = req.body.page;
 	var num = req.body.num;
 	num = parseInt(num);
-	if (school_id == undefined || grade == undefined || cls == undefined){
+	if (school_id == undefined || grade == undefined || cls == undefined || page == undefined || num == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
