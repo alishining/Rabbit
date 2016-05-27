@@ -1829,7 +1829,7 @@ exports.get_free_test = function(req, res, next){
 			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data        = {free_test_list : student_list};
+			result.data        = {free_test_list : student_list, total : student_list.length};
 			res.json(result);
 		} catch(err){
 			result.header.code = "500";
