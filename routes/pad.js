@@ -636,11 +636,11 @@ exports.get_homework = function(req, res, next){
 	sql.query(req, res, sql_mapping.get_homework, values, next, function(err, ret){
 		var date  = new Date();
 		var month = date.getMonth()+1;
-		var day = date.getDate();
+		var day = date.getDate() - 1;
 		if (date.getMonth()+1 < 10)
 		month = '0'+ (date.getMonth()+1);
 		if (date.getDate() < 10)
-			day = '0' + date.getDate();
+			day = '0' + (date.getDate()-1);
 		var ds = date.getFullYear() + '-' + month  + '-' + day;
 		values = [class_id, school_id, ds];
 		sql.query(req, res, sql_mapping.get_homework_rate, values, next, function(err, _ret){
