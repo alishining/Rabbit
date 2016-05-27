@@ -894,6 +894,7 @@ exports.get_all_student = function(req, res, next){
 	var school_id = req.body.school_id;
 	var page = req.body.page;
 	var num = req.body.num;
+	num = parseInt(num);
 	if (school_id == undefined || page == undefined || num == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -933,6 +934,7 @@ exports.search_student = function(req, res, next){
 	var grade = '%' + req.body.grade + '%';
 	var page = req.body.page;
 	var num = req.body.num;
+	num = parseInt(num);
 	if (input == undefined || school_id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -1806,6 +1808,7 @@ exports.get_free_test = function(req, res, next){
 	var cls = req.body.cls;
 	var page = req.body.page;
 	var num = req.body.num;
+	num = parseInt(num);
 	if (school_id == undefined || grade == undefined || cls == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
