@@ -169,6 +169,7 @@ exports.submit_report_forms = function(req, res, next){
 	var time = req.body.time;
 	var student_score = req.body.student_score;
 	var teacher = req.body.teacher;
+	console.log(req.body);
 	if (uid == undefined || sign == undefined || check_better == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -193,6 +194,7 @@ exports.submit_report_forms = function(req, res, next){
 		var has_rate = 0;
 		for(var i=0;i<rate;i++){
 			var student_id = student_score_list[i].student_id;
+			var del = student_score_list[i].del;
 			var student_number = student_score_list[i].student_number;
 			var student_name = student_score_list[i].student_name;
 			var sex = student_score_list[i].sex;
@@ -204,6 +206,7 @@ exports.submit_report_forms = function(req, res, next){
 			item_values = [];
 			item_values.push(tid);
 			item_values.push(student_id);
+			item_values.push(del);
 			item_values.push(student_number);
 			item_values.push(student_name);
 			item_values.push(sex);
@@ -220,6 +223,7 @@ exports.submit_report_forms = function(req, res, next){
 			add_values.push(item_values);
 			item_values = [];
 			item_values.push(student_id);
+			item_values.push(del);
 			item_values.push(student_number);
 			item_values.push(student_name);
 			item_values.push(sex);
@@ -272,6 +276,7 @@ exports.submit_report_forms = function(req, res, next){
 			if (item_id == '8'){
 				item_values = [];
 				item_values.push(student_id);
+				item_values.push(del);
 				item_values.push(student_number);
 				item_values.push(student_name);
 				item_values.push(sex);
@@ -286,6 +291,7 @@ exports.submit_report_forms = function(req, res, next){
 			if (item_id == '5'){
 				item_values = [];
 				item_values.push(student_id);
+				item_values.push(del);
 				item_values.push(student_number);
 				item_values.push(student_name);
 				item_values.push(sex);
@@ -300,6 +306,7 @@ exports.submit_report_forms = function(req, res, next){
 			if (item_id == '11'){
 				item_values = [];
 				item_values.push(student_id);
+				item_values.push(del);
 				item_values.push(student_number);
 				item_values.push(student_name);
 				item_values.push(sex);
@@ -314,6 +321,7 @@ exports.submit_report_forms = function(req, res, next){
 			if (item_id == '12'){
 				item_values = [];
 				item_values.push(student_id);
+				item_values.push(del);
 				item_values.push(student_number);
 				item_values.push(student_name);
 				item_values.push(sex);
@@ -328,6 +336,7 @@ exports.submit_report_forms = function(req, res, next){
 			if (item_id == '13'){
 				item_values = [];
 				item_values.push(student_id);
+				item_values.push(del);
 				item_values.push(student_number);
 				item_values.push(student_name);
 				item_values.push(sex);
@@ -494,6 +503,7 @@ exports.save_test_report = function(req, res, next){
 		item_values = [];
 		item_values.push(tid);
 		item_values.push(student_score_list[i].student_id);
+		item_values.push(student_score_list[i].del);
 		item_values.push(student_score_list[i].student_number);
 		item_values.push(student_score_list[i].student_name);
 		var sex = student_score_list[i].sex;
@@ -850,6 +860,7 @@ exports.submit_to_school = function(req, res, next){
 				var one_record = [];
 				one_record.push(tid);
 				one_record.push(ret[i].student_id);
+				one_record.push(ret[i].del);
 				one_record.push(ret[i].num);
 				one_record.push(ret[i].name);
 				one_record.push(ret[i].sex);

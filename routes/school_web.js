@@ -894,6 +894,7 @@ exports.get_all_student = function(req, res, next){
 	var school_id = req.body.school_id;
 	var page = req.body.page;
 	var num = req.body.num;
+	var type = '%' + req.body.type + '%';
 	num = parseInt(num);
 	if (school_id == undefined || page == undefined || num == undefined){
 		result.header.code = "400";
@@ -904,7 +905,7 @@ exports.get_all_student = function(req, res, next){
 	}
 	var start = page * num - num;
 	var end = start + num;
-	var values = [school_id];
+	var values = [school_id, type];
 	var student_list = [];
 	sql.query(req, res, sql_mapping.get_all_student, values, next, function(err, ret){
 		if (err){
@@ -1058,20 +1059,22 @@ exports.score_input = function(req, res, next){
 					if (dd < 10) dd = '0'+dd;
 					var birth = yy+'-'+mm+'-'+dd;
 				}
-				var address = record_list[8];
-				var height = record_list[9];
-				var weight = record_list[10];
-				var lung = record_list[11];
-				var run50 = record_list[12];
-				var sit_reach = record_list[13];
-				var	jump = record_list[14];
-				var situp = record_list[15];
-				var run8_50 = record_list[16];
+				var id_card = record_list[8];
+				var student_from = record_list[9];
+				var address = record_list[10];
+				var height = record_list[11];
+				var weight = record_list[12];
+				var lung = record_list[13];
+				var run50 = record_list[14];
+				var sit_reach = record_list[15];
+				var	jump = record_list[16];
+				var situp = record_list[17];
+				var run8_50 = record_list[18];
 				try{
-					var run800 = record_list[17];
-					var run1000	= record_list[18];
-					var ytxs = record_list[19];
-					var ldty = record_list[20];
+					var run800 = record_list[19];
+					var run1000	= record_list[20];
+					var ytxs = record_list[21];
+					var ldty = record_list[22];
 				} catch(err) {
 					var run800 = '';
 					var run1000 = '';
@@ -1829,7 +1832,7 @@ exports.get_free_test = function(req, res, next){
 			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data        = {free_test_list : student_list, total : student_list.length};
+			result.data        = {free_test_list : student_list, total : ret.length};
 			res.json(result);
 		} catch(err){
 			result.header.code = "500";
