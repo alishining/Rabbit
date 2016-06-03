@@ -91,7 +91,7 @@ var sql = {
 	mod_del_flag : 'update student_info set del = \'1\' where school_id = ?',
 	mod_student : 'update student_info set student_id=?, student_name=?, sex=?, nationality=?, birth=?, address=? where student_id=?',
 	get_student : 'select * from student_info where school_id=? and class_id=?',
-	search_student : 'SELECT * FROM student_info where school_id = ? and (student_name like ? or student_id like ?) and grade like ? and class like ? and del = \'0\'',
+	search_student : 'SELECT * FROM student_info where school_id = ? and (student_name like ? or student_id like ?) and grade like ? and class like ? and del like ?',
 	get_daily_training_rate : 'select ds, count(distinct student_id)/(select count(*) from student_info where class_id like ? and school_id=? and del=\'0\') as rate from training_record WHERE student_id in (select student_id from student_info where class_id like ? and school_id=? and del=\'0\') group by ds order by ds desc limit ?',
 	add_report : 'insert into report(student_id,sex,school_id,class_id,item_id,item,health_item,record,unit,score,level,year,term) values ?',
 	del_report : 'delete from report where year=? and term=? and school_id = ? and class_id like ?',
