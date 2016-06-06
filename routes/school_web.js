@@ -1556,10 +1556,7 @@ exports.score_output = function(req, res, next){
 					}
 					student_id = ret[i].student_id;
 					student_info.push('1'+ret[i].grade);
-					if (ret[i].class_number == '')
-						student_info.push(ret[i].class_id);
-					else
-						student_info.push(ret[i].class_number);
+					student_info.push(ret[i].class_number);
 					student_info.push(ret[i].class);
 					student_info.push(ret[i].student_id);
 					student_info.push(ret[i].nationality);
