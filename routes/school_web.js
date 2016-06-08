@@ -1106,12 +1106,12 @@ exports.score_input = function(req, res, next){
 		var student_info = student_map.get(sid_list[i]);
 		var total = 0;
 		var add_values = [];
-		if (num_map.get(student_info.class_name) == undefined){
-			num_map.set(student_info.class_name,1);
+		if (num_map.get(student_info.class_number) == undefined){
+			num_map.set(student_info.class_number,1);
 		} else {
-			num_map.set(student_info.class_name,num_map.get(student_info.class_name)+1);
+			num_map.set(student_info.class_number,num_map.get(student_info.class_number)+1);
 		}
-		var student_number = num_map.get(student_info.class_name);
+		var student_number = num_map.get(student_info.class_number);
 		var grade = parseInt(student_info.grade)%10;
 		if (isNaN(grade))
 			continue;

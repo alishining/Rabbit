@@ -100,18 +100,6 @@ exports.pad_init = function(req, res, next){
 						class_list.push({class_id : class_id_list[i], name : '六年级' + cls + '班',
 										 sport_item : [0, 2, 4, 5, 6, 7, 8, 9, 14]});
 						break;
-					case '7' :
-						class_list.push({class_id : class_id_list[i], name : '七年级' + cls + '班',
-										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]});
-						break;
-					case '8' :
-						class_list.push({class_id : class_id_list[i], name : '八年级' + cls + '班',
-										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]}); 
-						break;
-					case '9' :
-						class_list.push({class_id : class_id_list[i], name : '九年级' + cls + '班',
-										 sport_item : [0, 2, 6, 7, 4, 5, 10, 11, 12, 13, 14]}); 
-						break;
 				}
 			} else {
 				result.header.code = "200";
