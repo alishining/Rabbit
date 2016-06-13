@@ -1484,10 +1484,14 @@ exports.score_input = function(req, res, next){
 			var file_path = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
 			values = [year+'年第'+term+'学期', opt_time, account, file_name+'('+add_str.length+')', file_path];
 			sql.query(req, res, sql_mapping.add_upload_log, values, next, function(err, ret){
-				result.header.code = '200';
-				result.header.msg  = '成功';
-				result.data        = {result : '0', msg : '上传完毕'};
-				res.json(result);
+				try{
+					result.header.code = '200';
+					result.header.msg  = '成功';
+					result.data        = {result : '0', msg : '上传完毕'};
+					res.json(result);
+				}catch(err){
+					//
+				}
 			});
 		} else {
 			console.log(err);
@@ -1767,9 +1771,6 @@ exports.get_download_detail = function(req, res, next){
 			download_detail.push({empty_list : [], rate : '', class_name : '四年级'});
 			download_detail.push({empty_list : [], rate : '', class_name : '五年级'});
 			download_detail.push({empty_list : [], rate : '', class_name : '六年级'});
-			download_detail.push({empty_list : [], rate : '', class_name : '七年级'});
-			download_detail.push({empty_list : [], rate : '', class_name : '八年级'});
-			download_detail.push({empty_list : [], rate : '', class_name : '九年级'});
 			var total = 0;
 			var tmp = '';
 			for(var i=0;i<ret.length;i++){
