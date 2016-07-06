@@ -326,6 +326,11 @@ exports.student_sport_report = function(req, res, next){
 							bmi = bmi.toFixed(1);
 							var score = tools.get_bmi_level(grade, ret[i].sex, bmi).score;
 							var level = tools.get_bmi_level(grade, ret[i].sex, bmi).level;
+							if (isNaN(bmi)){
+								bmi = '';
+								score = '';
+								level = '';
+							}
 							values = [bmi,score,level,year,term,class_id,school_id,ret[i].student_id];
 							if (bmi != tmp_bmi){
 								sql.query(req, res, sql_mapping.update_bmi, values, next, function(err, ret){

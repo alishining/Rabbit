@@ -272,7 +272,7 @@ exports.load_sport_suggestion = function(){
 exports.get_area_level = function(score){
 	var score = parseInt(score);
 	if (isNaN(score)){
-		return 1;
+		return '';
 	} else {
 		if (score < 60)
 			return 1;
