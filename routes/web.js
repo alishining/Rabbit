@@ -114,7 +114,18 @@ exports.add_school = function(req, res, next){
 	var district = req.body.district;
 	var school   = req.body.school;
 	var is_cooperate = req.body.is_cooperate;
-	if (province == undefined || city == undefined || district == undefined || school == undefined || is_cooperate == undefined){
+	var contract = req.body.contract;
+	var start_time = req.body.start_time;
+	var end_time = req.body.end_time;
+	var fee_status = req.body.fee_status;
+	var proxy = req.body.proxy;
+	var manager = req.body.manager;
+	var ipad = req.body.ipad;
+	var school_addr = req.body.school_addr;
+	var school_contact = req.body.school_contact;
+	var phone = req.body.phone;
+	console.log(req.body);
+	if (province == undefined || city == undefined || district == undefined || school == undefined || is_cooperate == undefined || contract == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data		   = {};
@@ -127,7 +138,7 @@ exports.add_school = function(req, res, next){
 		if (num == 0)
 			num = '';
 		var school_account = school+num;
-		values = [school,'',province,city,district,school_account,'','',0,0,'',is_cooperate,'0'];
+		values = [school,'',province,city,district,school_account,start_time,end_time,0,0,'',is_cooperate,'0', contract, manager, fee_status, '0', proxy, ipad, school_addr, school_contact, phone];
 		try {
 			sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
 				values = [school_account, '123456', '', '', ret.insertId, school, '', '1', '0', ''];
@@ -182,7 +193,14 @@ exports.del_school = function(req, res, next){
 exports.mod_school = function(req, res, next){
 	var id			 = req.body.id;
 	var school		 = req.body.school;
-	var is_cooperate = req.body.is_cooperate;
+	var fee_status   = req.body.fee_status;
+	var contract	 = req.body.contract;
+	var start_time   = req.body.start_time;
+	var end_time	 = req.body.end_time;
+	var ipad = req.body.ipad;
+	var school_addr = req.body.school_addr;
+	var school_contact = req.body.school_contact;
+	var phone = req.body.phone;
 	if (school == undefined || is_cooperate == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -190,7 +208,7 @@ exports.mod_school = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [is_cooperate, school, id];
+	var values = [fee_status, contract, start_time, end_time, ipad, school_addr, school_contact, phone, id];
 	sql.query(req, res, sql_mapping.mod_school, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -736,3 +754,5 @@ exports.get_score_level = function(req, res, next){
 		}
 	});
 };
+
+//--------------------------------------
