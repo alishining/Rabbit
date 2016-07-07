@@ -125,6 +125,14 @@ app.post('/del_score_level', web_route.del_score_level);
 app.post('/mod_score_level', web_route.mod_score_level);
 app.post('/get_score_level', web_route.get_score_level);
 
+app.post('/add_proxy', web_route.add_proxy);
+app.post('/get_proxy_list', web_route.get_proxy_list);
+app.post('/get_proxy', web_route.get_proxy);
+app.post('/add_manager', web_route.add_manager);
+app.post('/get_manager', web_route.get_manager);
+app.post('/mod_manager', web_route.mod_manager);
+app.post('/mod_proxy', web_route.mod_proxy);
+app.post('/trans_work', web_route.trans_work);
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);

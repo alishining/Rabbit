@@ -756,3 +756,218 @@ exports.get_score_level = function(req, res, next){
 };
 
 //--------------------------------------
+
+exports.add_proxy = function(req, res, next){
+	var name = req.body.name;
+	var province = req.body.province;
+	var city = req.body.city;
+	var district = req.body.district;
+	var addr = req.body.addr;
+	var owner = req.body.owner;
+	var phone = req.body.phone;
+	if (name == undefined || addr == undefined || province == undefined || city == undefined || district == undefined || owner == undefined || phone == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = ['', name, province, city, district, addr, owner, phone, 0];
+	sql.query(req, res, sql_mapping.add_proxy, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '添加成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.get_proxy = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+	    result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.get_proxy, values, next, function(err, ret){
+		values = [];
+		sql.query(req, res, sql_mapping.get_school_from_proxy, values, next, function(err, ret1){
+			values = [id];
+			sql.query(req, res, sql_mapping.get_manager, values, next, function(err, ret2){
+				try {
+					result.header.code = "200";
+					result.header.msg  = "成功"; 
+					result.data = {manager : ret2, school : ret1, info : ret};
+					res.json(result);
+				} catch(err) {
+					result.header.code = "500";
+					result.header.msg  = "查询失败";
+					result.data        = {};
+					res.json(result);
+				}
+			})
+		})
+	});
+};
+
+exports.get_proxy_list = function(req, res, next){
+	var province = '%' + req.body.provice + '%';
+	var city = '%' + req.body.city + '%';
+	var district = '%' + req.body.district + '%';
+	var values = [province, city, district];
+	sql.query(req, res, sql_mapping.get_proxy_list, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {proxy_list : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.add_manager = function(req, res, next){
+	var name = req.body.name;
+	var sex = req.body.sex;
+	var proxy = req.body.proxy;
+	var phone = req.body.phone;
+	if (name == undefined || phone == undefined || sex == undefined || proxy == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [name, sex, phone, proxy];
+	sql.query(req, res, sql_mapping.add_manager, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : '0',  msg : '添加成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.get_manager = function(req, res, next){
+	var proxy = req.body.proxy;
+	if (proxy == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [proxy];
+	sql.query(req, res, sql_mapping.get_manager, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {manager : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.mod_manager = function(req, res, next){
+	var name = req.body.name;
+	var phone = req.body.phone;
+	if (name == undefined || phone == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [name, phone];
+	sql.query(req, res, sql_mapping.mod_manager, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0, msg : '编辑成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "编辑失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.mod_proxy = function(req, res, next){
+	var owner = req.body.owner;
+	var phone = req.body.phone;
+	if (owner == undefined || phone == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [owner, phone];
+	sql.query(req, res, sql_mapping.mod_proxy, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0, msg : '编辑成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "编辑失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.trans_work = function(req, res, next){
+	var manager_out = req.body.manager_out;
+	var manager_in = req.body.manager_in;
+	if (manager_out == undefined || manager_in == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [manager_in, manager_out];
+	sql.query(req, res, sql_mapping.trans_work, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0, msg : '交接成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "交接失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+
