@@ -799,7 +799,7 @@ exports.get_proxy = function(req, res, next){
 	}
 	var values = [id];
 	sql.query(req, res, sql_mapping.get_proxy, values, next, function(err, ret){
-		values = [];
+		values = [id];
 		sql.query(req, res, sql_mapping.get_school_from_proxy, values, next, function(err, ret1){
 			values = [id];
 			sql.query(req, res, sql_mapping.get_manager, values, next, function(err, ret2){
@@ -820,7 +820,7 @@ exports.get_proxy = function(req, res, next){
 };
 
 exports.get_proxy_list = function(req, res, next){
-	var province = '%' + req.body.provice + '%';
+	var province = '%' + req.body.province + '%';
 	var city = '%' + req.body.city + '%';
 	var district = '%' + req.body.district + '%';
 	var values = [province, city, district];
@@ -893,6 +893,7 @@ exports.get_manager = function(req, res, next){
 };
 
 exports.mod_manager = function(req, res, next){
+	var id = req.body.id;
 	var name = req.body.name;
 	var phone = req.body.phone;
 	if (name == undefined || phone == undefined){
@@ -902,7 +903,8 @@ exports.mod_manager = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [name, phone];
+	var values = [name, phone, id];
+	console.log(req.body);
 	sql.query(req, res, sql_mapping.mod_manager, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -919,6 +921,7 @@ exports.mod_manager = function(req, res, next){
 };
 
 exports.mod_proxy = function(req, res, next){
+	var id = req.body.id;
 	var owner = req.body.owner;
 	var phone = req.body.phone;
 	if (owner == undefined || phone == undefined){
@@ -928,7 +931,7 @@ exports.mod_proxy = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [owner, phone];
+	var values = [owner, phone, id];
 	sql.query(req, res, sql_mapping.mod_proxy, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -970,4 +973,52 @@ exports.trans_work = function(req, res, next){
 	});
 };
 
+exports.search_school = function(req, res, next){
+	var key = req.body.key;
+	if (key == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = ['%' + key + '%'];
+	sql.query(req, res, sql_mapping.search_school, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {manager : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
 
+exports.search_proxy = function(req, res, next){
+	var key = req.body.key;
+	if (key == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = ['%' + key + '%'];
+	sql.query(req, res, sql_mapping.search_proxy, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {manager : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+}

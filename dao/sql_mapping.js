@@ -74,9 +74,11 @@ var sql = {
 	add_proxy : 'insert into proxy(number, name, province, city, district, addr, owner, phone, contract) values(?,?,?,?,?,?,?,?,?)',
 	get_proxy : 'select * from proxy where id = ?',
 	get_proxy_list : 'select * from proxy where province like ? and city like ? and district like ?',
-	mod_manager : 'update manager set name=? where phone=?',
-	mod_proxy : 'update proxy set owner=? where phone=?',
+	mod_manager : 'update manager set name=?, phone=? where id=?',
+	mod_proxy : 'update proxy set owner=?, phone=? where id=?',
 	trans_work : 'update school set manager = ? where manager = ?',
+	search_school : 'select * from school where school like ?',
+	search_proxy : 'select * from proxy where proxy like ?',
 	//-------------------------------------------------------------------
 	school_login     : 'select teacher_name, school_id, school, password, is_root from school_user where account=?',
 	school_area		 : 'select * from school where id = ?',

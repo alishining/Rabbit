@@ -133,6 +133,8 @@ app.post('/get_manager', web_route.get_manager);
 app.post('/mod_manager', web_route.mod_manager);
 app.post('/mod_proxy', web_route.mod_proxy);
 app.post('/trans_work', web_route.trans_work);
+app.post('/search_school', web_route.search_school);
+app.post('/search_proxy', web_route.search_proxy);
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);
