@@ -131,10 +131,12 @@ app.post('/get_proxy', web_route.get_proxy);
 app.post('/add_manager', web_route.add_manager);
 app.post('/get_manager', web_route.get_manager);
 app.post('/mod_manager', web_route.mod_manager);
+app.post('/del_manager', web_route.del_manager);
 app.post('/mod_proxy', web_route.mod_proxy);
 app.post('/trans_work', web_route.trans_work);
 app.post('/search_school', web_route.search_school);
 app.post('/search_proxy', web_route.search_proxy);
+app.post('/admin_login', web_route.admin_login);
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);
@@ -169,6 +171,7 @@ app.post('/add_free_test', school_web_route.add_free_test);
 app.post('/del_free_test', school_web_route.del_free_test);
 app.post('/get_free_test', school_web_route.get_free_test);
 //------------------------------------------------------------------
+app.post('/get_book_list', pad_route.get_book_list);
 app.post('/pad_login', pad_route.pad_login);
 app.post('/pad_init', pad_route.pad_init);
 app.post('/pad_teacher_info', pad_route.pad_teacher_info);

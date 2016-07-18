@@ -124,7 +124,10 @@ exports.add_school = function(req, res, next){
 	var school_addr = req.body.school_addr;
 	var school_contact = req.body.school_contact;
 	var phone = req.body.phone;
-	console.log(req.body);
+	var contract_status = 1;
+	if (contract == ''){
+		contract_status = 0;
+	}
 	if (province == undefined || city == undefined || district == undefined || school == undefined || is_cooperate == undefined || contract == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -138,7 +141,7 @@ exports.add_school = function(req, res, next){
 		if (num == 0)
 			num = '';
 		var school_account = school+num;
-		values = [school,'',province,city,district,school_account,start_time,end_time,0,0,'',is_cooperate,'0', contract, manager, fee_status, '0', proxy, ipad, school_addr, school_contact, phone];
+		values = [school,'',province,city,district,school_account,start_time,end_time,0,0,'',is_cooperate,'0', contract, manager, fee_status, contract_status, proxy, ipad, school_addr, school_contact, phone];
 		try {
 			sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
 				values = [school_account, '123456', '', '', ret.insertId, school, '', '1', '0', ''];
@@ -201,14 +204,18 @@ exports.mod_school = function(req, res, next){
 	var school_addr = req.body.school_addr;
 	var school_contact = req.body.school_contact;
 	var phone = req.body.phone;
-	if (school == undefined || is_cooperate == undefined){
+	var contract_status = 1;
+	if (contract == ''){
+		contract_status = 0;
+	}
+	if (school == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data		   = {};
 		res.json(result);
 		return;
 	}
-	var values = [fee_status, contract, start_time, end_time, ipad, school_addr, school_contact, phone, id];
+	var values = [fee_status, contract, start_time, end_time, ipad, school_addr, school_contact, phone, contract_status, id];
 	sql.query(req, res, sql_mapping.mod_school, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -229,12 +236,26 @@ exports.get_school = function(req, res, next){
 	var province  =  '%' + req.body.province + '%';
 	var city	  =  '%' + req.body.city + '%';
 	var district  =  '%' + req.body.district + '%';
+	var page	  =  req.body.page;
+	var num		  =  req.body.num;
+	page = parseInt(page);
+	num = parseInt(num);
+	if (isNaN(num))
+		var num = 20;
 	var values = [province, city, district, school];
+	var start = page * num - num;
+	var end	  = start + num;
+	var school_list = [];
 	sql.query(req, res, sql_mapping.get_school, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
 			result.header.msg  = "成功"; 
-			result.data = {school : ret};
+			for (var i=start;i<end;i++){
+				if (ret[i] != undefined){
+					school_list.push(ret[i]);
+				}
+			}
+			result.data = {school : school_list, total : ret.length};
 			res.json(result);
 		} catch(err) {
 			result.header.code = "500";
@@ -806,7 +827,7 @@ exports.get_proxy = function(req, res, next){
 				try {
 					result.header.code = "200";
 					result.header.msg  = "成功"; 
-					result.data = {manager : ret2, school : ret1, info : ret};
+					result.data = {manager : ret2, school : ret1, info : ret, contract_num : ret1.length};
 					res.json(result);
 				} catch(err) {
 					result.header.code = "500";
@@ -823,12 +844,25 @@ exports.get_proxy_list = function(req, res, next){
 	var province = '%' + req.body.province + '%';
 	var city = '%' + req.body.city + '%';
 	var district = '%' + req.body.district + '%';
-	var values = [province, city, district];
+	var key = '%' + req.body.key + '%';
+	var page = req.body.page;
+	var num = req.body.num;
+	page = parseInt(page);
+	num = parseInt(num);
+	if (isNaN(num))
+		num = 20;
+	var start = page * num - num; 
+	var end = start + num;
+	var proxy_list = [];
+	var values = [province, city, district, key];
 	sql.query(req, res, sql_mapping.get_proxy_list, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
 			result.header.msg  = "成功"; 
-			result.data = {proxy_list : ret};
+			for (var i=start; i<end; i++){
+				proxy_list.push(ret[i]);
+			}
+			result.data = {proxy_list : proxy_list, total : ret.length};
 			res.json(result);
 		} catch(err) {
 			result.header.code = "500";
@@ -851,7 +885,7 @@ exports.add_manager = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [name, sex, phone, proxy];
+	var values = [name, sex, phone, proxy, 0];
 	sql.query(req, res, sql_mapping.add_manager, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -904,7 +938,6 @@ exports.mod_manager = function(req, res, next){
 		return;
 	}
 	var values = [name, phone, id];
-	console.log(req.body);
 	sql.query(req, res, sql_mapping.mod_manager, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -920,11 +953,36 @@ exports.mod_manager = function(req, res, next){
 	});
 };
 
+exports.del_manager = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.del_manager, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0, msg : '删除成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
 exports.mod_proxy = function(req, res, next){
 	var id = req.body.id;
 	var owner = req.body.owner;
 	var phone = req.body.phone;
-	if (owner == undefined || phone == undefined){
+	if (owner == undefined || phone == undefined || id == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -1021,4 +1079,20 @@ exports.search_proxy = function(req, res, next){
 			res.json(result);
 		}
 	});
+}
+
+exports.admin_login = function(req, res, next){
+	var user = req.body.user;
+	var password = req.body.password;
+	if (user == 'admin' && password == 'Flymeal'){
+		result.header.code = "200";
+		result.header.msg  = "成功"; 
+		result.data = {result : 0, msg : '登录成功'};
+		res.json(result);
+	} else {
+		result.header.code = "500";
+		result.header.msg  = "询失败";
+		result.data        = {};
+		res.json(result);
+	}
 }
