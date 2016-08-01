@@ -840,8 +840,8 @@ exports.training = function(req, res, next){
 			sql.query(req, res, sql_mapping.get_oneday_detail, values, next, function(err, ret_count){
 				values = [grade];
 				sql.query(req, res, sql_mapping.get_grade_sport_item, values, next, function(err, ret_sport_item){
-					var grade_homework_sport_item = ret_sport_item[0].item_list.split(','); 
 					try{
+						var grade_homework_sport_item = ret_sport_item[0].item_list.split(',');
 						var item_list = ret[0].item_list.split(',');
 						var hint = 1;
 						for (var i=0;i<grade_homework_sport_item.length;i++){
