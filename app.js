@@ -46,6 +46,7 @@ var j = schedule.scheduleJob(rule, function(){
 	var day = date.getDate();
 	if (month == 8 && day == 1){
 		pool.getConnection(function(err, connection) {
+			var values = [];
 			connection.query(sql_mapping.update_all_school_grade, values, function(err, ret){
 				connection.release();
 			});
