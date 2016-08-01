@@ -872,9 +872,6 @@ exports.training = function(req, res, next){
 						result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
 						res.json(result);
 					} catch(err){
-						for (var i=0;i<grade_homework_sport_item.length;i++){
-							unused_list.push({item_id : parseInt(grade_homework_sport_item[i]), count : 0, hint : '1次'});
-						}
 						result.header.code = "200";
 						result.header.msg  = "成功";
 						result.data        = {used_list : used_list, unused_list : unused_list, used_title : '运动作业', unused_title : '其他运动'};
