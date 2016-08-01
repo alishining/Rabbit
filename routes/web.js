@@ -1141,6 +1141,7 @@ exports.admin_login = function(req, res, next){
 
 exports.upload_resource = function(req, res, next){
 	var tmp_filename    = req.files.value.path;
+	var originalFilename = req.files.value.originalFilename;
 	var id = req.body.id;
 	if (id == undefined) { 
 		result.header.code = '400'; 
@@ -1150,7 +1151,7 @@ exports.upload_resource = function(req, res, next){
 		return; 
 	} 
 	var date  = new Date(); 
-	var key = encrypt.md5(id+date) + '.zip'; 
+	var key = encrypt.md5(id+date) + '#' + originalFilename; 
 	var extra = new qiniu.io.PutExtra(); 
 	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu'); 
 	var uptoken = putPolicy.token(); 
