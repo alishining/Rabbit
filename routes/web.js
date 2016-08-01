@@ -146,17 +146,20 @@ exports.add_school = function(req, res, next){
 			sql.query(req, res, sql_mapping.add_school, values, next, function(err, ret){
 				values = [school_account, '123456', '', '', ret.insertId, school, '', '1', '0', ''];
 				sql.query(req, res, sql_mapping.add_school_user, values, next, function(err, ret){
-					try {
-						result.header.code = "200";
-						result.header.msg  = "成功"; 
-						result.data = {result : '0',  msg : '添加成功'};
-						res.json(result);
-					} catch(err) {
-						result.header.code = "500";
-						result.header.msg  = "添加失败";
-						result.data        = {};
-						res.json(result);
-					}
+					values = [1, manager];
+					sql.query(req, res, sql_mapping.mod_manager_work, values, next, function(err, ret){
+						try {
+							result.header.code = "200";
+							result.header.msg  = "成功"; 
+							result.data = {result : '0',  msg : '添加成功'};
+							res.json(result);
+						} catch(err) {
+							result.header.code = "500";
+							result.header.msg  = "添加失败";
+							result.data        = {};
+							res.json(result);
+						}
+					});
 				})
 			})
 		} catch(err) {
@@ -848,9 +851,12 @@ exports.get_proxy_list = function(req, res, next){
 	var page = req.body.page;
 	var num = req.body.num;
 	page = parseInt(page);
+	var num_null = 0;
 	num = parseInt(num);
-	if (isNaN(num))
+	if (isNaN(num)){
 		num = 20;
+		num_null = 1;
+	}
 	var start = page * num - num; 
 	var end = start + num;
 	var proxy_list = [];
@@ -862,7 +868,10 @@ exports.get_proxy_list = function(req, res, next){
 			for (var i=start; i<end; i++){
 				proxy_list.push(ret[i]);
 			}
-			result.data = {proxy_list : proxy_list, total : ret.length};
+			if (num_null != 1)
+				result.data = {proxy_list : proxy_list, total : ret.length};
+			else
+				result.data = {proxy_list : ret, total : ret.length};
 			res.json(result);
 		} catch(err) {
 			result.header.code = "500";
@@ -885,7 +894,7 @@ exports.add_manager = function(req, res, next){
 		res.json(result);
 		return;
 	}
-	var values = [name, sex, phone, proxy, 0];
+	var values = [name, sex, phone, proxy, 0, 0];
 	sql.query(req, res, sql_mapping.add_manager, values, next, function(err, ret){
 		try {
 			result.header.code = "200";
@@ -978,6 +987,33 @@ exports.del_manager = function(req, res, next){
 	});
 };
 
+exports.mov_manager = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.mov_manager, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0, msg : '删除成功'};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "删除失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+
+
 exports.mod_proxy = function(req, res, next){
 	var id = req.body.id;
 	var owner = req.body.owner;
@@ -1017,17 +1053,23 @@ exports.trans_work = function(req, res, next){
 	}
 	var values = [manager_in, manager_out];
 	sql.query(req, res, sql_mapping.trans_work, values, next, function(err, ret){
-		try {
-			result.header.code = "200";
-			result.header.msg  = "成功"; 
-			result.data = {result : 0, msg : '交接成功'};
-			res.json(result);
-		} catch(err) {
-			result.header.code = "500";
-			result.header.msg  = "交接失败";
-			result.data        = {};
-			res.json(result);
-		}
+		values = [1, manager_in];
+		sql.query(req, res, sql_mapping.mod_manager_work, values, next, function(err, ret){
+			values = [0, manager_out];
+			sql.query(req, res, sql_mapping.mod_manager_work, values, next, function(err, ret){
+				try {
+					result.header.code = "200";
+					result.header.msg  = "成功"; 
+					result.data = {result : 0, msg : '交接成功'};
+					res.json(result);
+				} catch(err) {
+					result.header.code = "500";
+					result.header.msg  = "交接失败";
+					result.data        = {};
+					res.json(result);
+				}
+			});
+		});
 	});
 };
 
@@ -1096,3 +1138,111 @@ exports.admin_login = function(req, res, next){
 		res.json(result);
 	}
 }
+
+exports.upload_resource = function(req, res, next){
+	var tmp_filename    = req.files.value.path;
+	var id = req.body.id;
+	if (id == undefined) { 
+		result.header.code = '400'; 
+		result.header.msg  = '参数不存在';  
+		result.data        = {}; 
+		res.json(result); 
+		return; 
+	} 
+	var date  = new Date(); 
+	var key = encrypt.md5(id+date) + '.zip'; 
+	var extra = new qiniu.io.PutExtra(); 
+	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu'); 
+	var uptoken = putPolicy.token(); 
+	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) { 
+		if (!err) { 
+			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+			var values = [file_name, id];
+			sql.query(req, res, sql_mapping.upload_resource, values, next, function(err, ret){
+				result.header.code = '200'; 
+				result.header.msg  = '成功'; 
+				result.data        = {result : '0', 
+									  msg    : '上传成功'}; 
+				res.json(result); 
+			});
+		} else { 
+			result.header.code = '200'; 
+			result.header.msg  = '成功'; 
+			result.data        = {result : '-1', 
+					      msg    : '上传失败' ,
+					      err    : err};
+			res.json(result); 
+		} 
+	}); 
+};
+
+exports.resource_publish = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.resource_publish, values, next, function(err, ret){
+		sql.query(req, res, sql_mapping.update_flag, values, next, function(err, ret){
+			try {
+				result.header.code = "200";
+				result.header.msg  = "成功"; 
+				result.data = {result : 0, msg : '发布成功'};
+				res.json(result);
+			} catch(err) {
+				result.header.code = "500";
+				result.header.msg  = "发布失败";
+				result.data        = {};
+				res.json(result);
+			}
+		});
+	});
+};
+
+exports.update_resource = function(req, res, next){
+	var values = [];
+	sql.query(req, res, sql_mapping.update_resource, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {update : ret};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "更新失败";
+			result.data        = {};
+			res.json(result);
+		}
+	});
+};
+
+exports.update_feedback = function(req, res, next){
+	var id = req.body.id;
+	if (id == undefined){
+		result.header.code = "400";
+		result.header.msg  = "参数不存在";
+		result.data        = {};
+		res.json(result);
+		return;
+	}
+	var values = [id];
+	sql.query(req, res, sql_mapping.update_feedback, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			result.data = {result : 0,  msg : "反馈成功"};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "失败";
+			result.data        = {result : -1,  msg : "反馈失败"};
+			res.json(result);
+		}
+	});
+};
+
+

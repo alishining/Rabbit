@@ -15,6 +15,7 @@ var tools = require('./tools/load_score_level');
 var app = express();
 var schedule = require("node-schedule");
 var pool = require('./dao/sql_pool').mysql_pool();
+var sql_mapping = require('./dao/sql_mapping');
 
 app.set('port', 3000);
 app.set('views', path.join(__dirname, 'views'));
@@ -132,11 +133,16 @@ app.post('/add_manager', web_route.add_manager);
 app.post('/get_manager', web_route.get_manager);
 app.post('/mod_manager', web_route.mod_manager);
 app.post('/del_manager', web_route.del_manager);
+app.post('/mov_manager', web_route.mov_manager);
 app.post('/mod_proxy', web_route.mod_proxy);
 app.post('/trans_work', web_route.trans_work);
 app.post('/search_school', web_route.search_school);
 app.post('/search_proxy', web_route.search_proxy);
 app.post('/admin_login', web_route.admin_login);
+app.post('/upload_resource', multipartMiddleware, web_route.upload_resource);
+app.post('/resource_publish', web_route.resource_publish);
+app.post('/update_resource', web_route.update_resource);
+app.post('/update_feedback', web_route.update_feedback);
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);

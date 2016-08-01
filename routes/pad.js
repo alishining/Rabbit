@@ -1117,7 +1117,7 @@ exports.get_book_list = function(req, res, next){
 						for (var j=0; j<root[u].chapter.length; j++){
 							for (var k=0; k<root[u].chapter[j].section.length; k++){
 								if (ret[i].father == root[u].chapter[j].section[k].id){
-									root[u].chapter[j].section[k].cls.push({id : ret[i].id, cls : ret[i].name, url : ret[i].url});
+									root[u].chapter[j].section[k].cls.push({id : ret[i].id, cls : ret[i].name, url : ret[i].url, detail : ret[i].detail});
 									break;
 								}
 							}
@@ -1128,7 +1128,7 @@ exports.get_book_list = function(req, res, next){
 		}
 		result.header.code = '200';
 		result.header.msg  = '成功';
-		result.data        = {book_list : JSON.stringify(root)};
+		result.data        = {book_list : root};
 		res.json(result);
 	});
 
