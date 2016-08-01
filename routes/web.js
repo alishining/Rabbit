@@ -1151,7 +1151,7 @@ exports.upload_resource = function(req, res, next){
 		return; 
 	} 
 	var date  = new Date(); 
-	var key = encrypt.md5(id+date) + '#' + originalFilename; 
+	var key = encrypt.md5(id+date) + '_' + originalFilename; 
 	var extra = new qiniu.io.PutExtra(); 
 	var putPolicy = new qiniu.rs.PutPolicy('lingpaotiyu'); 
 	var uptoken = putPolicy.token(); 
