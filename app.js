@@ -31,7 +31,6 @@ app.all('*', function(req, res, next) {
 	next();
 });
 
-
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -144,6 +143,7 @@ app.post('/upload_resource', multipartMiddleware, web_route.upload_resource);
 app.post('/resource_publish', web_route.resource_publish);
 app.post('/update_resource', web_route.update_resource);
 app.post('/update_feedback', web_route.update_feedback);
+app.post('/get_publish_history', web_route.get_publish_history);
 //------------------------------------------------------------------
 app.post('/school_login', school_web_route.school_login);
 app.post('/get_user_class', school_web_route.get_user_class);

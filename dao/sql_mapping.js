@@ -83,10 +83,12 @@ var sql = {
 	search_school : 'select * from school where school like ?',
 	search_proxy : 'select * from proxy where proxy like ?',
 	upload_resource : 'update book_list set tmp_url = ? where id = ?',
-	resource_publish : 'update book_list set url = tmp_url where id = ?',
+	resource_publish : 'update book_list set url = tmp_url where id in (?)',
 	update_resource : 'select * from book_list where update_flag=1',
 	update_feedback : 'update book_list set update_flag=0 where id=?',
 	update_flag : 'update book_list set update_flag=1 where id=?',
+	add_publish_history : 'insert into publish_history(url, admin, adddate) values(?,?,?)',
+	get_publish_history : 'select * from publish_history',
 	//-------------------------------------------------------------------
 	school_login     : 'select teacher_name, school_id, school, password, is_root from school_user where account=?',
 	school_area		 : 'select * from school where id = ?',

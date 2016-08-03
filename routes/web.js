@@ -1140,12 +1140,19 @@ exports.admin_login = function(req, res, next){
 }
 
 exports.upload_resource = function(req, res, next){
+	if (req.files == undefined) { 
+		result.header.code = '400'; 
+		result.header.msg  = '参数或文件不存在';  
+		result.data        = {}; 
+		res.json(result); 
+		return; 
+	} 
 	var tmp_filename    = req.files.value.path;
 	var originalFilename = req.files.value.originalFilename;
 	var id = req.body.id;
-	if (id == undefined) { 
+	if (id == undefined || tmp_filename == undefined) { 
 		result.header.code = '400'; 
-		result.header.msg  = '参数不存在';  
+		result.header.msg  = '参数或文件不存在';  
 		result.data        = {}; 
 		res.json(result); 
 		return; 
@@ -1179,7 +1186,9 @@ exports.upload_resource = function(req, res, next){
 
 exports.resource_publish = function(req, res, next){
 	var id = req.body.id;
-	if (id == undefined){
+	var url = req.body.url;
+	var admin = req.body.admin;
+	if (id == undefined || url == undefined || admin == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
 		result.data        = {};
@@ -1189,17 +1198,21 @@ exports.resource_publish = function(req, res, next){
 	var values = [id];
 	sql.query(req, res, sql_mapping.resource_publish, values, next, function(err, ret){
 		sql.query(req, res, sql_mapping.update_flag, values, next, function(err, ret){
-			try {
-				result.header.code = "200";
-				result.header.msg  = "成功"; 
-				result.data = {result : 0, msg : '发布成功'};
-				res.json(result);
-			} catch(err) {
-				result.header.code = "500";
-				result.header.msg  = "发布失败";
-				result.data        = {};
-				res.json(result);
-			}
+			var adddate = new Date(); 
+			values = [url, admin, adddate.toLocaleString()];
+			sql.query(req, res, sql_mapping.add_publish_history, values, next, function(err, ret){
+				try {
+					result.header.code = "200";
+					result.header.msg  = "成功"; 
+					result.data = {result : 0, msg : '发布成功'};
+					res.json(result);
+				} catch(err) {
+					result.header.code = "500";
+					result.header.msg  = "发布失败";
+					result.data        = {};
+					res.json(result);
+				}
+			});
 		});
 	});
 };
@@ -1241,6 +1254,41 @@ exports.update_feedback = function(req, res, next){
 			result.header.code = "500";
 			result.header.msg  = "失败";
 			result.data        = {result : -1,  msg : "反馈失败"};
+			res.json(result);
+		}
+	});
+};
+
+exports.get_publish_history = function(req, res, next){
+	var page = req.body.page;
+	var num = req.body.num;
+	page = parseInt(page);
+	var num_null = 0;
+	num = parseInt(num);
+	if (isNaN(num)){
+		num = 20;
+		num_null = 1;
+	}
+	var start = page * num - num; 
+	var end = start + num;
+	var history_list = [];
+	var values = [];
+	sql.query(req, res, sql_mapping.get_publish_history, values, next, function(err, ret){
+		try {
+			result.header.code = "200";
+			result.header.msg  = "成功"; 
+			for (var i=start; i<end; i++){
+				history_list.push(ret[i]);
+			}
+			if (num_null != 1)
+				result.data = {history_list : history_list, total : ret.length};
+			else
+				result.data = {history_list : ret, total : ret.length};
+			res.json(result);
+		} catch(err) {
+			result.header.code = "500";
+			result.header.msg  = "查询失败";
+			result.data        = {};
 			res.json(result);
 		}
 	});
