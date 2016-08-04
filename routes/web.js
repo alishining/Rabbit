@@ -1195,6 +1195,7 @@ exports.resource_publish = function(req, res, next){
 		res.json(result);
 		return;
 	}
+	id = id.split(',');
 	var values = [id];
 	sql.query(req, res, sql_mapping.resource_publish, values, next, function(err, ret){
 		sql.query(req, res, sql_mapping.update_flag, values, next, function(err, ret){

@@ -82,7 +82,7 @@ var sql = {
 	trans_work : 'update school set manager = ? where manager = ?',
 	search_school : 'select * from school where school like ?',
 	search_proxy : 'select * from proxy where proxy like ?',
-	upload_resource : 'update book_list set tmp_url = ? where id = ?',
+	upload_resource : 'update book_list set tmp_url = ? where id in (?)',
 	resource_publish : 'update book_list set url = tmp_url where id in (?)',
 	update_resource : 'select * from book_list where update_flag=1',
 	update_feedback : 'update book_list set update_flag=0 where id=?',
