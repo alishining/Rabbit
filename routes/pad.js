@@ -157,7 +157,6 @@ exports.submit_report_forms = function(req, res, next){
 	var time = req.body.time;
 	var student_score = req.body.student_score;
 	var teacher = req.body.teacher;
-	console.log(req.body);
 	if (uid == undefined || sign == undefined || check_better == undefined || tid == undefined || title == undefined || class_id == undefined || item_id == undefined || time == undefined || student_score == undefined){
 		result.header.code = "400";
 		result.header.msg  = "参数不存在";
@@ -1092,12 +1091,12 @@ exports.get_book_list = function(req, res, next){
 		for (var i=0;i<ret.length;i++){
 			switch(ret[i].level){
 				case 1 : 
-					root.push({id : ret[i].id, name : ret[i].name, chapter : []});
+					root.push({id : ret[i].id, name : ret[i].name, intro : ret[i].intro, chapter : []});
 					break;
 				case 2 :
 					for (var u=0; u<root.length; u++){
 						if (ret[i].father == root[u].id){
-							root[u].chapter.push({id : ret[i].id, name : ret[i].name, section : []});
+							root[u].chapter.push({id : ret[i].id, name : ret[i].name, intro : ret[i].intro, section : []});
 							break;
 						}
 					}
@@ -1106,7 +1105,7 @@ exports.get_book_list = function(req, res, next){
 					for (var u=0; u<root.length; u++){
 						for (var j=0; j<root[u].chapter.length; j++){
 							if (ret[i].father == root[u].chapter[j].id){
-								root[u].chapter[j].section.push({id : ret[i].id, name : ret[i].name, cls : []});
+								root[u].chapter[j].section.push({id : ret[i].id, name : ret[i].name, intro : ret[i].intro, cls : []});
 								break;
 							}
 						}
@@ -1117,7 +1116,7 @@ exports.get_book_list = function(req, res, next){
 						for (var j=0; j<root[u].chapter.length; j++){
 							for (var k=0; k<root[u].chapter[j].section.length; k++){
 								if (ret[i].father == root[u].chapter[j].section[k].id){
-									root[u].chapter[j].section[k].cls.push({id : ret[i].id, cls : ret[i].name, url : ret[i].url, detail : ret[i].detail});
+									root[u].chapter[j].section[k].cls.push({id : ret[i].id, cls : ret[i].name, intro : ret[i].intro, url : ret[i].url, detail : ret[i].detail});
 									break;
 								}
 							}

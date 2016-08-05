@@ -1427,8 +1427,6 @@ exports.score_output = function(req, res, next){
 	student_info.push('姓名');
 	student_info.push('性别');
 	student_info.push('出生日期');
-	student_info.push('身份证号');
-	student_info.push('学生来源');
 	student_info.push('家庭住址');
 	student_info.push(constant.height);
 	student_info.push(constant.weight);
@@ -1468,8 +1466,6 @@ exports.score_output = function(req, res, next){
 					student_info.push(ret[i].student_name);
 					student_info.push(ret[i].sex);
 					student_info.push(ret[i].birth);
-					student_info.push('');
-					student_info.push('');
 					student_info.push(ret[i].address);
 					if (ret[i].item_id == 0 || ret[i].item_id == 1 || ret[i].item_id == 2 || ret[i].item_id == 3 || ret[i].item_id == 4 || ret[i].item_id == 5 || ret[i].item_id == 6 || ret[i].item_id == 7 || ret[i].item_id == 8 || ret[i].item_id == 9){
 						if (ret[i].item_id == 9){
