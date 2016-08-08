@@ -1042,7 +1042,7 @@ exports.score_input = function(req, res, next){
 			for (var u=0;u<line.length;u++){
 				var field = line[u];
 				try{
-					if (field[0] == 'L' || field[0] == 'D')
+					if (field[0] == 'L' || field[0] == 'D' || field[0] == 'T')
 						student_id = field;
 				}catch(err){
 					//
