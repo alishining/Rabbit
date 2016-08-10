@@ -1578,12 +1578,17 @@ exports.get_remind_day = function(req, res, next){
 		res.json(result);
 		return;
 	}
+	var date = new Date();
+	var month = date.getMonth() + 1;
+	if (month < 10)
+		month = '0' + month;
+	var today = date.getFullYear() + '-' + month + '-' + date.getDate();
 	var values = [school];
 	sql.query(req, res, sql_mapping.get_remind_day, values, next, function(err, ret){
 		try{
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data        = {day : ret[0].protocol_end};
+			result.data        = {day : ret[0].protocol_end, today : today};
 			res.json(result);
 		} catch(err){
 			result.header.code = "500";
