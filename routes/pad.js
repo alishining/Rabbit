@@ -1022,7 +1022,7 @@ exports.update_teacher_img = function(req, res, next){
 	var uptoken = putPolicy.token();
 	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) {
 		if (!err) {
-			var file_name = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+			var file_name = 'http://obqp7wnq5.bkt.clouddn.com/' + key;
 			var values = [file_name, uid];
 			sql.query(req, res, sql_mapping.update_teacher_img, values, next, function(err, ret){
 				result.header.code = '200';

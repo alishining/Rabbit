@@ -4,7 +4,6 @@ var qiniu   = require('qiniu');
 var fs = require('fs');
 var xlsx = require("node-xlsx");
 var multipart = require('connect-multiparty');
-var qiniu   = require('qiniu');
 var encrypt = require('../tools/encrypt');
 var sql = require('../dao/sql_tool');
 var tool = require('../tools/sms');
@@ -1382,7 +1381,7 @@ exports.score_input = function(req, res, next){
 	var uptoken = putPolicy.token();
 	qiniu.io.putFile(uptoken, key, tmp_filename, extra, function(err, ret) {
 		if (!err) {
-			var file_path = 'http://7xq9cu.com1.z0.glb.clouddn.com/' + key;
+			var file_path = 'http://obqp7wnq5.bkt.clouddn.com/' + key;
 			values = [year+'年第'+term+'学期', opt_time, account, file_name+'('+add_str.length+')', file_path];
 			sql.query(req, res, sql_mapping.add_upload_log, values, next, function(err, ret){
 				try{
