@@ -1041,9 +1041,11 @@ exports.score_input = function(req, res, next){
 			for (var u=0;u<line.length;u++){
 				var field = line[u];
 				try{
-					if (field[0] == 'L' || field[0] == 'D' || field[0] == 'T')
+					var Regx = /^[A-Za-z0-9]*$/;
+					if (field.length >= 18 && Regx.test(student_id))
 						student_id = field;
 				}catch(err){
+					console.log(err);
 					//
 				}
 				switch(student_list[0][u]){
@@ -1347,6 +1349,12 @@ exports.score_input = function(req, res, next){
 						sql.query(req, res, sql_mapping.update_class_list, values, next, function(err, ret){
 							if (err){
 								console.log(err);
+							} else {
+								result.header.code = "200";
+								result.header.msg  = "成功";
+								result.data = {result : '0', msg : '上传成功'};
+								res.json(result);
+								return;
 							}
 						});
 					} catch(err) {
@@ -1388,7 +1396,8 @@ exports.score_input = function(req, res, next){
 					result.header.code = '200';
 					result.header.msg  = '成功';
 					result.data        = {result : '0', msg : '上传完毕'};
-					res.json(result);
+				//	res.json(result);
+					return;
 				}catch(err){
 					//
 				}
@@ -1398,7 +1407,8 @@ exports.score_input = function(req, res, next){
 			result.header.code = '500';
 			result.header.msg  = '上传失败';
 			result.data		   = {};
-			res.json(result);
+		//	res.json(result);
+			return;
 		}
 	});
 };
