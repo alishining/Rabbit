@@ -698,11 +698,15 @@ exports.detail_homework = function(req, res, next){
 	var date  = new Date();
 	var month = date.getMonth()+1;
 	var day = date.getDate();
+	var pday = date.getDate() - 1;
 	if (date.getMonth()+1 < 10)
 		month = '0'+ (date.getMonth()+1);
 	if (date.getDate() < 10)
 		day = '0' + date.getDate();
+	if (pday < 10)
+		pday = '0' + pday;
 	var ds = date.getFullYear() + '-' + month  + '-' + day;
+	var pds = date.getFullYear() + '-' + month  + '-' + pday;
 	var finished_list = [];
 	var unfinished_list = [];
 	var values = [item_id, ds, school_id, class_id];
@@ -730,7 +734,7 @@ exports.detail_homework = function(req, res, next){
 			}
 			result.header.code = "200";
 			result.header.msg  = "成功";
-			result.data = {date : ds, finished_list : finished_list, unfinished_list : unfinished_list, unfinished_count : unfinished_list.length, finished_count : finished_list.length};  
+			result.data = {date : pds, finished_list : finished_list, unfinished_list : unfinished_list, unfinished_count : unfinished_list.length, finished_count : finished_list.length};  
 			res.json(result);
 		} else {
 			result.header.code = "500";

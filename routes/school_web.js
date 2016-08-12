@@ -1330,6 +1330,7 @@ exports.score_input = function(req, res, next){
 			values = [add_str];
 			sql.query(req, res, sql_mapping.add_student, values, next, function(err, ret){
 				if (err){
+					console.log(err);
 					result.header.code = "500";
 					result.header.msg  = "失败";
 					result.data = {result : '-1', msg : '导入失败，请查看是否有重复学籍号'};
