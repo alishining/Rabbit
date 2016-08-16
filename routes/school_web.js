@@ -1041,9 +1041,10 @@ exports.score_input = function(req, res, next){
 			for (var u=0;u<line.length;u++){
 				var field = line[u];
 				try{
-					var Regx = /^[A-Za-z0-9]*$/;
-					if (field.length >= 18 && Regx.test(student_id))
+					if (u == 3){
 						student_id = field;
+						console.log(student_id);
+					}
 				}catch(err){
 					console.log(err);
 					//
